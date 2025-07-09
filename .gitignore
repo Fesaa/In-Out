@@ -1,0 +1,5 @@
+debug/
+.idea/
+API/obj
+API/config/logs/*
+.vscode

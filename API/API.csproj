@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Product>In-Out</Product>
+        <Company>Brasserie Van De Kelder</Company>
+        <AssemblyVersion>0.0.1.0</AssemblyVersion>
+        <AssemblyName>In-Out</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="15.0.0" />
+      <PackageReference Include="Flurl" Version="4.0.0" />
+      <PackageReference Include="Flurl.Http" Version="4.0.2" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
+      <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
+      <PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+      <PackageReference Include="Serilog" Version="4.3.0" />
+      <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+      <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+      <PackageReference Include="Serilog.Expressions" Version="5.0.0" />
+      <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
+      <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
+      <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
+      <PackageReference Include="Serilog.Sinks.AspNetCore.App.SignalR" Version="1.2.2" />
+      <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+      <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
+      <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="9.0.0" />
+      <PackageReference Include="System.IO.Abstractions" Version="22.0.15" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Constants\" />
+      <Folder Include="DTOs\" />
+      <Folder Include="Entities\" />
+      <Folder Include="I18N\" />
+      <Folder Include="Services\" />
+    </ItemGroup>
+
+</Project>
