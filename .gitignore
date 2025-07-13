@@ -3,3 +3,5 @@ debug/
 API/obj
 API/config/logs/*
 .vscode
+appsettings.Development.json
+*.ai

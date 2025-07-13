@@ -19,13 +19,14 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
 
         services.AddControllers();
         services.AddCors();
+        services.AddIdentityServices(cfg);
         services.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "In-Out API",
-                Description = "In-Out API",
+                Title = $"{BuildInfo.AppName} API",
+                Description = $"{BuildInfo.AppName} API",
                 License = new OpenApiLicense
                 {
                     Name = "MIT License",
@@ -50,7 +51,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
+                            Id = "Bearer",
                         }
                     },
                     Array.Empty<string>()
@@ -63,7 +64,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 Variables = new Dictionary<string, OpenApiServerVariable>
                 {
                     { "protocol", new OpenApiServerVariable { Default = "http", Enum = ["http", "https"] } },
-                    { "hostpath", new OpenApiServerVariable { Default = "localhost:5000" } }
+                    { "hostpath", new OpenApiServerVariable { Default = "localhost:5000" } },
                 }
             });
         });

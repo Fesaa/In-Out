@@ -41,7 +41,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Constants\" />
       <Folder Include="DTOs\" />
       <Folder Include="Entities\" />
       <Folder Include="I18N\" />
