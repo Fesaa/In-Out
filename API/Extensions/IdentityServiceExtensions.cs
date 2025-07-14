@@ -1,4 +1,5 @@
 using API.Constants;
+using API.DTOs;
 using API.Helpers;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,12 +11,12 @@ namespace API.Extensions;
 public static class IdentityServiceExtensions
 {
 
-    private const string OpenIdConnect = nameof(OpenIdConnect);
+    public const string OpenIdConnect = nameof(OpenIdConnect);
 
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration)
     {
 
-        var openIdConnectConfig = configuration.GetSection(OpenIdConnect).Get<OpenIDConnectConfiguration>();
+        var openIdConnectConfig = configuration.GetSection(OpenIdConnect).Get<OidcConfigurationDto>();
         if (openIdConnectConfig == null)
             throw new Exception("OpenIdConnect configuration is missing");
 
@@ -70,12 +71,6 @@ public static class IdentityServiceExtensions
         if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs")) context.Token = accessToken;
 
         return Task.CompletedTask;
-    }
-    
-    public class OpenIDConnectConfiguration
-    {
-        public string Authority { get; set; }
-        public string ClientId { get; set; }
     }
     
 }

@@ -36,7 +36,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var filePath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-            opt.IncludeXmlComments(filePath, true);
+            //opt.IncludeXmlComments(filePath, true);
             opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
                 In = ParameterLocation.Header,
                 Description = "JWT token obtained from OIDC",

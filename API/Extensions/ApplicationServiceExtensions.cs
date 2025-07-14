@@ -11,6 +11,8 @@ public static class ApplicationServiceExtensions
     {
         services.AddAutoMapper(a => a.AddMaps(typeof(AutoMapperProfiles).Assembly));
 
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         
         services.AddPostgres(configuration);
