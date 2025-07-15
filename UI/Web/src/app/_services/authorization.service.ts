@@ -1,4 +1,4 @@
-import {DestroyRef, inject, Injectable, signal} from '@angular/core';
+import {computed, DestroyRef, effect, inject, Injectable, Signal, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
 import {environment} from '../../environments/environment';
@@ -16,10 +16,17 @@ export enum OidcEvents {
   TokenRefreshed = "token_refreshed"
 }
 
+export enum Role {
+  CreateForOthers = 'CreateForOthers',
+  ExportDeliveryRapport = 'ExportDeliveryRapport',
+  ManageStock = 'ManageStock',
+  ViewAllDeliveries = 'ViewAllDeliveries',
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class OidcService {
+export class AuthorizationService {
 
   private readonly oauth2 = inject(OAuthService);
   private readonly httpClient = inject(HttpClient);
@@ -27,17 +34,34 @@ export class OidcService {
 
   private readonly apiBaseUrl = environment.apiUrl;
 
-  public readonly events$ = this.oauth2.events;
-
   /**
    * Public OIDC settings
    */
   private readonly _settings = signal<OidcConfiguration | undefined>(undefined);
   public readonly settings = this._settings.asReadonly();
 
+  private readonly token = signal('');
+
+  public readonly roles: Signal<Role[]> = computed(() => {
+    const settings = this.settings();
+    const token = this.token();
+    if (!token || !settings) return [];
+
+    const claims = this.decodeJwt(token);
+    const resourceAccess = claims['resource_access'];
+    if (!resourceAccess) return [];
+
+    const roles = resourceAccess[settings.clientId].roles;
+    return roles as Role[];
+  });
+
   constructor() {
     this.setupRefresh();
     this.setupOAuth();
+  }
+
+  hasRole(role: Role): boolean {
+    return this.roles().includes(role);
   }
 
   login() {
@@ -60,7 +84,6 @@ export class OidcService {
 
     this.oauth2.setStorage(localStorage);
 
-
     this.configuration().subscribe(cfg => {
       this._settings.set(cfg);
 
@@ -82,15 +105,33 @@ export class OidcService {
 
       from(this.oauth2.loadDiscoveryDocumentAndTryLogin()).subscribe({
         next: _ => {
-
           if (!this.oauth2.hasValidAccessToken() && this.oauth2.getRefreshToken()) {
-            this.oauth2.refreshToken().catch(e => console.error(e));
+            this.oauth2.refreshToken()
+              .catch(e => console.error(e))
+              .then(() => {
+                if (this.oauth2.hasValidAccessToken()) return;
+
+                console.log("Failed to get valid token");
+                this.login();
+              });
+          } else if (!this.oauth2.hasValidAccessToken()) {
+            this.login();
           }
         },
         error: error => {
           console.log(error);
         }
       });
+
+      this.oauth2.events.subscribe(event => {
+        if (event.type === OidcEvents.TokenRefreshed && this.oauth2.hasValidAccessToken()) {
+          this.token.set(this.oauth2.getAccessToken());
+        }
+      });
+
+      if (this.oauth2.hasValidAccessToken()) {
+        this.token.set(this.oauth2.getAccessToken());
+      }
     });
   }
 
@@ -104,6 +145,12 @@ export class OidcService {
 
   private configuration() {
     return this.httpClient.get<OidcConfiguration>(this.apiBaseUrl + 'Configuration/oidc');
+  }
+
+  private decodeJwt(token: string) {
+    const payload = token.split('.')[1];
+    const decoded = atob(payload);
+    return JSON.parse(decoded);
   }
 
 }

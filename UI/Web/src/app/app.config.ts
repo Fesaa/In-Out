@@ -7,7 +7,7 @@ import {
 import {provideRouter} from '@angular/router';
 import {provideOAuthClient} from "angular-oauth2-oidc";
 import {routes} from './app.routes';
-import {provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import {provideHttpClient, withFetch, withInterceptorsFromDi} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import { TranslocoHttpLoader } from './_services/transloco-loader';
@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
         sendAccessToken: true,
       }
     }),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
     importProvidersFrom(BrowserAnimationsModule),
     provideAnimationsAsync(),
     provideTransloco({
