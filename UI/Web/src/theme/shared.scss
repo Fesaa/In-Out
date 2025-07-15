@@ -1,0 +1,19 @@
+.clickable:hover {
+  cursor: pointer;
+}
+
+.selected {
+  background-color: var(--secundairy-color);
+  color: var(--secondary-text-color);
+}
+
+.title {
+  color: var(--body-text-color);
+  font-size: var(--title-font-size);
+  box-shadow: var(--primary-color-darker-shade);
+}
+
+a:hover {
+  color: var(--secundairy-color);
+  cursor: pointer;
+}

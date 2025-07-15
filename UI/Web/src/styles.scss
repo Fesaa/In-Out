@@ -2,3 +2,13 @@
 
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
+
+@use "./theme/themes/default.scss";
+@use "./theme/forms.scss";
+@use "./theme/shared.scss";
+
+
+body {
+  background-color: var(--background-color);
+  color: var(--body-text-color)
+}

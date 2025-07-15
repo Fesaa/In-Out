@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+:root {
+  /* Primary Colors */
+  --primary-color: #1A2B1A;
+  --primary-color-light: #2D3E2D;
+  --primary-color-lighter: #4A5D4A;
+
+  /* Secondary Colors */
+  --secondary-color: #D4AF37;
+  --secondary-color-light: #B8860B;
+  --secondary-color-lighter: #CD853F;
+
+  /* Background Colors */
+  --background-color: #F8F6F3;
+  --background-secondary: #EDE8E0;
+  --background-accent: #F4E7C1;
+
+  /* Text Colors */
+  --text-primary: #1A2B1A;
+  --text-secondary: #3C3C3C;
+  --text-light: #F8F6F3;
+  --text-accent: #D4AF37;
+
+  /* Surface Colors */
+  --surface-card: #ffffff;
+  --surface-hover: #F4E7C1;
+  --surface-border: #EDE8E0;
+
+  /* Utility Colors */
+  --warm-bronze: #8B6F47;
+  --sage-green: #4A5D4A;
+  --olive-green: #6B8E23;
+  --amber: #CD853F;
+  --champagne: #F4E7C1;
+
+  /* Shadows */
+  --shadow-light: rgba(26, 43, 26, 0.1);
+  --shadow-medium: rgba(26, 43, 26, 0.2);
+  --shadow-dark: rgba(26, 43, 26, 0.3);
+}

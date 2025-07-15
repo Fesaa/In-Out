@@ -1,6 +1,3 @@
-<div>
-  @for (role of oidcService.roles(); track role) {
-    <div>{{role}}</div>
-  }
+<div *transloco="let t;">
   <router-outlet></router-outlet>
 </div>

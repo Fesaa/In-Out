@@ -1,4 +1,4 @@
-import {computed, DestroyRef, effect, inject, Injectable, Signal, signal} from '@angular/core';
+import {computed, DestroyRef, effect, inject, Injectable, Injector, runInInjectionContext, Signal, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
 import {environment} from '../../environments/environment';
@@ -11,7 +11,7 @@ import {from} from 'rxjs';
  */
 export enum OidcEvents {
   /**
-   * Fired on token refresh, and when the first token is recieved
+   * Fired on token refresh, and when the first token is received
    */
   TokenRefreshed = "token_refreshed"
 }
@@ -21,16 +21,18 @@ export enum Role {
   ExportDeliveryRapport = 'ExportDeliveryRapport',
   ManageStock = 'ManageStock',
   ViewAllDeliveries = 'ViewAllDeliveries',
+  ManageApplication = 'ManageApplication',
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizationService {
+export class AuthService {
 
   private readonly oauth2 = inject(OAuthService);
   private readonly httpClient = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   private readonly apiBaseUrl = environment.apiUrl;
 
@@ -55,13 +57,14 @@ export class AuthorizationService {
     return roles as Role[];
   });
 
+  public readonly isAuthenticated= computed((): boolean => {
+    this.token(); // Retrigger for new tokens
+    return this.oauth2.hasValidAccessToken();
+  });
+
   constructor() {
     this.setupRefresh();
     this.setupOAuth();
-  }
-
-  hasRole(role: Role): boolean {
-    return this.roles().includes(role);
   }
 
   login() {
@@ -97,21 +100,22 @@ export class AuthorizationService {
         showDebugInformation: !environment.production,
         responseType: 'code',
         scope: "openid profile email roles offline_access",
-        // Not all OIDC providers follow this nicely
-        strictDiscoveryDocumentValidation: false,
         useSilentRefresh: false,
       });
       this.oauth2.setupAutomaticSilentRefresh();
 
       from(this.oauth2.loadDiscoveryDocumentAndTryLogin()).subscribe({
         next: _ => {
+          if (this.oauth2.hasValidAccessToken()) {
+            this.token.set(this.oauth2.getAccessToken());
+            return;
+          }
+
           if (!this.oauth2.hasValidAccessToken() && this.oauth2.getRefreshToken()) {
             this.oauth2.refreshToken()
               .catch(e => console.error(e))
               .then(() => {
                 if (this.oauth2.hasValidAccessToken()) return;
-
-                console.log("Failed to get valid token");
                 this.login();
               });
           } else if (!this.oauth2.hasValidAccessToken()) {
