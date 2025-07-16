@@ -1,5 +1,7 @@
 ﻿using API.Data;
+using API.Data.Repositories;
 using API.Helpers;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -12,6 +14,8 @@ public static class ApplicationServiceExtensions
         services.AddAutoMapper(a => a.AddMaps(typeof(AutoMapperProfiles).Assembly));
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<IProductService, ProductService>();
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         

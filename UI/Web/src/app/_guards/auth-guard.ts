@@ -1,6 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, GuardResult, MaybeAsync, RouterStateSnapshot} from '@angular/router';
 import {AuthService} from '../_services/auth.service';
+import {filter, map, take} from 'rxjs';
 
 
 @Injectable({
@@ -17,12 +18,17 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    const path = window.location.pathname;
-    if (path !== '/login' && !path.startsWith("oidc") && path !== '') {
-      localStorage.setItem(AuthGuard.urlKey, path);
-    }
+    return this.authService.loaded$.pipe(filter(x => x), take(1), map(() => {
+      const isAuthenticated = this.authService.isAuthenticated();
+      if (isAuthenticated) return true;
 
-    return false;
+      const path = window.location.pathname;
+      if (path !== '/login' && !path.startsWith("oidc") && path !== '' && path !== '/') {
+        localStorage.setItem(AuthGuard.urlKey, path);
+      }
+
+      return false;
+    }));
   }
 
 }

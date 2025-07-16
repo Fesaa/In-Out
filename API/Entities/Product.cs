@@ -11,6 +11,7 @@ public class Product
     
     public string Description { get; set; }
     
+    public int CategoryId { get; set; }
     public ProductCategory Category { get; set; }
     public ProductType  Type { get; set; }
     

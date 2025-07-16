@@ -1,11 +1,73 @@
 {
+  "common": {
+    "edit": "Edit",
+    "close": "Close"
+  },
+
+
   "navigation": {
     "items": {
       "new-delivery": "New delivery",
       "deliveries": "Browse deliveries",
       "stock": "Stock",
-      "management": "Management"
+      "management": "Management",
+      "logout": "Logout"
+    },
+    "management": {
+      "items": {
+        "overview": "Overview",
+        "products": "Products",
+        "clients": "Clients",
+        "deliveries": "Deliveries",
+        "server": "Server"
+      }
     }
+  },
+
+  "management": {
+    "dashboard": {
+      "title": "Management dashboard",
+      "sub-title": "Contact your idp manager if you're missing perms"
+    },
+    "products": {
+      "title": "Product Management",
+      "create-category": "Create Category ",
+      "create-first-category": "Create Your First Category",
+      "create-product": "Create Product ",
+      "create-first-product": "Create Your First Product",
+      "no-categories": {
+        "title": "No Categories Available",
+        "message": "  You need to create at least one category before you can add products. Categories help organize your products and make them easier to manage."
+      },
+      "no-products": {
+        "title": "No Products Found",
+        "message": "Your product catalog is empty. Start building your inventory by creating your first product."
+      },
+      "table": {
+        "header": {
+          "name": "Name",
+          "description": "Description",
+          "category": "Category",
+          "actions": "Actions"
+        }
+      }
+    }
+  },
+
+  "create-product-category": {
+    "title": "Product Category",
+    "description": "Categories group together different items, and give some order to your delivery form. It is recommended to make not too big, nor too small.",
+    "first-run": "You must have at least one category before you can start creating product",
+    "create": "Create",
+    "update": "Update",
+    "cancel": "Cancel",
+    "name": "Name",
+    "name-tooltip": "Name display in the new delivery form, must be unique",
+    "enabled": "Enabled",
+    "enabled-tooltip": "When a category is disabled, all products in it will become disabled too",
+    "disabled": "Disabled",
+    "auto-collapse": "Auto collapse",
+    "auto-collapse-tooltip": "When enabled, will hide products in this category by default in the new delivery form"
   },
 
   "oidc":{

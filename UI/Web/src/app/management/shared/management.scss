@@ -1,0 +1,36 @@
+.manager-container {
+  font-family: 'Spectral', serif;
+  padding: 20px;
+  background-color: var(--background-color);
+  min-height: 100vh;
+}
+
+.manager-header {
+  margin-bottom: 24px;
+  background-color: var(--surface-card);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  overflow: hidden;
+}
+
+.header-content {
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+}
+
+.manager-title {
+  color: var(--text-light);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}

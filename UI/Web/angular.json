@@ -10,7 +10,8 @@
           "style": "scss",
           "changeDetection": "OnPush",
           "standalone": true,
-          "type": "component"
+          "type": "component",
+          "skipTests": true
         }
       },
       "root": "",

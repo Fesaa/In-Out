@@ -20,7 +20,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideOAuthClient({
       resourceServer: {
-        allowedUrls: ["localhost:5000"],
         sendAccessToken: true,
       }
     }),

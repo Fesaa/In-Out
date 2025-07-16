@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {NavigationItem, NavigationService} from '../_services/navigation.service';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {Router} from '@angular/router';
@@ -12,7 +12,7 @@ import {Router} from '@angular/router';
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
   private readonly router = inject(Router);
   protected readonly navigationService = inject(NavigationService);
@@ -25,6 +25,13 @@ export class DashboardComponent {
 
     if (item.action) {
       item.action();
+    }
+  }
+
+  ngOnInit(): void {
+    const items = this.navigationService.items();
+    if (items.length === 1) {
+      this.navigate(items[0]);
     }
   }
 

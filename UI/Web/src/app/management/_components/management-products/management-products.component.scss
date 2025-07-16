@@ -1,0 +1,8 @@
+@use "../../shared/management.scss";
+
+.table-section {
+  background-color: var(--surface-card);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow-light);
+}

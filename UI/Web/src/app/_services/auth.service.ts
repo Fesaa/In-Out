@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {OAuthErrorEvent, OAuthService} from 'angular-oauth2-oidc';
 import {environment} from '../../environments/environment';
 import {OidcConfiguration} from '../_models/configuration';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {takeUntilDestroyed, toObservable} from '@angular/core/rxjs-interop';
 import {from} from 'rxjs';
 
 /**
@@ -24,6 +24,10 @@ export enum Role {
   ManageApplication = 'ManageApplication',
 }
 
+export type UserInfo = {
+  UserName: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,9 +36,12 @@ export class AuthService {
   private readonly oauth2 = inject(OAuthService);
   private readonly httpClient = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly injector = inject(Injector);
 
   private readonly apiBaseUrl = environment.apiUrl;
+
+  private readonly _loaded = signal(false);
+  public readonly loaded = this._loaded.asReadonly();
+  public readonly loaded$ = toObservable(this.loaded);
 
   /**
    * Public OIDC settings
@@ -62,6 +69,16 @@ export class AuthService {
     return this.oauth2.hasValidAccessToken();
   });
 
+  public readonly userInfo = computed<UserInfo | undefined>(() => {
+    const token = this.token(); // Refresher
+
+    const info = this.oauth2.getIdentityClaims();
+    if (!info) return undefined;
+    return {
+      UserName: info["name"]
+    };
+  });
+
   constructor() {
     this.setupRefresh();
     this.setupOAuth();
@@ -71,6 +88,10 @@ export class AuthService {
     if (this.oauth2.hasValidAccessToken()) return;
 
     this.oauth2.initLoginFlow();
+  }
+
+  logout() {
+    this.oauth2.logOut();
   }
 
   private setupOAuth() {
@@ -96,7 +117,7 @@ export class AuthService {
         // Require https in production unless localhost
         requireHttps: environment.production ? 'remoteOnly' : false,
         redirectUri: window.location.origin + "/oidc/callback",
-        postLogoutRedirectUri: window.location.origin + "login",
+        postLogoutRedirectUri: window.location.origin,
         showDebugInformation: !environment.production,
         responseType: 'code',
         scope: "openid profile email roles offline_access",
@@ -106,6 +127,8 @@ export class AuthService {
 
       from(this.oauth2.loadDiscoveryDocumentAndTryLogin()).subscribe({
         next: _ => {
+          this._loaded.set(true);
+
           if (this.oauth2.hasValidAccessToken()) {
             this.token.set(this.oauth2.getAccessToken());
             return;

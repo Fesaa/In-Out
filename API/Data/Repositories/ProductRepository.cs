@@ -1,7 +1,9 @@
+using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
 using API.Extensions;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data.Repositories;
@@ -9,8 +11,12 @@ namespace API.Data.Repositories;
 public interface IProductRepository
 {
     Task<Product?> GetById(int id);
+    Task<ProductCategory?> GetCategoryById(int id);
     Task<Product?> GetByName(string name);
+    Task<ProductCategory?> GetCategoryByName(string name);
     Task<IList<Product>> GetAll(bool onlyEnabled = false);
+    Task<IList<ProductDto>> GetAllDto(bool onlyEnabled = false);
+    Task<IList<ProductCategoryDto>> GetAllCategories(bool onlyEnabled = false);
     Task<IList<Product>> GetByCategory(ProductCategory category);
     void Add(Product product);
     void Add(ProductCategory category);
@@ -29,16 +35,43 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
         return await ctx.Products.Where(p => p.Id == id).FirstOrDefaultAsync();
     }
 
+    public async Task<ProductCategory?> GetCategoryById(int id)
+    {
+        return await ctx.ProductCategories.Where(p => p.Id == id).FirstOrDefaultAsync();
+    }
+
     public Task<Product?> GetByName(string name)
     {
         var normalized = name.ToNormalized();
         return ctx.Products.Where(p => p.NormalizedName == normalized).FirstOrDefaultAsync();
     }
 
+    public async Task<ProductCategory?> GetCategoryByName(string name)
+    {
+        var normalized = name.ToNormalized();
+        return await ctx.ProductCategories.Where(p => p.NormalizedName == normalized).FirstOrDefaultAsync();
+    }
+
     public async Task<IList<Product>> GetAll(bool onlyEnabled = false)
     {
         return await ctx.Products
             .WhereIf(onlyEnabled, p => p.Enabled)
+            .ToListAsync();
+    }
+
+    public async Task<IList<ProductDto>> GetAllDto(bool onlyEnabled = false)
+    {
+        return await ctx.Products
+            .WhereIf(onlyEnabled, p => p.Enabled)
+            .ProjectTo<ProductDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
+    public async Task<IList<ProductCategoryDto>> GetAllCategories(bool onlyEnabled = false)
+    {
+        return await ctx.ProductCategories
+            .WhereIf(onlyEnabled, p => p.Enabled)
+            .ProjectTo<ProductCategoryDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
 

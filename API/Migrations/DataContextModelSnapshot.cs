@@ -71,6 +71,9 @@ namespace API.Migrations
                     b.Property<bool>("AutoCollapse")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
