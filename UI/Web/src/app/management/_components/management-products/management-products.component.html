@@ -1,119 +1,122 @@
-
-<div class="manager-container" *transloco="let t; prefix: 'management.products'">
-  <div class="manager-header">
-    <div class="header-content">
-      <h2 class="manager-title">{{t('title')}}</h2>
-      <div class="action-buttons">
-        <button
-          type="button"
-          class="btn btn-olive"
-          (click)="createCategory()">
-          <i class="fas fa-plus" aria-hidden="true"></i>
-          {{t('create-category')}}
-        </button>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          [disabled]="categories().length === 0"
-          (click)="createProduct()">
-          <i class="fas fa-plus" aria-hidden="true"></i>
-          {{t('create-product')}}
-        </button>
+@if (loading()) {
+  <app-loading-spinner [centered]="true" size="large"></app-loading-spinner>
+} @else {
+  <div class="manager-container" *transloco="let t; prefix: 'management.products'">
+    <div class="manager-header">
+      <div class="header-content">
+        <h2 class="manager-title">{{t('title')}}</h2>
+        <div class="action-buttons">
+          <button
+            type="button"
+            class="btn btn-olive"
+            (click)="createCategory()">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            {{t('create-category')}}
+          </button>
+          <button
+            type="button"
+            class="btn btn-secondary"
+            [disabled]="categories().length === 0"
+            (click)="createProduct()">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            {{t('create-product')}}
+          </button>
+        </div>
       </div>
     </div>
+
+    @if (productWarning() || categoriesWarning()) {
+      <div class="warnings-container">
+
+        @if (categoriesWarning()) {
+          <div class="warning-card warning-amber">
+            <div class="warning-icon">
+              <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+            </div>
+            <div class="warning-content">
+              <h4 class="warning-title">{{t('no-categories.title')}}</h4>
+              <p class="warning-message">{{t('no-categories.message')}}</p>
+              <button
+                type="button"
+                class="btn btn-warning-action"
+                (click)="createCategory()">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                {{t('create-first-category')}}
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (productWarning()) {
+          <div class="warning-card warning-olive">
+            <div class="warning-icon">
+              <i class="fas fa-info-circle" aria-hidden="true"></i>
+            </div>
+            <div class="warning-content">
+              <h4 class="warning-title">{{t('no-products.title')}}</h4>
+              <p class="warning-message">
+                {{t('no-products.message')}}
+              </p>
+              <button
+                type="button"
+                class="btn btn-warning-action"
+                (click)="createProduct()">
+                <i class="fas fa-plus" aria-hidden="true"></i>
+                {{t('create-first-product')}}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (products().length > 0) {
+      <app-table [trackByIdFunc]="productTracker" [items]="products()" *transloco="let t; prefix: 'management.products.table'">
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">
+              {{t('header.name')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.description')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.category')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.actions')}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template #cell let-item let-position="idx">
+          <td class="table-cell">
+            {{item.name}}
+          </td>
+          <td class="table-cell">
+            {{item.description}}
+          </td>
+          <td class="table-cell">
+            {{category(item)?.name ?? t('category.unknown')}}
+          </td>
+          <td class="table-cell d-flex align-items-center gap-2">
+            <button
+              type="button"
+              class="btn btn-sm p-1"
+            >
+              <i class="fas fa-edit" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm p-1 text-danger"
+            >
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </td>
+
+
+        </ng-template>
+      </app-table>
+    }
+
   </div>
-
-  @if (productWarning() || categoriesWarning()) {
-    <div class="warnings-container">
-
-      @if (categoriesWarning()) {
-        <div class="warning-card warning-amber">
-          <div class="warning-icon">
-            <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-          </div>
-          <div class="warning-content">
-            <h4 class="warning-title">{{t('no-categories.title')}}</h4>
-            <p class="warning-message">{{t('no-categories.message')}}</p>
-            <button
-              type="button"
-              class="btn btn-warning-action"
-              (click)="createCategory()">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-              {{t('create-first-category')}}
-            </button>
-          </div>
-        </div>
-      }
-
-      @if (productWarning()) {
-        <div class="warning-card warning-olive">
-          <div class="warning-icon">
-            <i class="fas fa-info-circle" aria-hidden="true"></i>
-          </div>
-          <div class="warning-content">
-            <h4 class="warning-title">{{t('no-products.title')}}</h4>
-            <p class="warning-message">
-              {{t('no-products.message')}}
-            </p>
-            <button
-              type="button"
-              class="btn btn-warning-action"
-              (click)="createProduct()">
-              <i class="fas fa-plus" aria-hidden="true"></i>
-              {{t('create-first-product')}}
-            </button>
-          </div>
-        </div>
-      }
-    </div>
-  }
-
-  @if (products().length > 0) {
-    <app-table [trackByIdFunc]="productTracker" [items]="products()" *transloco="let t; prefix: 'management.products.table'">
-      <ng-template #header>
-        <tr>
-          <th class="table-header-cell">
-            {{t('header.name')}}
-          </th>
-          <th class="table-header-cell">
-            {{t('header.description')}}
-          </th>
-          <th class="table-header-cell">
-            {{t('header.category')}}
-          </th>
-          <th class="table-header-cell">
-            {{t('header.actions')}}
-          </th>
-        </tr>
-      </ng-template>
-      <ng-template #cell let-item let-position="idx">
-        <td class="table-cell">
-          {{item.name}}
-        </td>
-        <td class="table-cell">
-          {{item.description}}
-        </td>
-        <td class="table-cell">
-          {{category(item)?.name ?? t('category.unknown')}}
-        </td>
-        <td class="table-cell d-flex align-items-center gap-2">
-          <button
-            type="button"
-            class="btn btn-sm p-1"
-          >
-            <i class="fas fa-edit" aria-hidden="true"></i>
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm p-1 text-danger"
-          >
-            <i class="fas fa-trash" aria-hidden="true"></i>
-          </button>
-        </td>
-
-
-      </ng-template>
-    </app-table>
-  }
-
-</div>
+}

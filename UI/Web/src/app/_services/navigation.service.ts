@@ -2,19 +2,19 @@ import {computed, inject, Injectable} from '@angular/core';
 import {AuthService, Role} from './auth.service';
 
 export enum ManagementSettingsId {
-  Overview = 0,
-  Products = 1,
-  Clients = 2,
-  Deliveries = 3,
-  Server= 4,
+  Overview = 'overview',
+  Products = 'products',
+  Clients = 'clients',
+  Deliveries = 'deliveries',
+  Server= 'server',
 }
 
 export enum NavigationsId {
-  NewDelivery = 0,
-  Deliveries = 1,
-  Stock = 2,
-  Management = 3,
-  Logout = 4,
+  NewDelivery = 'newDelivery',
+  Deliveries = 'deliveries',
+  Stock = 'stock',
+  Management = 'management',
+  Logout = 'logout',
 }
 
 export type NavigationItemId = ManagementSettingsId | NavigationsId;

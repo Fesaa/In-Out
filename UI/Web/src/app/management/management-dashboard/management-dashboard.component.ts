@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, Component, inject, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, signal, WritableSignal} from '@angular/core';
 import {
   ManagementSettingsId,
   NavigationItem, NavigationItemId,
   NavigationService
 } from '../../_services/navigation.service';
-import {Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {AuthService} from '../../_services/auth.service';
 import {ManagementOverviewComponent} from '../_components/management-overview/management-overview.component';
@@ -28,14 +28,27 @@ import {ManagementServerComponent} from '../_components/management-server/manage
   styleUrl: './management-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ManagementDashboardComponent {
+export class ManagementDashboardComponent{
 
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   protected navigationService = inject(NavigationService);
   protected authService = inject(AuthService);
 
   activeItem: WritableSignal<NavigationItemId> = signal(ManagementSettingsId.Overview)
   sidebarOpen = signal(false);
+
+  constructor() {
+    this.route.fragment.subscribe(fragment => {
+      if (fragment && Object.values(ManagementSettingsId).includes(fragment as ManagementSettingsId)) {
+        this.activeItem.set(fragment as ManagementSettingsId);
+      }
+    });
+
+    effect(() => {
+      this.router.navigate([], { fragment: this.activeItem() });
+    });
+  }
 
   toggleSidebar() {
     this.sidebarOpen.update(v => !v);
@@ -46,12 +59,6 @@ export class ManagementDashboardComponent {
 
     this.activeItem.set(item.id);
     this.sidebarOpen.set(false)
-
-    if (item.routerLink) {
-      this.router.navigate([item.routerLink]);
-    } else if (item.action) {
-      item.action();
-    }
   }
 
   protected readonly ManagementSettingsId = ManagementSettingsId;

@@ -7,12 +7,14 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductCategoryModalComponent} from './_components/product-category-modal/product-category-modal.component';
 import {DefaultModalOptions} from '../../../_models/default-modal-options';
+import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-management-products',
   imports: [
     TableComponent,
-    TranslocoDirective
+    TranslocoDirective,
+    LoadingSpinnerComponent
   ],
   templateUrl: './management-products.component.html',
   styleUrl: './management-products.component.scss',
@@ -23,6 +25,7 @@ export class ManagementProductsComponent implements OnInit {
   private readonly modalService = inject(NgbModal);
   private readonly productService = inject(ProductService);
 
+  loading = signal(true);
   products = signal<Product[]>([]);
   categories = signal<ProductCategory[]>([]);
 
@@ -37,6 +40,7 @@ export class ManagementProductsComponent implements OnInit {
       next: ([products, categories]) => {
         this.products.set(products);
         this.categories.set(categories);
+        this.loading.set(false);
       },
       error: error => {
         console.log(error);
