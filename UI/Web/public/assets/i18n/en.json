@@ -1,7 +1,11 @@
 {
   "common": {
     "edit": "Edit",
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "update": "Update"
   },
 
 
@@ -54,15 +58,41 @@
     }
   },
 
-  "create-product-category": {
+  "product-type-pipe": {
+    "one-time": "One time",
+    "consumable": "Multiple times"
+  },
+
+  "product-modal": {
+    "title": "Product",
+    "description": "Products are anything that may appear in a delivery, group them together by using categories",
+    "create": "{{common.create}}",
+    "update": "{{common.update}}",
+    "cancel": "{{common.cancel}}",
+    "name": "Name",
+    "name-tooltip": "The name must be unique",
+    "description-control": "Description",
+    "description-tooltip": "Optional extra information about the product to help users identify it",
+    "description-default-value": "no description set...",
+    "category": "Category",
+    "category-tooltip": "Defines how the product is grouped in the new delivery form",
+    "type": "Product type",
+    "type-tooltip": "How often can the product be bought per delivery",
+    "is-tracked": "Track product in stock",
+    "is-tracked-tooltip": "When disabled, product is no longer tracked in stock. You have to remove the current amount manually if applicable",
+    "enabled": "Enabled",
+    "enabled-tooltip": "The product can be used"
+  },
+
+  "product-category-modal": {
     "title": "Product Category",
     "description": "Categories group together different items, and give some order to your delivery form. It is recommended to make not too big, nor too small.",
     "first-run": "You must have at least one category before you can start creating product",
-    "create": "Create",
-    "update": "Update",
-    "cancel": "Cancel",
+    "create": "{{common.create}}",
+    "update": "{{common.update}}",
+    "cancel": "{{common.cancel}}",
     "name": "Name",
-    "name-tooltip": "Name display in the new delivery form, must be unique",
+    "name-tooltip": "Name displayed in the new delivery form, must be unique",
     "enabled": "Enabled",
     "enabled-tooltip": "When a category is disabled, all products in it will become disabled too",
     "disabled": "Disabled",

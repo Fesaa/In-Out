@@ -32,12 +32,11 @@ export class ProductCategoryModalComponent implements OnInit {
 
   private readonly productService = inject(ProductService);
   private readonly cdRef = inject(ChangeDetectorRef);
-  private readonly destroyRef = inject(DestroyRef);
   protected readonly modal = inject(NgbActiveModal);
 
   existingCategories = model.required<ProductCategory[]>();
   firstRun = model.required<boolean>();
-  category = input<ProductCategory>({
+  category = model<ProductCategory>({
     id: -1,
     name: 'Your new category',
     sortValue: 0,
@@ -54,29 +53,18 @@ export class ProductCategoryModalComponent implements OnInit {
   }
 
   save() {
-    const category: ProductCategory = this.categoryForm.value;
-    category.id = this.category().id;
-    category.sortValue = this.category().sortValue;
+    const formValue = this.categoryForm.value as ProductCategory;
+    const { id, sortValue } = this.category();
+    const category: ProductCategory = { ...formValue, id, sortValue };
 
-    if (category.id === -1) {
-      this.productService.createCategory(category).subscribe({
-        next: () => {
-          this.close();
-        },
-        error: err => {
-          console.log(err);
-        }
-      });
-    } else {
-     this.productService.updateCategory(category).subscribe({
-       next: () => {
-         this.close();
-       },
-       error: err => {
-         console.log(err);
-       }
-     })
-    }
+    const action$ = id === -1
+      ? this.productService.createCategory(category)
+      : this.productService.updateCategory(category);
+
+    action$.subscribe({
+      next: () => this.close(),
+      error: err => console.error(err)
+    });
   }
 
   ngOnInit(): void {

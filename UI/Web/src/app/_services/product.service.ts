@@ -27,8 +27,8 @@ export class ProductService {
     return this.http.get<Product>(`${this.baseUrl}${id}`);
   }
 
-  createProduct(product: Product): Observable<Product> {
-    return this.http.post<Product>(this.baseUrl, product);
+  createProduct(product: Product): Observable<void> {
+    return this.http.post<void>(this.baseUrl, product);
   }
 
   updateProduct(product: Product): Observable<void> {
@@ -39,8 +39,8 @@ export class ProductService {
     return this.http.delete<void>(`${this.baseUrl}${id}`);
   }
 
-  createCategory(category: ProductCategory): Observable<ProductCategory> {
-    return this.http.post<ProductCategory>(`${this.baseUrl}category`, category);
+  createCategory(category: ProductCategory): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}category`, category);
   }
 
   updateCategory(category: ProductCategory): Observable<void> {

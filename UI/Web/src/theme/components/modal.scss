@@ -46,3 +46,8 @@
     background-color: var(--secondary-color-light);
   }
 }
+
+.scrollable-modal {
+  max-height: calc(var(--vh) * 100 - 198px);
+  overflow: auto;
+}

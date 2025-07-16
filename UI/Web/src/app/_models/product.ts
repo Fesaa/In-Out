@@ -13,6 +13,8 @@ export enum ProductType {
   OneTime = 1,
 }
 
+export const AllProductTypes = [ProductType.Consumable, ProductType.OneTime];
+
 export type ProductCategory = {
   id: number;
   name: string;

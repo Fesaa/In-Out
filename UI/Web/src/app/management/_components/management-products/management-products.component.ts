@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {ProductService} from '../../../_services/product.service';
-import {Product, ProductCategory, ProductType} from '../../../_models/product';
+import {Product, ProductCategory} from '../../../_models/product';
 import {forkJoin} from 'rxjs';
 import {TableComponent} from '../../../shared/components/table/table.component';
 import {TranslocoDirective} from '@jsverse/transloco';
@@ -8,6 +8,8 @@ import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 import {ProductCategoryModalComponent} from './_components/product-category-modal/product-category-modal.component';
 import {DefaultModalOptions} from '../../../_models/default-modal-options';
 import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
+import {ProductModalComponent} from './_components/product-modal/product-modal.component';
+import {ModalService} from '../../../_services/modal.service';
 
 @Component({
   selector: 'app-management-products',
@@ -22,7 +24,7 @@ import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinne
 })
 export class ManagementProductsComponent implements OnInit {
 
-  private readonly modalService = inject(NgbModal);
+  private readonly modalService = inject(ModalService);
   private readonly productService = inject(ProductService);
 
   loading = signal(true);
@@ -56,10 +58,14 @@ export class ManagementProductsComponent implements OnInit {
     return `${product.id}`;
   }
 
-  createCategory() {
-    const modal = this.modalService.open(ProductCategoryModalComponent, DefaultModalOptions);
-    (modal.componentInstance as ProductCategoryModalComponent).existingCategories.set(this.categories());
-    (modal.componentInstance as ProductCategoryModalComponent).firstRun.set(this.categories().length === 0);
+  createOrUpdateCategory(category?: ProductCategory) {
+    const [modal, component] = this.modalService.open(ProductCategoryModalComponent, DefaultModalOptions);
+    component.existingCategories.set(this.categories());
+    component.firstRun.set(this.categories().length === 0);
+    if (category) {
+      component.category.set(category);
+    }
+
     modal.closed.subscribe(() => {
       this.productService.getCategories().subscribe(categories => {
         this.categories.set(categories);
@@ -67,7 +73,18 @@ export class ManagementProductsComponent implements OnInit {
     });
   }
 
-  createProduct() {
+  createOrUpdateProduct(product?: Product) {
+    const [modal, component] = this.modalService.open(ProductModalComponent, DefaultModalOptions);
+    component.categories.set(this.categories());
+    if (product) {
+      component.product.set(product);
+    }
+
+    modal.closed.subscribe(() => {
+      this.productService.allProducts().subscribe(products => {
+        this.products.set(products);
+      })
+    })
 
   }
 }

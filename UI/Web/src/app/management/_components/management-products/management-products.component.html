@@ -9,7 +9,7 @@
           <button
             type="button"
             class="btn btn-olive"
-            (click)="createCategory()">
+            (click)="createOrUpdateCategory()">
             <i class="fas fa-plus" aria-hidden="true"></i>
             {{t('create-category')}}
           </button>
@@ -17,7 +17,7 @@
             type="button"
             class="btn btn-secondary"
             [disabled]="categories().length === 0"
-            (click)="createProduct()">
+            (click)="createOrUpdateProduct()">
             <i class="fas fa-plus" aria-hidden="true"></i>
             {{t('create-product')}}
           </button>
@@ -39,7 +39,7 @@
               <button
                 type="button"
                 class="btn btn-warning-action"
-                (click)="createCategory()">
+                (click)="createOrUpdateCategory()">
                 <i class="fas fa-plus" aria-hidden="true"></i>
                 {{t('create-first-category')}}
               </button>
@@ -60,7 +60,7 @@
               <button
                 type="button"
                 class="btn btn-warning-action"
-                (click)="createProduct()">
+                (click)="createOrUpdateProduct()">
                 <i class="fas fa-plus" aria-hidden="true"></i>
                 {{t('create-first-product')}}
               </button>
@@ -102,6 +102,7 @@
             <button
               type="button"
               class="btn btn-sm p-1"
+              (click)="createOrUpdateProduct(item)"
             >
               <i class="fas fa-edit" aria-hidden="true"></i>
             </button>
