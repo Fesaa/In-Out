@@ -13,10 +13,12 @@ public interface IProductRepository
     Task<Product?> GetById(int id);
     Task<ProductCategory?> GetCategoryById(int id);
     Task<Product?> GetByName(string name);
+    Task<ProductCategory?> GetFirstCategory();
     Task<ProductCategory?> GetCategoryByName(string name);
     Task<IList<Product>> GetAll(bool onlyEnabled = false);
     Task<IList<ProductDto>> GetAllDto(bool onlyEnabled = false);
-    Task<IList<ProductCategoryDto>> GetAllCategories(bool onlyEnabled = false);
+    Task<IList<ProductCategory>> GetAllCategories(bool onlyEnabled = false);
+    Task<IList<ProductCategoryDto>> GetAllCategoriesDtos(bool onlyEnabled = false);
     Task<IList<Product>> GetByCategory(ProductCategory category);
     void Add(Product product);
     void Add(ProductCategory category);
@@ -46,6 +48,13 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
         return ctx.Products.Where(p => p.NormalizedName == normalized).FirstOrDefaultAsync();
     }
 
+    public async Task<ProductCategory?> GetFirstCategory()
+    {
+        return await ctx.ProductCategories
+            .OrderBy(p => p.SortValue)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<ProductCategory?> GetCategoryByName(string name)
     {
         var normalized = name.ToNormalized();
@@ -67,10 +76,19 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
             .ToListAsync();
     }
 
-    public async Task<IList<ProductCategoryDto>> GetAllCategories(bool onlyEnabled = false)
+    public async Task<IList<ProductCategory>> GetAllCategories(bool onlyEnabled = false)
     {
         return await ctx.ProductCategories
             .WhereIf(onlyEnabled, p => p.Enabled)
+            .OrderBy(p => p.SortValue)
+            .ToListAsync();
+    }
+
+    public async Task<IList<ProductCategoryDto>> GetAllCategoriesDtos(bool onlyEnabled = false)
+    {
+        return await ctx.ProductCategories
+            .WhereIf(onlyEnabled, p => p.Enabled)
+            .OrderBy(p => p.SortValue)
             .ProjectTo<ProductCategoryDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }

@@ -23,7 +23,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpGet("category")]
     public async Task<ActionResult<IList<ProductCategoryDto>>> GetProductCategories([FromQuery] bool onlyEnabled = false)
     {
-        return Ok(await unitOfWork.ProductRepository.GetAllCategories(onlyEnabled));
+        return Ok(await unitOfWork.ProductRepository.GetAllCategoriesDtos(onlyEnabled));
     }
 
     /// <summary>
@@ -117,6 +117,13 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     public async Task<IActionResult> DeleteCategory(int id)
     {
         await productService.DeleteProductCategory(id);
+        return Ok();
+    }
+    
+    [HttpPost("category/order")]
+    public async Task<IActionResult> OrderCategories(IList<int> ids)
+    {
+        await productService.OrderCategories(ids);
         return Ok();
     }
     

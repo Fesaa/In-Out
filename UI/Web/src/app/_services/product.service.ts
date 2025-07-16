@@ -50,4 +50,8 @@ export class ProductService {
   deleteCategory(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}category/${id}`);
   }
+
+  orderCategories(ids: number[]) {
+    return this.http.post(`${this.baseUrl}category/order`, ids);
+  }
 }

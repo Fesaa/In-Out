@@ -1,5 +1,8 @@
-import {inject, Injectable, Type} from '@angular/core';
+import {inject, Injectable, TemplateRef, Type} from '@angular/core';
 import {NgbModal, NgbModalOptions, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+import {ConfirmModalComponent} from '../shared/components/confirm-modal/confirm-modal.component';
+import {DefaultModalOptions} from '../_models/default-modal-options';
+import {firstValueFrom, take} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +27,33 @@ export class ModalService {
   dismissAll(reason?: any) {
     this.modal.dismissAll(reason);
   }
+
+  confirm(options: {
+    question?: string;
+    title?: string;
+    bodyTemplate?: TemplateRef<unknown>;
+    templateData?: unknown;
+  }) {
+    const [_, component] = this.open(ConfirmModalComponent, DefaultModalOptions);
+
+    if (options.question) {
+      component.question.set(options.question);
+    }
+
+    if (options.title) {
+      component.title.set(options.title);
+    }
+
+    if (options.bodyTemplate) {
+      component.bodyTemplate.set(options.bodyTemplate);
+    }
+
+    if (options.templateData) {
+      component.templateData.set(options.templateData);
+    }
+
+    return firstValueFrom(component.result$);
+  }
+
 
 }

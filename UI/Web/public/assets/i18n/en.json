@@ -5,7 +5,15 @@
     "cancel": "Cancel",
     "save": "Save",
     "create": "Create",
-    "update": "Update"
+    "update": "Update",
+    "confirm": "Confirm"
+  },
+
+  "confirm-modal": {
+    "title": "Confirm your next action",
+    "cancel": "{{common.cancel}}",
+    "confirm": "{{common.confirm}}",
+    "close": "{{common.close}}"
   },
 
 
@@ -47,12 +55,29 @@
         "title": "No Products Found",
         "message": "Your product catalog is empty. Start building your inventory by creating your first product."
       },
+      "confirm-delete-product": "Are you certain you want to delete {{name}}?",
+      "destructive-actions": "This action is destructive, and cannot be undone!",
+      "confirm-delete-category": "Are you certain you want to delete {{name}}?",
+      "confirm-delete-category-re-assign": "{{products}} Product will be re-assigned to the category \"{{newCategory}}\"",
       "table": {
         "header": {
           "name": "Name",
           "description": "Description",
           "category": "Category",
           "actions": "Actions"
+        }
+      },
+      "categories": {
+        "table": {
+          "header": {
+            "name": "Name",
+            "enabled": "Enabled",
+            "size": "Amount of products in this category",
+            "actions": "Actions"
+          },
+          "cell": {
+            "item": "{{count}} products"
+          }
         }
       }
     }

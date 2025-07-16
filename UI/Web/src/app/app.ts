@@ -27,7 +27,6 @@ export class App implements OnInit {
   }
 
   private updateVh(): void {
-    console.log('setting vh');
     // Sets a CSS variable for the actual device viewport height. Needed for mobile dev.
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);

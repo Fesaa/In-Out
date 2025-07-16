@@ -71,7 +71,8 @@
     }
 
     @if (products().length > 0) {
-      <app-table [trackByIdFunc]="productTracker" [items]="products()" *transloco="let t; prefix: 'management.products.table'">
+      <app-table [trackByIdFunc]="productTracker" [items]="products()"
+                 *transloco="let t; prefix: 'management.products.table'">
         <ng-template #header>
           <tr>
             <th class="table-header-cell">
@@ -89,35 +90,120 @@
           </tr>
         </ng-template>
         <ng-template #cell let-item let-position="idx">
-          <td class="table-cell">
-            {{item.name}}
-          </td>
-          <td class="table-cell">
-            {{item.description}}
-          </td>
-          <td class="table-cell">
-            {{category(item)?.name ?? t('category.unknown')}}
-          </td>
-          <td class="table-cell d-flex align-items-center gap-2">
-            <button
-              type="button"
-              class="btn btn-sm p-1"
-              (click)="createOrUpdateProduct(item)"
-            >
-              <i class="fas fa-edit" aria-hidden="true"></i>
-            </button>
-            <button
-              type="button"
-              class="btn btn-sm p-1 text-danger"
-            >
-              <i class="fas fa-trash" aria-hidden="true"></i>
-            </button>
-          </td>
-
-
+            <td class="table-cell">
+              {{item.name}}
+            </td>
+            <td class="table-cell">
+              {{item.description}}
+            </td>
+            <td class="table-cell">
+              {{category(item)?.name ?? t('category.unknown')}}
+            </td>
+            <td class="table-cell d-flex align-items-center gap-2">
+              <button
+                type="button"
+                class="btn btn-sm p-1"
+                (click)="createOrUpdateProduct(item)"
+              >
+                <i class="fas fa-edit" aria-hidden="true"></i>
+              </button>
+              <button
+                type="button"
+                class="btn btn-sm p-1 text-danger"
+                (click)="deleteProduct(item)"
+              >
+                <i class="fas fa-trash" aria-hidden="true"></i>
+              </button>
+            </td>
         </ng-template>
       </app-table>
     }
 
+    @if (categories().length > 0) {
+      <div class="mt-4">
+        <app-table [pagination]="false"
+                   [dragAble]="true" (onDrop)="onCategoryDrop($event)"
+                   [items]="categories()" [trackByIdFunc]="categoryTracker"
+                   *transloco="let t; prefix: 'management.products.categories.table'">
+          <ng-template #header>
+            <tr>
+              <th class="table-header-cell">
+              </th>
+              <th class="table-header-cell">
+                {{t('header.name')}}
+              </th>
+              <th class="table-header-cell">
+                {{t('header.size')}}
+              </th>
+              <th class="table-header-cell">
+                {{t('header.actions')}}
+              </th>
+            </tr>
+          </ng-template>
+          <ng-template #cell let-item let-position="idx">
+            <td class="table-cell">
+                <span class="fas fa-grip-lines drag-handle" cdkDragHandle></span>
+              </td>
+              <td class="table-cell">
+                {{item.name}}
+              </td>
+              <td class="table-cell">
+                {{t('cell.item', {count: categorySize(item)})}}
+              </td>
+              <td class="table-cell d-flex align-items-center gap-2">
+                <button
+                  type="button"
+                  class="btn btn-sm p-1"
+                  (click)="createOrUpdateProduct(item)"
+                >
+                  <i class="fas fa-edit" aria-hidden="true"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm p-1 text-danger"
+                  (click)="deleteCategory(item)"
+                  [disabled]="categories().length === 1"
+                >
+                  <i class="fas fa-trash" aria-hidden="true"></i>
+                </button>
+              </td>
+          </ng-template>
+        </app-table>
+      </div>
+    }
   </div>
 }
+
+
+<ng-template #deleteProductConfirm let-product *transloco="let t; prefix: 'management.products'">
+  <div class="warning-card warning-amber">
+    <div class="warning-icon">
+      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+    </div>
+    <div class="warning-content">
+      <div class="warning-title">
+        {{t('destructive-actions')}}
+      </div>
+      <div class="warning-message">
+        {{t('confirm-delete-product', {name: product.name})}}
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteCategoryConfirm let-category *transloco="let t; prefix: 'management.products'">
+  <div class="warning-card warning-amber">
+    <div class="warning-icon">
+      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+    </div>
+    <div class="warning-content">
+      <div class="warning-title">
+        {{t('destructive-actions')}}
+      </div>
+      <div class="warning-message">
+        <p>{{t('confirm-delete-category', {name: category.name})}}</p>
+        <p>{{t('confirm-delete-category-re-assign', {products: categorySize(category), newCategory: newDefaultCategory(category).name})}}</p>
+      </div>
+    </div>
+  </div>
+</ng-template>

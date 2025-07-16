@@ -2,19 +2,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  ContentChild, effect,
+  ContentChild, effect, EventEmitter,
   input,
-  OnInit,
+  OnInit, Output,
   signal,
   TemplateRef
 } from '@angular/core';
 import {NgTemplateOutlet, TitleCasePipe} from '@angular/common';
+import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
 
 
 @Component({
   selector: 'app-table',
   imports: [
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    CdkDropList,
+    CdkDrag
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -27,13 +30,19 @@ export class TableComponent<T> implements OnInit {
 
   trackByIdFunc = input.required<(index: number, value: T) => string>();
   items = input.required<T[]>();
+  pagination = input(true);
   pageSize = input(10);
+
+  dragAble = input(false);
+  dragTableId = input<string>();
+  @Output() onDrop = new EventEmitter<CdkDragDrop<T[]>>();
 
   currentPage = signal(1);
 
   totalPages = computed(() => Math.ceil(this.items().length / this.pageSize()));
 
   paginatedItems = computed(() => {
+    if (!this.pagination()) return this.items();
     const start = (this.currentPage() - 1) * this.pageSize();
     const end = start + this.pageSize();
     return this.items().slice(start, end);

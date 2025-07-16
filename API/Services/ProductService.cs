@@ -14,6 +14,11 @@ public interface IProductService
     Task UpdateProductCategory(ProductCategoryDto dto);
     Task DeleteProduct(int id);
     Task DeleteProductCategory(int id);
+    
+    /**
+     * Sets the sort value of all categories to the index in the list
+     */
+    Task OrderCategories(IList<int> ids);
 }
 
 public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductService
@@ -123,8 +128,37 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     {
         var category = await unitOfWork.ProductRepository.GetCategoryById(id);
         if (category == null) throw new ApplicationException("errors.product-not-found");
+        
+        var products = await unitOfWork.ProductRepository.GetByCategory(category);
+        if (products.Count > 0)
+        {
+            var defaultCategory = await unitOfWork.ProductRepository.GetFirstCategory();
+            if (defaultCategory == null || defaultCategory.Id == category.Id)
+                throw new ApplicationException("errors.no-fallback-category");
+            
+            foreach (var product in products)
+            {
+                product.Category = defaultCategory;
+                unitOfWork.ProductRepository.Update(product);
+            }
+        }
 
         unitOfWork.ProductRepository.Delete(category);
+        await unitOfWork.CommitAsync();
+    }
+
+    public async Task OrderCategories(IList<int> ids)
+    {
+        ids = ids.Distinct().ToList();
+        var categories = await unitOfWork.ProductRepository.GetAllCategories();
+        if (ids.Count != categories.Count) throw new ApplicationException("errors.not-enough-categories");
+        
+        foreach (var category in categories)
+        {
+            category.SortValue = ids.IndexOf(category.Id);
+            unitOfWork.ProductRepository.Update(category);
+        }
+        
         await unitOfWork.CommitAsync();
     }
 }
