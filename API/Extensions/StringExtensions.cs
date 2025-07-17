@@ -13,6 +13,5 @@ public static class StringExtensions
     public static string ToNormalized(this string? value)
     {
         return string.IsNullOrEmpty(value) ? string.Empty : NormalizeRegex.Replace(value, string.Empty).Trim().ToLower();
-
     }
 }

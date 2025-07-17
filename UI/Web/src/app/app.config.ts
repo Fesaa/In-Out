@@ -7,22 +7,26 @@ import {
 import {provideRouter} from '@angular/router';
 import {provideOAuthClient} from "angular-oauth2-oidc";
 import {routes} from './app.routes';
-import {provideHttpClient, withFetch, withInterceptorsFromDi} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import { TranslocoHttpLoader } from './_services/transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
+import {provideToastr} from 'ngx-toastr';
+import {ErrorInterceptor} from './_interceptors/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    provideToastr(),
     provideOAuthClient({
       resourceServer: {
         sendAccessToken: true,
       }
     }),
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     importProvidersFrom(BrowserAnimationsModule),
     provideAnimationsAsync(),

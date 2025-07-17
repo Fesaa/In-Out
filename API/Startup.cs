@@ -3,6 +3,7 @@ using System.Reflection;
 using API.Data;
 using API.Extensions;
 using API.Helpers;
+using API.Middleware;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Net.Http.Headers;
@@ -110,7 +111,8 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "In-Out API " + BuildInfo.Version);
             });
         }
-        
+
+        app.UseMiddleware<ExceptionMiddleware>();
         app.UseResponseCompression();
         app.UseRouting();
 

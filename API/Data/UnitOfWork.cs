@@ -7,6 +7,7 @@ public interface IUnitOfWork
 {
     ISettingsRepository SettingsRepository { get; }
     IProductRepository ProductRepository { get; }
+    IUserPreferencesRepository UserPreferencesRepository { get; }
 
     Task<bool> CommitAsync();
     bool HasChanges();
@@ -17,6 +18,7 @@ public class UnitOfWork(DataContext ctx, IMapper mapper, ILogger<UnitOfWork> log
 {
     public ISettingsRepository SettingsRepository { get; } = new SettingsRepository(ctx, mapper);
     public IProductRepository ProductRepository { get; } = new ProductRepository(ctx, mapper);
+    public IUserPreferencesRepository UserPreferencesRepository { get; } = new UserPreferencesRepository(ctx, mapper);
 
     public async Task<bool> CommitAsync()
     {
