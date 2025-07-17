@@ -56,8 +56,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpPost]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto product)
     {
-        var res = await productService.CreateProduct(product);
-        return Ok(res);
+        try
+        {
+            var res = await productService.CreateProduct(product);
+            return Ok(res);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -68,8 +75,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpPost("category")]
     public async Task<ActionResult<ProductCategoryDto>> CreateCategory(ProductCategoryDto category)
     {
-        var res = await productService.CreateProductCategory(category);
-        return Ok(res);
+        try
+        {
+            var res = await productService.CreateProductCategory(category);
+            return Ok(res);
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -80,8 +94,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpPut]
     public async Task<IActionResult> UpdateProduct(ProductDto product)
     {
-        await productService.UpdateProduct(product);
-        return Ok();
+        try
+        {
+            await productService.UpdateProduct(product);
+            return Ok();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -92,8 +113,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpPut("category")]
     public async Task<IActionResult> UpdateCategory(ProductCategoryDto category)
     {
-        await productService.UpdateProductCategory(category);
-        return Ok();
+        try
+        {
+            await productService.UpdateProductCategory(category);
+            return Ok();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -104,8 +132,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        await productService.DeleteProduct(id);
-        return Ok();
+        try
+        {
+            await productService.DeleteProduct(id);
+            return Ok();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     /// <summary>
@@ -116,15 +151,28 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [HttpDelete("category/{id}")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
-        await productService.DeleteProductCategory(id);
-        return Ok();
+        try
+        {
+            await productService.DeleteProductCategory(id);
+            return Ok();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     
     [HttpPost("category/order")]
     public async Task<IActionResult> OrderCategories(IList<int> ids)
     {
-        await productService.OrderCategories(ids);
-        return Ok();
+        try
+        {
+            await productService.OrderCategories(ids);
+            return Ok();
+        }
+        catch (ApplicationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-    
 }

@@ -17,6 +17,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<Product> Products { get; set; }
     
+    public DbSet<Client> Clients { get; set; }
+    
     private void OnSaveChanges()
     {
         foreach (var saveEntity in ChangeTracker.Entries()

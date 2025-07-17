@@ -6,7 +6,12 @@
     "save": "Save",
     "create": "Create",
     "update": "Update",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "actions": "Actions"
+  },
+
+  "errors": {
+    "no-fallback-category": "Cannot delete category while no fallback category exists"
   },
 
   "confirm-modal": {
@@ -16,6 +21,28 @@
     "close": "{{common.close}}"
   },
 
+  "client-modal": {
+    "title": "Client",
+    "description": "Clients must only have a unique company number when set, and a name, all other information is without restrictions or validation. We do recommend filling out as much correct information as possible, as this makes it easier to process deliveries",
+    "cancel": "{{common.cancel}}",
+    "create": "{{common.create}}",
+    "close": "{{common.close}}",
+    "update": "{{common.update}}",
+    "name": "Name",
+    "name-tooltip": "Name to help identify the client",
+    "address": "Address",
+    "address-tooltip": "Client's delivery or billing address",
+    "companyNumber": "Company Number",
+    "companyNumber-tooltip": "Unique identifier for the company. Must be unique across all clients.",
+    "contactEmail": "Contact Email",
+    "contactEmail-tooltip": "Email address of the main point of contact for this client",
+    "contactName": "Contact Name",
+    "contactName-tooltip": "Full name of the main point of contact",
+    "contactNumber": "Contact Number",
+    "contactNumber-tooltip": "Phone number of the main point of contact",
+    "invoiceEmail": "Invoice Email",
+    "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
+},
 
   "navigation": {
     "items": {
@@ -78,6 +105,25 @@
           "cell": {
             "item": "{{count}} products"
           }
+        }
+      }
+    },
+    "clients": {
+      "title": "Client Management",
+      "create-client": "Create client",
+      "import-clients": "Import clients",
+      "no-clients": {
+        "title": "No clients found",
+        "message": "Import or create clients ahead of time to save you time while creating deliveries in the future!",
+        "btn": "Import clients"
+      },
+      "table": {
+        "header": {
+          "name": "Name",
+          "companyNumber": "Company number",
+          "contactEmail": "Email",
+          "contactNumber": "Phone number",
+          "actions": "{{common.actions}}"
         }
       }
     }

@@ -1,18 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
-
-/* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap';
 
-@use "./theme/themes/default.scss";
-@use "./theme/shared.scss";
+@use './theme/themes/default.scss';
+@use './theme/shared.scss';
 
-@use "./theme/components/table.scss";
-@use "./theme/components/input.scss";
-@use "./theme/components/modal.scss";
-@use "./theme/components/notice.scss";
+@use './theme/components/table.scss';
+@use './theme/components/input.scss';
+@use './theme/components/modal.scss';
+@use './theme/components/notice.scss';
 
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
+@import 'ngx-toastr/toastr';
+@import 'ngx-toastr/toastr-bs5-alert';
+
+/* Global styles */
 body {
   font-family: 'Spectral', serif;
   background-color: var(--background-color);
-  color: var(--body-text-color)
+  color: var(--body-text-color);
 }

@@ -9,7 +9,6 @@ import {ToastrService} from 'ngx-toastr';
 export class ErrorInterceptor implements HttpInterceptor {
 
   private readonly translocoService = inject(TranslocoService);
-  private readonly authService = inject(AuthService);
   private readonly toastr = inject(ToastrService);
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -114,7 +113,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   private handleAuthError(error: any) {
-    this.authService.logout();
+    // TODO: Re-direct to logout
   }
 
   private toast(message: string, title?: string) {

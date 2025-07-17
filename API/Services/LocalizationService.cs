@@ -71,7 +71,7 @@ public class LocalizationService: ILocalizationService
     {
         if (string.IsNullOrWhiteSpace(languageCode))
         {
-            languageCode = "en";
+            languageCode = DefaultLocale;
         }
 
         if (_memoryCache.TryGetValue(languageCode, out Dictionary<string, string>? language))
@@ -109,12 +109,12 @@ public class LocalizationService: ILocalizationService
 
         if (string.IsNullOrEmpty(translatedString))
         {
-            if (locale == "en")
+            if (locale == DefaultLocale)
             {
                 return key;
             }
 
-            return await Get("en", key, args);
+            return await Get(DefaultLocale, key, args);
         }
 
         if (args.Length > 0)
@@ -127,12 +127,12 @@ public class LocalizationService: ILocalizationService
     public async Task<string> Translate(string userId, string key, params object[] args)
     {
         var userLocale = await _unitOfWork.UserPreferencesRepository.GetLocaleAsync(userId);
-        return await Get(userLocale ?? "en", key, args);
+        return await Get(userLocale ?? DefaultLocale, key, args);
     }
 
     public Task<string> Translate(string key, params object[] args)
     {
-        return Get("en", key, args);
+        return Get(DefaultLocale, key, args);
     }
 
     public IEnumerable<string> GetLocales()

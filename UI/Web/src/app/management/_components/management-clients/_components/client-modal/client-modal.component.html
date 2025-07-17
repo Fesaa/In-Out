@@ -1,0 +1,128 @@
+<ng-container *transloco="let t; prefix: 'client-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title')}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+
+      <div class="notice notice-olive m-2">
+        <i class="fas fa-info-circle notice-icon"></i>
+        <div class="notice-text">
+          <p class="notice-body">{{ t('description') }}</p>
+        </div>
+      </div>
+
+      <form [formGroup]="clientForm" class="client-form">
+        <div class="row g-0 mb-2">
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('name'); as control) {
+              <app-settings-item [control]="control" [title]="t('name')" [subtitle]="t('name-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="name" type="text" class="form-control" id="form-control-name">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('address'); as control) {
+              <app-settings-item [control]="control" [title]="t('address')" [subtitle]="t('address-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <textarea formControlName="address" type="text" class="form-control" id="form-control-address"></textarea>
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('companyNumber'); as control) {
+              <app-settings-item [control]="control" [title]="t('companyNumber')" [subtitle]="t('companyNumber-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="companyNumber" type="text" class="form-control" id="form-control-companyNumber">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('contactEmail'); as control) {
+              <app-settings-item [control]="control" [title]="t('contactEmail')" [subtitle]="t('contactEmail-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="contactEmail" type="text" class="form-control" id="form-control-contactEmail">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('contactName'); as control) {
+              <app-settings-item [control]="control" [title]="t('contactName')" [subtitle]="t('contactName-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="contactName" type="text" class="form-control" id="form-control-contactName">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('contactNumber'); as control) {
+              <app-settings-item [control]="control" [title]="t('contactNumber')" [subtitle]="t('contactNumber-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="contactNumber" type="text" class="form-control" id="form-control-contactNumber">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('invoiceEmail'); as control) {
+              <app-settings-item [control]="control" [title]="t('invoiceEmail')" [subtitle]="t('invoiceEmail-tooltip')">
+                <ng-template #view>
+                  {{control.value}}
+                </ng-template>
+                <ng-template #edit>
+                  <input formControlName="invoiceEmail" type="text" class="form-control" id="form-control-invoiceEmail">
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+        </div>
+      </form>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('cancel')}}
+      </button>
+      <button type="button" class="btn btn-olive" (click)="save()" [disabled]="isSaving() || !clientForm.valid">
+        @if (isSaving()) {
+          <app-loading-spinner />
+        }
+        <span>{{isSaving() ? t('saving') : client().id === -1 ? t('create') : t('update')}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

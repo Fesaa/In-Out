@@ -1,1 +1,99 @@
-<p>management-clients works!</p>
+<div class="manager-container" *transloco="let t; prefix: 'management.clients'">
+  <div class="manager-header">
+    <div class="header-content">
+      <h2 class="manager-title">{{t('title')}}</h2>
+      <div class="action-buttons">
+        <button
+          type="button"
+          class="btn btn-olive">
+          <i class="fas fa-file-import" aria-hidden="true"></i>
+          {{t('import-clients')}}
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="createOrUpdateClient()">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          {{t('create-client')}}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (clientWarning()) {
+    <div class="warning-card warning-amber">
+      <div class="warning-icon">
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+      </div>
+      <div class="warning-content">
+        <h4 class="warning-title">{{t('no-clients.title')}}</h4>
+        <p class="warning-message">{{t('no-clients.message')}}</p>
+        <button
+          type="button"
+          class="btn btn-warning-action">
+          <i class="fas fa-plus" aria-hidden="true"></i>
+          {{t('no-clients.btn')}}
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <app-loading-spinner size="large"></app-loading-spinner>
+  } @else {
+    <div class="mt-4">
+      <app-table [items]="clients()" [trackByIdFunc]="clientTracker" *transloco="let t; prefix: 'management.clients.table'">
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">
+              {{t('header.name')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.companyNumber')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.contactEmail')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.contactNumber')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.actions')}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template #cell let-item>
+          <td class="table-cell">
+            {{item.name}}
+          </td>
+          <td class="table-cell">
+            {{item.companyNumber}}
+          </td>
+          <td class="table-cell">
+            {{item.contactEmail}}
+          </td>
+          <td class="table-cell">
+            {{item.contactNumber}}
+          </td>
+          <td class="table-cell d-flex align-items-center gap-2">
+            <button
+              type="button"
+              class="btn btn-sm p-1"
+              (click)="createOrUpdateClient(item)"
+            >
+              <i class="fas fa-edit" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm p-1 text-danger"
+              (click)="deleteClient(item)"
+            >
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </td>
+        </ng-template>
+      </app-table>
+    </div>
+  }
+
+</div>

@@ -1,9 +1,11 @@
-﻿using API.Data;
+﻿using System.IO.Abstractions;
+using API.Data;
 using API.Data.Repositories;
 using API.Helpers;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Extensions;
 
@@ -15,7 +17,12 @@ public static class ApplicationServiceExtensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        services.AddScoped<IMemoryCache, MemoryCache>();
+        services.AddScoped<IFileSystem, FileSystem>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IDirectoryService, DirectoryService>();
+        services.AddScoped<ILocalizationService, LocalizationService>();
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         
