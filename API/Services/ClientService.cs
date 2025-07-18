@@ -1,6 +1,7 @@
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Entities.Enums;
 using API.Extensions;
 
 namespace API.Services;
@@ -46,8 +47,8 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         if (client == null)
             throw new ApplicationException("errors.client-not-found");
 
-        var systemNotes = new List<string>();
-        
+        var systemNotes = new List<SystemMessage>();
+
         if (client.NormalizedName != dto.Name.ToNormalized())
         {
             client.Name = dto.Name;
@@ -64,7 +65,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
             }
             
             logger.LogDebug("Updating CompanyNumber for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            systemNotes.Add(await localizationService.Translate("client-update-company-number-note", client.CompanyNumber, dto.CompanyNumber.Trim()));
+            AddSystemNote(await localizationService.Translate("client-update-company-number-note", client.CompanyNumber, dto.CompanyNumber.Trim()));
 
             client.CompanyNumber = dto.CompanyNumber;
         }
@@ -72,29 +73,38 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         if (client.Address != dto.Address.Trim())
         {
             logger.LogDebug("Updating Address for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            systemNotes.Add(await localizationService.Translate("client-update-address-note", client.Address, dto.Address.Trim()));
+            AddSystemNote(await localizationService.Translate("client-update-address-note", client.Address, dto.Address.Trim()));
+
             client.Address = dto.Address.Trim();
         }
 
         if (client.InvoiceEmail != dto.InvoiceEmail.Trim())
         {
             logger.LogDebug("Updating invoice email for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            systemNotes.Add(await localizationService.Translate("client-update-invoice-email",  client.InvoiceEmail, dto.InvoiceEmail.Trim()));
+            AddSystemNote(await localizationService.Translate("client-update-invoice-email",  client.InvoiceEmail, dto.InvoiceEmail.Trim()));
+
             client.InvoiceEmail = dto.InvoiceEmail.Trim();
         }
         
         client.ContactName = dto.ContactName.Trim();
         client.ContactNumber = dto.ContactNumber.Trim();
         client.ContactEmail = dto.ContactEmail.Trim();
-        
-        // TODO: Add systemNotes to outgoing deliveries
+
         if (systemNotes.Count > 0)
         {
-            
+            var deliveries = await unitOfWork.DeliveryRepository.GetDeliveriesForClient(client.Id, [DeliveryState.InProgress, DeliveryState.Completed]);
+            foreach (var delivery in deliveries)
+            {
+                foreach (var systemNote in systemNotes) delivery.SystemMessages.Add(systemNote);
+                unitOfWork.DeliveryRepository.Update(delivery);
+            }
         }
         
         unitOfWork.ClientRepository.Update(client);
         await unitOfWork.CommitAsync();
+        return;
+
+        void AddSystemNote(string s) => systemNotes.Add(s.ToSystemMessage());
     }
     
     public async Task DeleteClient(int id)

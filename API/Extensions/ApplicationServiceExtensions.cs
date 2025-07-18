@@ -23,6 +23,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IDirectoryService, DirectoryService>();
         services.AddScoped<ILocalizationService, LocalizationService>();
+        services.AddScoped<IDeliveryService, DeliveryService>();
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         

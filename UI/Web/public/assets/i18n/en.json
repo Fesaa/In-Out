@@ -11,6 +11,7 @@
   },
 
   "errors": {
+    "generic": "An error has occurred",
     "no-fallback-category": "Cannot delete category while no fallback category exists"
   },
 

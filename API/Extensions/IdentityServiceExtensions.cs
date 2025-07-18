@@ -52,12 +52,14 @@ public static class IdentityServiceExtensions
             .AddPolicy(PolicyConstants.CreateForOthers)
             .AddPolicy(PolicyConstants.ViewAllDeliveries)
             .AddPolicy(PolicyConstants.ExportDeliveryRapport)
-            .AddPolicy(PolicyConstants.ManageStock);
+            .AddPolicy(PolicyConstants.ManageStock)
+            .AddPolicy(PolicyConstants.ManageApplication)
+            ;
 
         return services;
     }
 
-    public static AuthorizationBuilder AddPolicy(this AuthorizationBuilder builder, string roleName)
+    private static AuthorizationBuilder AddPolicy(this AuthorizationBuilder builder, string roleName)
     {
         return builder.AddPolicy(roleName, policy => 
             policy.RequireRole(roleName, roleName.ToLower(), roleName.ToUpper()));

@@ -126,7 +126,7 @@ public class LocalizationService: ILocalizationService
 
     public async Task<string> Translate(string userId, string key, params object[] args)
     {
-        var userLocale = await _unitOfWork.UserPreferencesRepository.GetLocaleAsync(userId);
+        var userLocale = await _unitOfWork.UsersRepository.GetLocaleAsync(userId);
         return await Get(userLocale ?? DefaultLocale, key, args);
     }
 
