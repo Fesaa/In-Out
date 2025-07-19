@@ -9,5 +9,10 @@ public static class ClaimsPrincipalExtensions
     {
         return principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException();
     }
+
+    public static string GetName(this ClaimsPrincipal principal)
+    {
+        return principal.FindFirst("name")?.Value ?? throw new UnauthorizedAccessException();
+    }
     
 }

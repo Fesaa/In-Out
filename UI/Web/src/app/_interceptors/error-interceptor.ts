@@ -117,7 +117,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   private toast(message: string, title?: string) {
-   if (message.startsWith('errors.')) {
+   if ((message+'').startsWith('errors.')) {
       this.toastr.error(this.translocoService.translate(message), title);
     } else {
       this.toastr.error(message, title);

@@ -13,6 +13,16 @@ public class AutoMapperProfiles: Profile
         CreateMap<ProductCategory, ProductCategoryDto>();
         
         CreateMap<Client, ClientDto>();
+        CreateMap<User, UserDto>();
+
+        CreateMap<Delivery, DeliveryDto>()
+            .ForMember(d => d.FromId,
+                opt =>
+                    opt.MapFrom(s => s.UserId))
+            .ForMember(d => d.ClientId,
+                opt =>
+                    opt.MapFrom(s => s.Recipient.Id));
+        CreateMap<DeliveryLine, DeliveryLineDto>();
 
     }
 }

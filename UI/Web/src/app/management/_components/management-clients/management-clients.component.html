@@ -70,7 +70,7 @@
             {{item.companyNumber}}
           </td>
           <td class="table-cell">
-            {{item.contactEmail}}
+            <a [href]="'mailto:' + item.contactEmail">{{item.contactEmail}}</a>
           </td>
           <td class="table-cell">
             {{item.contactNumber}}

@@ -16,6 +16,7 @@ public class User
     /// UserName claim in the OIDC token
     /// </summary>
     public string Name { get; set; }
+    public string NormalizedName { get; set; }
     
     public string Language { get; set; }
 }

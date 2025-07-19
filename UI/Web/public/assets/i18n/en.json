@@ -12,7 +12,8 @@
 
   "errors": {
     "generic": "An error has occurred",
-    "no-fallback-category": "Cannot delete category while no fallback category exists"
+    "no-fallback-category": "Cannot delete category while no fallback category exists",
+    "not-found": "Something was not found!"
   },
 
   "confirm-modal": {
@@ -43,7 +44,38 @@
     "contactNumber-tooltip": "Phone number of the main point of contact",
     "invoiceEmail": "Invoice Email",
     "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
-},
+  },
+
+  "manage-delivery": {
+    "loading": "Loading...",
+    "new-delivery": "New Delivery",
+    "edit-delivery-with-id": "Edit Delivery #{{id}}",
+    "items-selected": "{{count}} items selected",
+    "save-delivery": "Save Delivery",
+    "save": "{{common.save}}",
+    "consumable": "Consumable",
+    "one-time": "One-time",
+    "recipient": "Recipient",
+    "from": "From",
+    "success": "Successfully updated your delivery",
+    "failed": "Failed to submit your delivery, check your input"
+  },
+  "typeahead": {
+    "placeholder": "Search...",
+    "aria": {
+      "clear": "Clear selection",
+      "lock": "Lock field",
+      "unlock": "Unlock field",
+      "removeItem": "Remove {{value}}",
+      "results": "Search results"
+    },
+    "button": {
+      "add": "Add \"{{value}}\""
+    },
+    "text": {
+      "noResults": "No results found"
+    }
+  },
 
   "navigation": {
     "items": {
@@ -163,6 +195,7 @@
     "create": "{{common.create}}",
     "update": "{{common.update}}",
     "cancel": "{{common.cancel}}",
+    "close": "{{common.close}}",
     "name": "Name",
     "name-tooltip": "Name displayed in the new delivery form, must be unique",
     "enabled": "Enabled",

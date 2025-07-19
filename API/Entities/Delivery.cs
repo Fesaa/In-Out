@@ -16,8 +16,6 @@ public class Delivery: IEntityDate
     public IList<SystemMessage> SystemMessages { get; set; }
     public IList<DeliveryLine> Lines { get; set; }
 
-    public DateTime Created { get; set; }
     public DateTime CreatedUtc { get; set; }
-    public DateTime LastModified { get; set; }
     public DateTime LastModifiedUtc { get; set; }
 }

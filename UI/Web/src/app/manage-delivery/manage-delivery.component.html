@@ -1,0 +1,190 @@
+<div class="container-fluid px-3 py-4" *transloco="let t; prefix: 'manage-delivery'">
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{{ t('loading') }}</span>
+      </div>
+    </div>
+  } @else {
+    <form [formGroup]="deliveryForm" (ngSubmit)="onSubmit()">
+      <div class="row mb-4">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+              <h1 class="h3 mb-1" style="color: var(--text-primary);">
+                @if (delivery().id === -1) {
+                  {{ t('new-delivery') }}
+                } @else {
+                  {{ t('edit-delivery-with-id', { id: delivery().id }) }}
+                }
+              </h1>
+              @if (totalItems() > 0) {
+                <span class="badge rounded-pill"
+                      style="background-color: var(--secondary-color); color: var(--text-light);">
+                  {{ t('items-selected', { count: totalItems() }) }}
+                </span>
+              }
+            </div>
+            <button type="submit"
+                    class="btn btn-secondary"
+                    [disabled]="!deliveryForm.valid || totalItems() === 0 || this.submitting()">
+              <i class="fas fa-save"></i>
+              {{ t('save-delivery') }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+
+        @if (fromTypeaheadSettings(); as fromTypeaheadSettings) {
+          <div class="row-12 mb-4">
+            <app-type-ahead
+              [settings]="fromTypeaheadSettings"
+              (selectedData)="selectFrom($event)"
+              [disabled]="!authService.roles().includes(Role.CreateForOthers)"
+            >
+              <ng-template #label>
+                <h5>{{t('from')}}</h5>
+              </ng-template>
+            </app-type-ahead>
+          </div>
+        }
+
+        @if (clientTypeaheadSettings(); as clientTypeaheadSettings) {
+          <div class="row-12 mb-4">
+            <app-type-ahead
+              [settings]="clientTypeaheadSettings"
+              (selectedData)="selectClient($event)"
+              [disabled]="delivery().id !== -1"
+            >
+              <ng-template #label>
+                <h5>{{t('recipient')}}</h5>
+              </ng-template>
+            </app-type-ahead>
+          </div>
+        }
+
+        <div class="col-12">
+          @for (category of sortedCategories(); track category.id) {
+            @let categoryProducts = groupedProducts().get(category.id);
+            @let categoryTotal = getCategoryTotal(category.id);
+            @let isCollapsed = isCategoryCollapsed(category.id);
+
+            @if (categoryProducts && categoryProducts.length > 0) {
+              <div class="category-section mb-4">
+                <div class="category-header d-flex justify-content-between align-items-center p-3 rounded-top clickable"
+                     style="background-color: var(--surface-card); border-left: 4px solid var(--secondary-color); box-shadow: 0 2px 4px var(--shadow-light);"
+                     (click)="toggleCategory(category.id)">
+                  <div class="d-flex align-items-center gap-2">
+                    <i class="fas"
+                       [class.fa-chevron-down]="!isCollapsed"
+                       [class.fa-chevron-right]="isCollapsed"
+                       style="color: var(--text-secondary); font-size: 12px;"></i>
+                    <h5 class="mb-0" style="color: var(--text-primary);">
+                      {{ category.name }}
+                    </h5>
+                  </div>
+                  @if (categoryTotal > 0) {
+                    <span class="badge rounded-pill"
+                          style="background-color: var(--secondary-color); color: var(--text-light);">
+                      {{ categoryTotal }}
+                    </span>
+                  }
+                </div>
+
+                @if (!isCollapsed) {
+                  <div class="category-products"
+                       style="background-color: var(--surface-card); border-left: 4px solid var(--surface-border); box-shadow: 0 2px 4px var(--shadow-light); border-radius: 0 0 8px 8px;">
+                    @for (product of categoryProducts; track product.id) {
+                      @if (product.enabled) {
+                        @let quantity = getProductQuantity(product.id);
+
+                        <div class="product-item d-flex justify-content-between align-items-center p-3"
+                             [class.border-bottom]="!$last"
+                             style="border-bottom-color: var(--surface-border) !important;">
+                          <div class="product-info flex-grow-1 me-3">
+                            <div class="product-name fw-semibold mb-1"
+                                 style="color: var(--text-primary); font-size: 16px;">
+                              {{ product.name }}
+                            </div>
+                            @if (product.description) {
+                              <div class="product-description text-muted"
+                                   style="color: var(--text-secondary) !important; font-size: 14px; line-height: 1.4;">
+                                {{ product.description }}
+                              </div>
+                            }
+                            <div class="product-type mt-1">
+                              <span class="badge"
+                                    style="background-color: var(--background-accent); color: var(--text-secondary); font-size: 11px;">
+                                @if (product.type === 0) {
+                                  {{ t('consumable') }}
+                                } @else {
+                                  {{ t('one-time') }}
+                                }
+                              </span>
+                            </div>
+                          </div>
+
+                          <div class="quantity-controls d-flex align-items-center gap-2">
+                            @if (quantity > 0) {
+                              <button type="button"
+                                      class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                      style="width: 36px; height: 36px; border-color: var(--surface-border);"
+                                      (click)="decrementProduct(product.id)">
+                                <i class="fas fa-minus" style="font-size: 12px;"></i>
+                              </button>
+
+                              <div class="quantity-display d-flex align-items-center justify-content-center"
+                                   style="min-width: 40px; height: 36px; background-color: var(--background-accent); border-radius: 6px; font-weight: 600; color: var(--text-primary);">
+                                {{ quantity }}
+                              </div>
+                            }
+
+                            <button type="button"
+                                    class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                    [class.btn-secondary]="quantity === 0"
+                                    [class.btn-olive]="quantity > 0"
+                                    style="width: 36px; height: 36px;"
+                                    [disabled]="product.type === ProductType.OneTime && quantity === 1"
+                                    (click)="incrementProduct(product.id)">
+                              <i class="fas fa-plus" style="font-size: 12px;"></i>
+                            </button>
+                          </div>
+                        </div>
+                      }
+                    }
+                  </div>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="mobile-menu-bar fixed-bottom d-md-none p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <button type="button" class="btn btn-olive" routerLink="/dashboard">
+            <i class="fas fa-home"></i>
+          </button>
+          <div>
+            @if (totalItems() > 0) {
+              <div class="fw-semibold" style="color: var(--text-primary);">
+                {{ t('items-selected', { count: totalItems() }) }}
+              </div>
+            }
+          </div>
+          <button type="button"
+                  class="btn btn-secondary"
+                  (click)="onSubmit()"
+                  [disabled]="!deliveryForm.valid || totalItems() === 0 || this.submitting()">
+            <i class="fas fa-save"></i>
+            {{ t('save') }}
+          </button>
+        </div>
+      </div>
+
+      <div class="d-md-none" style="height: 80px;"></div>
+    </form>
+  }
+</div>

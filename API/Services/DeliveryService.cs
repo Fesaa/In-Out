@@ -16,7 +16,7 @@ public interface IDeliveryService
     Task DeleteDelivery(int id);
 }
 
-public class DeliveryService(IUnitOfWork unitOfWork): IDeliveryService
+public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): IDeliveryService
 {
     public static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Canceled];
 
@@ -55,6 +55,7 @@ public class DeliveryService(IUnitOfWork unitOfWork): IDeliveryService
             Recipient = client,
             Message = dto.Message.Trim(),
             Lines = lines,
+            SystemMessages = [],
         };
         
         unitOfWork.DeliveryRepository.Add(delivery);
@@ -63,7 +64,7 @@ public class DeliveryService(IUnitOfWork unitOfWork): IDeliveryService
 
     public async Task UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto)
     {
-        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id);
+        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id, DeliveryIncludes.Complete);
         if (delivery == null)
             throw new ApplicationException("errors.delivery-not-found");
         
@@ -73,7 +74,7 @@ public class DeliveryService(IUnitOfWork unitOfWork): IDeliveryService
         if (delivery.Recipient.Id != dto.ClientId)
             throw new ApplicationException("errors.cannot-change-recipient");
         
-        var user = await unitOfWork.UsersRepository.GetByUserIdAsync(actor.GetUserId());
+        var user = await userService.GetUser(actor);
         if (delivery.UserId != user.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
             throw new UnauthorizedAccessException();
         
@@ -118,6 +119,7 @@ public class DeliveryService(IUnitOfWork unitOfWork): IDeliveryService
             });
         }
         
+        unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
         delivery.Lines = newLines;
         
         unitOfWork.DeliveryRepository.Update(delivery);

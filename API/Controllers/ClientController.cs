@@ -18,6 +18,12 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
         return Ok(await unitOfWork.ClientRepository.GetClientDtos());
     }
 
+    [HttpGet("search")]
+    public async Task<ActionResult<IList<ClientDto>>> Search([FromQuery] string query)
+    {
+        return Ok(await unitOfWork.ClientRepository.SearchClients(query));
+    }
+
     /// <summary>
     /// Get a single client by ID
     /// </summary>

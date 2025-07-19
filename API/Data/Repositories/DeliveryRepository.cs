@@ -31,6 +31,7 @@ public interface IDeliveryRepository
     void Add(Delivery delivery);
     void Update(Delivery delivery);
     void Remove(Delivery delivery);
+    void RemoveRange(IList<DeliveryLine> lines);
 }
 
 public class DeliveryRepository(DataContext ctx, IMapper mapper): IDeliveryRepository
@@ -81,6 +82,11 @@ public class DeliveryRepository(DataContext ctx, IMapper mapper): IDeliveryRepos
     public void Remove(Delivery delivery)
     {
         ctx.Deliveries.Remove(delivery).State = EntityState.Deleted;
+    }
+
+    public void RemoveRange(IList<DeliveryLine> lines)
+    {
+        ctx.DeliveryLines.RemoveRange(lines);
     }
 
     private async Task<IQueryable<DeliveryDto>> CreateFilteredQueryable(FilterDto filter, IQueryable<Delivery>? query = null)

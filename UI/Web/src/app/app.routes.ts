@@ -4,6 +4,7 @@ import {AuthGuard} from './_guards/auth-guard';
 import {roleGuard} from './_guards/role-guard';
 import {Role} from './_services/auth.service';
 import {ManagementDashboardComponent} from './management/management-dashboard/management-dashboard.component';
+import {ManageDeliveryComponent} from './manage-delivery/manage-delivery.component';
 
 export const routes: Routes = [
   {
@@ -13,6 +14,19 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'delivery',
+        children: [
+          {
+            path: 'manage',
+            component: ManageDeliveryComponent,
+          },
+          {
+            path: 'browse',
+            component: ManageDeliveryComponent,
+          }
+        ]
       }
     ]
   },

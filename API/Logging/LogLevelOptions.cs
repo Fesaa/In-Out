@@ -1,6 +1,7 @@
 ﻿using API.Helpers;
 using Serilog;
 using Serilog.Core;
+using Serilog.Enrichers.WithCaller;
 using Serilog.Events;
 using Serilog.Templates;
 
@@ -26,6 +27,7 @@ public static class LogLevelOptions
             .MinimumLevel.Override("Microsoft.AspNetCore.ResponseCaching.ResponseCachingMiddleware", LogEventLevel.Error)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Error)
             .Enrich.FromLogContext()
+            .Enrich.WithCaller()
             .WriteTo.Console(new ExpressionTemplate(outputTemplate))
             .WriteTo.File(LogFile, shared: true, rollingInterval: RollingInterval.Day, outputTemplate: outputTemplate)
             .Filter.ByIncludingOnly(ShouldIncludeLogStatement);

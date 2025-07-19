@@ -36,7 +36,7 @@ export class ProductModalComponent implements OnInit {
   private readonly cdRef = inject(ChangeDetectorRef);
   protected readonly modal = inject(NgbActiveModal);
 
-  categories = model.required<ProductCategory[]>();
+  categories = model<ProductCategory[]>([]);
 
   product = model<Product>({
     id: -1,

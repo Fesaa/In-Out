@@ -15,6 +15,10 @@ export class ClientService {
     return this.http.get<Client[]>(`${this.baseUrl}dto`);
   }
 
+  search(search: string): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.baseUrl}search?query=${search}`);
+  }
+
   getById(id: number): Observable<Client> {
     return this.http.get<Client>(`${this.baseUrl}${id}`);
   }

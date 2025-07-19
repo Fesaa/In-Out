@@ -40,13 +40,11 @@ public class DataContext: DbContext
     {
         if (e.FromQuery || e.Entry.State != EntityState.Added || e.Entry.Entity is not IEntityDate entity) return;
 
-        entity.LastModified = DateTime.Now;
         entity.LastModifiedUtc = DateTime.UtcNow;
 
         // This allows for mocking
-        if (entity.Created == DateTime.MinValue)
+        if (entity.CreatedUtc == DateTime.MinValue)
         {
-            entity.Created = DateTime.Now;
             entity.CreatedUtc = DateTime.UtcNow;
         }
     }
@@ -54,7 +52,6 @@ public class DataContext: DbContext
     private static void OnEntityStateChanged(object? sender, EntityStateChangedEventArgs e)
     {
         if (e.NewState != EntityState.Modified || e.Entry.Entity is not IEntityDate entity) return;
-        entity.LastModified = DateTime.Now;
         entity.LastModifiedUtc = DateTime.UtcNow;
     }
     

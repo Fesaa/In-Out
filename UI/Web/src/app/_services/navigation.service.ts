@@ -63,7 +63,7 @@ export class NavigationService {
       translationKey: 'navigation.items.new-delivery',
       icon: 'fas fa-truck-loading',
       requiredRoles: [],
-      routerLink: 'delivery/new'
+      routerLink: 'delivery/manage'
     },
     {
       id: NavigationsId.Deliveries,
