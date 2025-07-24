@@ -123,7 +123,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
-                .WithOrigins("http://localhost:4200", "http://localhost:5000")
+                .WithOrigins("http://localhost:4300", "http://localhost:5000")
                 .WithExposedHeaders("Content-Disposition", "Pagination"));
         }
         else

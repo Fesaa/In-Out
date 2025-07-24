@@ -1,0 +1,27 @@
+.badge {
+  display: inline-block;
+  padding: 0.2em 0.6em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-light);
+  border-radius: 12px;
+  user-select: none;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.badge--primary {
+  background-color: var(--olive-green);
+}
+
+.badge--secondary {
+  background-color: var(--secondary-color);
+}
+
+.badge--error {
+  background-color: lightgoldenrodyellow;
+}
+
+.badge--warning {
+  background-color: darkred;
+}

@@ -14,9 +14,12 @@ import { TranslocoHttpLoader } from './_services/transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
 import {provideToastr} from 'ngx-toastr';
 import {ErrorInterceptor} from './_interceptors/error-interceptor';
+import {DeliveryStatePipe} from './_pipes/delivery-state-pipe';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    DeliveryStatePipe,
+
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),

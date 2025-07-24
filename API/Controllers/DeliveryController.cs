@@ -1,6 +1,8 @@
 using API.Data;
 using API.Data.Repositories;
 using API.DTOs;
+using API.DTOs.Filter;
+using API.Helpers;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +17,12 @@ public class DeliveryController(IUnitOfWork unitOfWork, IDeliveryService deliver
         var delivery = await unitOfWork.DeliveryRepository.GetDelivery(id, DeliveryIncludes.Complete);
         if (delivery == null) return NotFound();
         return Ok(delivery);
+    }
+
+    [HttpPost("filter")]
+    public async Task<IList<DeliveryDto>> GetDeliveries([FromBody] FilterDto filter, [FromQuery] PaginationParams pagination)
+    {
+        return await unitOfWork.DeliveryRepository.GetDeliveries(filter, pagination);
     }
 
     [HttpPost]

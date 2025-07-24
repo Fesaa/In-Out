@@ -12,7 +12,7 @@ export class ClientService {
   private readonly http = inject(HttpClient);
 
   getAll(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.baseUrl}dto`);
+    return this.http.get<Client[]>(`${this.baseUrl}`);
   }
 
   search(search: string): Observable<Client[]> {
@@ -21,10 +21,6 @@ export class ClientService {
 
   getById(id: number): Observable<Client> {
     return this.http.get<Client>(`${this.baseUrl}${id}`);
-  }
-
-  getByCompanyNumber(companyNumber: string): Observable<Client> {
-    return this.http.get<Client>(`${this.baseUrl}company/${companyNumber}`);
   }
 
   create(dto: Client): Observable<void> {

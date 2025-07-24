@@ -1,3 +1,4 @@
+using API.Entities;
 using API.Entities.Enums;
 
 namespace API.DTOs;
@@ -17,7 +18,7 @@ public class DeliveryDto
     /// <summary>
     /// Cannot be changed via the API
     /// </summary>
-    public IList<string> SystemMessages { get; set; }
+    public IList<SystemMessage> SystemMessages { get; set; }
     public IList<DeliveryLineDto> Lines { get; set; }
     
     public DateTime Created { get; set; }

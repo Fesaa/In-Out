@@ -152,6 +152,7 @@ export class TypeaheadComponent<T> implements OnInit {
 
       this.searchSubject
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           debounceTime(settings.debounce),
           distinctUntilChanged(),
           switchMap(term => {
@@ -167,7 +168,6 @@ export class TypeaheadComponent<T> implements OnInit {
               startWith([] as T[])
             );
           }),
-          takeUntilDestroyed(this.destroyRef)
         )
         .subscribe(results => {
           let filteredResults = results;

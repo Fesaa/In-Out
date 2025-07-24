@@ -60,6 +60,22 @@
     "success": "Successfully updated your delivery",
     "failed": "Failed to submit your delivery, check your input"
   },
+
+  "filter": {
+    "filter-title": "Filter deliveries",
+    "filter-combination-and": "Match all the filters",
+    "filter-combination-or": "Match any of the filters",
+    "add-filter": "Add statement",
+    "search": "Search"
+  },
+
+  "browse-deliveries": {
+    "from": "From",
+    "to": "Recipient",
+    "state": "Delivery state",
+    "created": "Created on"
+  },
+
   "typeahead": {
     "placeholder": "Search...",
     "aria": {
@@ -75,6 +91,36 @@
     "text": {
       "noResults": "No results found"
     }
+  },
+  "filter-field-pipe": {
+    "delivery-state": "Delivery State",
+    "from": "From",
+    "recipient": "Recipient",
+    "lines": "Lines",
+    "products": "Products",
+    "created": "Created",
+    "last-modified": "Last Modified",
+    "unknown": "Unknown"
+  },
+  "filter-comparison-pipe": {
+    "contains": "Contains",
+    "not-contains": "Does not contain",
+    "equals": "Equals",
+    "not-equals": "Does not equal",
+    "starts-with": "Starts with",
+    "ends-with": "Ends with",
+    "greater-than": "Greater than",
+    "greater-than-or-equals": "Greater than or equals",
+    "less-than": "Less than",
+    "less-than-or-equals": "Less than or equals",
+    "unknown": "Unknown"
+  },
+  "delivery-state-pipe": {
+    "in-progress": "In Progress",
+    "completed": "Completed",
+    "handled": "Handled",
+    "cancelled": "Cancelled",
+    "unknown": "Unknown"
   },
 
   "navigation": {
@@ -100,6 +146,9 @@
     "dashboard": {
       "title": "Management dashboard",
       "sub-title": "Contact your idp manager if you're missing perms"
+    },
+    "overview": {
+      "title": "Overview"
     },
     "products": {
       "title": "Product Management",

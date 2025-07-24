@@ -3,6 +3,7 @@ namespace API.DTOs.Filter;
 public enum FilterComparison
 {
     Contains = 0,
+    NotContains = 9,
     Equals = 1,
     NotEquals = 2,
     StartsWith = 3,
@@ -11,6 +12,4 @@ public enum FilterComparison
     GreaterThanOrEquals = 6,
     LessThan = 7,
     LessThanOrEquals = 8,
-    After = 9,
-    Before = 10,
 }

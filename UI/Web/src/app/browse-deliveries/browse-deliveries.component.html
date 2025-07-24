@@ -1,0 +1,31 @@
+
+<div class="m-md-5 m-2" *transloco="let t; prefix: 'browse-deliveries'">
+
+  <app-filter (search)="loadFilter($event)"></app-filter>
+
+  <app-table
+    [items]="deliveries()"
+    [trackByIdFunc]="trackDelivery"
+    [pageSize]="20"
+  >
+    <ng-template #header>
+      <tr>
+        <th class="table-header-cell">{{t('from')}}</th>
+        <th class="table-header-cell">{{t('to')}}</th>
+        <th class="table-header-cell">{{t('state')}}</th>
+        <th class="table-header-cell">{{t('created')}}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #cell let-delivery>
+      <td class="table-cell">{{ delivery.from.name }}</td>
+      <td class="table-cell">{{ delivery.recipient.name }}</td>
+      <td class="table-cell">
+        <app-badge colour="primary">{{delivery.state | deliveryState}}</app-badge>
+      </td>
+      <td class="table-cell">{{ delivery.createdUtc ?? '—' }}</td>
+    </ng-template>
+  </app-table>
+
+
+</div>

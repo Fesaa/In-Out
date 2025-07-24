@@ -30,3 +30,7 @@ export enum DeliveryState {
   Handled = 2,
   Cancelled = 3,
 }
+
+export const AllDeliveryStates: DeliveryState[] = Object.values(DeliveryState).filter(
+  (v): v is DeliveryState => typeof v === 'number'
+);

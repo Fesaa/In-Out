@@ -1,0 +1,76 @@
+
+<ng-container *transloco="let t; prefix: 'filter'">
+  <form class="filter-form mb-5" [formGroup]="filterForm">
+
+    <div>{{t('filter-title')}}</div>
+
+    <div class="form-row combination-row">
+      <select formControlName="combination" class="form-select">
+        <option [ngValue]="FilterCombination.And">{{ t('filter-combination-and') }}</option>
+        <option [ngValue]="FilterCombination.Or">{{ t('filter-combination-or') }}</option>
+      </select>
+
+      <button type="button" class="btn btn-secondary" (click)="addFilterStatement()">
+        <i class="fa fa-plus"></i>
+        {{ t('add-filter') }}
+      </button>
+    </div>
+
+    <div class="form-group">
+      @for (group of statementArray.controls; track trackGroup($index, group); let idx = $index) {
+        @let field = group.get('field')!.value;
+        @let inputType = filterService.getFieldInputType(field);
+
+        <div class="form-row pt-2 mt-2" [formGroup]="group">
+
+          <select formControlName="field" class="form-select col-md-2">
+            @for (opt of AllFilterFields; track opt) {
+              <option [ngValue]="opt">{{ opt | filterField }}</option>
+            }
+          </select>
+
+          <select formControlName="comparison" class="form-select col-md-2">
+            @for (opt of filterService.comparisonsForField(field); track opt) {
+              <option [ngValue]="opt">{{ opt | filterComparison }}</option>
+            }
+          </select>
+
+          <div class="col-md-7">
+            @switch (inputType) {
+              @case (FilterInputType.FreeText) {
+                <input class="form-control" type="text" formControlName="value">
+              }
+              @case (FilterInputType.FreeNumber) {
+                <input class="form-control" type="number" formControlName="value">
+              }
+              @case (FilterInputType.Typeahead) {
+                @let settings = filterService.getTypeaheadSettings(group);
+                @if (settings) {
+                  <app-type-ahead (selectedData)="patchControlValue($event, group)" [settings]="settings">
+                    <ng-template #optionItem let-item>
+                      {{filterService.fieldOptionLabel(field, item)}}
+                    </ng-template>
+                    <ng-template #badgeItem let-item>
+                      {{filterService.fieldOptionLabel(field, item)}}
+                    </ng-template>
+                  </app-type-ahead>
+                }
+              }
+            }
+          </div>
+
+          <div class="col-md-1">
+            <button class="btn btn-secondary" (click)="removeFilterStatement(idx)">
+              <i class="fa fa-minus"></i>
+            </button>
+          </div>
+
+        </div>
+      }
+    </div>
+
+    <div>
+      <button class="btn btn-olive" (click)="submit()">{{t('search')}}</button>
+    </div>
+  </form>
+</ng-container>

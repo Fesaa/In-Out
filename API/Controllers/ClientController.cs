@@ -12,7 +12,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     /// <summary>
     /// Get all clients
     /// </summary>
-    [HttpGet("dto")]
+    [HttpGet]
     public async Task<ActionResult<IList<ClientDto>>> GetClientDtos()
     {
         return Ok(await unitOfWork.ClientRepository.GetClientDtos());
@@ -31,16 +31,6 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     public async Task<ActionResult<ClientDto?>> GetClientById(int id)
     {
         var client = await unitOfWork.ClientRepository.GetClientDtoById(id);
-        return client is null ? NotFound() : Ok(client);
-    }
-
-    /// <summary>
-    /// Get a client by company number
-    /// </summary>
-    [HttpGet("company/{companyNumber}")]
-    public async Task<ActionResult<ClientDto?>> GetClientByCompanyNumber(string companyNumber)
-    {
-        var client = await unitOfWork.ClientRepository.GetClientByCompanyNumber(companyNumber);
         return client is null ? NotFound() : Ok(client);
     }
 

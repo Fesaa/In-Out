@@ -2,6 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {Delivery} from '../_models/delivery';
+import {Filter} from '../_models/filter';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,10 @@ export class DeliveryService {
 
   deleteDelivery(id: number) {
     return this.httpClient.delete<Delivery>(`${this.baseUrl}/${id}`);
+  }
+
+  filter(filter: Filter) {
+    return this.httpClient.post<Delivery[]>(this.baseUrl+'/filter', filter);
   }
 
 }

@@ -58,7 +58,7 @@ export class AuthService {
 
     const claims = this.decodeJwt(token);
     const resourceAccess = claims['resource_access'];
-    if (!resourceAccess) return [];
+    if (!resourceAccess || !resourceAccess[settings.clientId]) return [];
 
     const roles = resourceAccess[settings.clientId].roles;
     return roles as Role[];
