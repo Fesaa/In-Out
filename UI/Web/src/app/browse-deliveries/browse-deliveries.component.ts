@@ -21,6 +21,7 @@ import {DeliveryStatePipe} from '../_pipes/delivery-state-pipe';
 import {BadgeComponent} from '../shared/components/badge/badge.component';
 import {ToastrService} from 'ngx-toastr';
 import {FilterComponent} from '../filter/filter.component';
+import {NavBarComponent} from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -31,6 +32,7 @@ import {FilterComponent} from '../filter/filter.component';
     DeliveryStatePipe,
     BadgeComponent,
     FilterComponent,
+    NavBarComponent,
   ],
   templateUrl: './browse-deliveries.component.html',
   styleUrl: './browse-deliveries.component.scss',

@@ -10,6 +10,7 @@ export enum ManagementSettingsId {
 }
 
 export enum NavigationsId {
+  Dashboard = 'dashboard',
   NewDelivery = 'newDelivery',
   Deliveries = 'deliveries',
   Stock = 'stock',
@@ -63,28 +64,28 @@ export class NavigationService {
       translationKey: 'navigation.items.new-delivery',
       icon: 'fas fa-truck-loading',
       requiredRoles: [],
-      routerLink: 'delivery/manage'
+      routerLink: '/delivery/manage'
     },
     {
       id: NavigationsId.Deliveries,
       translationKey: 'navigation.items.deliveries',
       icon: 'fas fa-shipping-fast',
       requiredRoles: [],
-      routerLink: 'delivery/browse'
+      routerLink: '/delivery/browse'
     },
     {
       id: NavigationsId.Stock,
       translationKey: 'navigation.items.stock',
       icon: 'fas fa-warehouse',
       requiredRoles: [],
-      routerLink: 'stock/browse'
+      routerLink: '/stock/browse'
     },
     {
       id: NavigationsId.Management,
       translationKey: 'navigation.items.management',
       icon: 'fas fa-cogs',
       requiredRoles: [Role.ManageApplication],
-      routerLink: 'management'
+      routerLink: '/management'
     },
     {
       id: NavigationsId.Logout,

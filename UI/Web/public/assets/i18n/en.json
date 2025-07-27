@@ -125,6 +125,7 @@
 
   "navigation": {
     "items": {
+      "dashboard": "Dashboard",
       "new-delivery": "New delivery",
       "deliveries": "Browse deliveries",
       "stock": "Stock",
