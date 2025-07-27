@@ -72,12 +72,6 @@
         }
       }
 
-      @defer (when activeItem() === ManagementSettingsId.Deliveries; prefetch on idle) {
-        @if (activeItem() === ManagementSettingsId.Deliveries) {
-          <app-management-deliveries></app-management-deliveries>
-        }
-      }
-
       @defer (when activeItem() === ManagementSettingsId.Server; prefetch on idle) {
         @if (activeItem() === ManagementSettingsId.Server) {
           <app-management-server></app-management-server>

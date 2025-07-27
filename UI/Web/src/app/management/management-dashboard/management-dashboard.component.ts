@@ -10,7 +10,6 @@ import {AuthService} from '../../_services/auth.service';
 import {ManagementOverviewComponent} from '../_components/management-overview/management-overview.component';
 import {ManagementProductsComponent} from '../_components/management-products/management-products.component';
 import {ManagementClientsComponent} from '../_components/management-clients/management-clients.component';
-import {ManagementDeliveriesComponent} from '../_components/management-deliveries/management-deliveries.component';
 import {ManagementServerComponent} from '../_components/management-server/management-server.component';
 
 @Component({
@@ -21,7 +20,6 @@ import {ManagementServerComponent} from '../_components/management-server/manage
     ManagementOverviewComponent,
     ManagementProductsComponent,
     ManagementClientsComponent,
-    ManagementDeliveriesComponent,
     ManagementServerComponent
   ],
   templateUrl: './management-dashboard.component.html',

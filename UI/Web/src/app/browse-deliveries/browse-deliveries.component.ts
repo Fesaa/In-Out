@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, signal} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {Filter,} from '../_models/filter';
 import {Delivery} from '../_models/delivery';
@@ -10,6 +10,7 @@ import {BadgeComponent} from '../shared/components/badge/badge.component';
 import {ToastrService} from 'ngx-toastr';
 import {FilterComponent} from '../filter/filter.component';
 import {NavBarComponent} from '../nav-bar/nav-bar.component';
+import {UtcToLocalTimePipe} from '../_pipes/utc-to-local-time.pipe';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -21,6 +22,7 @@ import {NavBarComponent} from '../nav-bar/nav-bar.component';
     BadgeComponent,
     FilterComponent,
     NavBarComponent,
+    UtcToLocalTimePipe,
   ],
   templateUrl: './browse-deliveries.component.html',
   styleUrl: './browse-deliveries.component.scss',
@@ -30,6 +32,8 @@ export class BrowseDeliveriesComponent {
 
   private readonly deliveryService = inject(DeliveryService);
   private readonly toastr = inject(ToastrService);
+
+  showNavbar = input(true);
 
   deliveries = signal<Delivery[]>([]);
 

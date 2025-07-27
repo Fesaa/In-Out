@@ -5,7 +5,6 @@ export enum ManagementSettingsId {
   Overview = 'overview',
   Products = 'products',
   Clients = 'clients',
-  Deliveries = 'deliveries',
   Server= 'server',
 }
 
@@ -115,12 +114,6 @@ export class NavigationService {
       translationKey: 'navigation.management.items.clients',
       icon: 'fas fa-users',
       requiredRoles: [],
-    },
-    {
-      id: ManagementSettingsId.Deliveries,
-      translationKey: 'navigation.management.items.deliveries',
-      icon: 'fas fa-truck',
-      requiredRoles: [Role.ViewAllDeliveries, Role.ExportDeliveryRapport],
     },
     {
       id: ManagementSettingsId.Server,
