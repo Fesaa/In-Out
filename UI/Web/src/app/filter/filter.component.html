@@ -69,7 +69,53 @@
       }
     </div>
 
-    <div>
+    <div class="row align-items-center">
+
+      <div class="col-md-2">
+        @if (filterForm.get('limit'); as control) {
+          <app-settings-item [control]="control" [title]="t('limit-label')" [showEdit]="false" [canEdit]="false">
+            <ng-template #view>
+              <input type="number" formControlName="limit" class="form-input form-control">
+            </ng-template>
+          </app-settings-item>
+        }
+      </div>
+
+      <div class="col-md-4">
+        @if (filterForm.get('sortOptions.sortField'); as control) {
+          <app-settings-item [control]="control" [title]="t('sort-label')" [showEdit]="false" [canEdit]="false">
+            <ng-template #view>
+              <div formGroupName="sortOptions">
+                <select formControlName="sortField" class="form-select form-control">
+                  @for (sortField of AllSortFields; track sortField) {
+                    <option [ngValue]="sortField">{{sortField | sortField }}</option>
+                  }
+                </select>
+              </div>
+            </ng-template>
+          </app-settings-item>
+        }
+      </div>
+
+      <div class="col-md-4">
+        @if (filterForm.get('sortOptions.isAscending'); as control) {
+          <app-settings-item [control]="control" [title]="t('sort-direction')" [showEdit]="false" [canEdit]="false">
+            <ng-template #view>
+              <div (click)="toggleAscension()" class="">
+                @if (control.value) {
+                  <i class="fas fa-arrow-down sort-direction-icon"></i>
+                } @else {
+                  <i class="fas fa-arrow-up sort-direction-icon"></i>
+                }
+              </div>
+            </ng-template>
+          </app-settings-item>
+        }
+      </div>
+
+    </div>
+
+    <div class="col-md-4">
       <button class="btn btn-olive" (click)="submit()">{{t('search')}}</button>
     </div>
   </form>

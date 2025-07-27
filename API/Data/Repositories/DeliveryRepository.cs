@@ -41,11 +41,15 @@ public class DeliveryRepository(DataContext ctx, IMapper mapper): IDeliveryRepos
     public async Task<IList<DeliveryDto>> GetDeliveries(FilterDto filter, PaginationParams pagination, DeliveryIncludes includes = DeliveryIncludes.None)
     {
         var filteredQuery = await CreateFilteredQueryable(filter, ctx.Deliveries.AsNoTracking());
-        var deliveryIds = await filteredQuery.Select(d => d.Id).ToListAsync();
+        var deliveryIds = await filteredQuery
+            .Select(d => d.Id)
+            .ToListAsync();
 
         var includedQuery = ctx.Deliveries
             .AsNoTracking()
             .Where(d => deliveryIds.Contains(d.Id))
+            .ApplySort(filter.SortOptions)
+            .Take(filter.Limit <= 0 ? int.MaxValue : filter.Limit)
             .Includes(includes);
 
         return await includedQuery

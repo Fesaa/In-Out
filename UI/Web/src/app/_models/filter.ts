@@ -12,8 +12,14 @@ export type SortOptions = {
 }
 
 export enum SortField {
-  None = 0,
+  From = 0,
+  Recipient = 1,
+  CreationDate = 2,
 }
+
+export const AllSortFields: SortField[] = Object.values(SortField).filter(
+  (v) => typeof v === 'number'
+);
 
 export type FilterStatement = {
   comparison: FilterComparison,
@@ -110,7 +116,7 @@ export function deserializeFilterFromQuery(query: string): Filter {
     combination: FilterCombination[combinationStr as keyof typeof FilterCombination],
     limit: Number(limitStr),
     sortOptions: {
-      sortField: sortField ? parseInt(sortField) as SortField : SortField.None,
+      sortField: sortField ? parseInt(sortField) as SortField : SortField.From,
       isAscending: isAscending === 'true',
     }
   };
