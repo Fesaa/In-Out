@@ -1,5 +1,6 @@
 debug/
 .idea/
+API/bin
 API/obj
 API/config/logs/*
 .vscode
