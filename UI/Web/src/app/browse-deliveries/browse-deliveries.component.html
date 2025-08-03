@@ -1,5 +1,8 @@
+@if (showNavbar()) {
+  <app-nav-bar></app-nav-bar>
+}
 
-<div class="m-md-5 m-2" *transloco="let t; prefix: 'browse-deliveries'">
+<div class="mx-md-5 m-2" *transloco="let t; prefix: 'browse-deliveries'">
 
   <app-filter (search)="loadFilter($event)"></app-filter>
 
@@ -23,7 +26,7 @@
       <td class="table-cell">
         <app-badge colour="primary">{{delivery.state | deliveryState}}</app-badge>
       </td>
-      <td class="table-cell">{{ delivery.createdUtc ?? '—' }}</td>
+      <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
     </ng-template>
   </app-table>
 

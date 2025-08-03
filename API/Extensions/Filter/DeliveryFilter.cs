@@ -7,6 +7,25 @@ namespace API.Extensions.Filter;
 public static class DeliveryFilter
 {
 
+    public static IQueryable<Delivery> ApplySort(this IQueryable<Delivery> query, SortOptions options)
+    {
+        query = options.SortField switch
+        {
+            SortField.From => query.OrderBy(d => d.From.NormalizedName),
+            SortField.Recipient => query.OrderBy(d => d.Recipient.NormalizedName),
+            SortField.CreationDate => query.OrderBy(d => d.CreatedUtc),
+            _ => query,
+        };
+        
+        if (!options.IsAscending)
+        {
+            query = query.Reverse();
+        }
+        
+
+        return query;
+    }
+
     public static IQueryable<Delivery> HasState(this IQueryable<Delivery> query, bool guard, FilterComparison comparison, List<DeliveryState> states)
     {
         if (!guard) return query;

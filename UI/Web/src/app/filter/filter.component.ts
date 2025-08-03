@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {
   AllFilterComparisons,
-  AllFilterFields,
+  AllFilterFields, AllSortFields,
   deserializeFilterFromQuery,
   Filter,
   FilterCombination,
@@ -22,6 +22,8 @@ import {FilterComparisonPipe} from '../_pipes/filter-comparison-pipe';
 import {FilterFieldPipe} from '../_pipes/filter-field-pipe';
 import {TypeaheadComponent} from '../type-ahead/typeahead.component';
 import {TranslocoDirective} from '@jsverse/transloco';
+import {SortFieldPipe} from '../_pipes/sort-field-pipe';
+import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
 
 export type FilterStatementFormGroup = FormGroup<{
   comparison: FormControl<FilterComparison>,
@@ -36,7 +38,9 @@ export type FilterStatementFormGroup = FormGroup<{
     FilterFieldPipe,
     ReactiveFormsModule,
     TypeaheadComponent,
-    TranslocoDirective
+    TranslocoDirective,
+    SortFieldPipe,
+    SettingsItemComponent
   ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
@@ -54,8 +58,8 @@ export class FilterComponent implements OnInit {
     statements: new FormArray<FilterStatementFormGroup>([]),
     combination: new FormControl<FilterCombination>(FilterCombination.And, {nonNullable: true}),
     sortOptions: new FormGroup({
-      sortField: new FormControl<SortField>(SortField.None, {nonNullable: true}),
-      isAscending: new FormControl<boolean>(false, {nonNullable: true}),
+      sortField: new FormControl<SortField>(SortField.From, {nonNullable: true}),
+      isAscending: new FormControl<boolean>(true, {nonNullable: true}),
     }),
     limit: new FormControl<number>(0, {nonNullable: true}),
   });
@@ -128,6 +132,10 @@ export class FilterComponent implements OnInit {
     filterStatementFormGroup.get('value')!.setValue(this.filterService.toFormValue($event, filterStatementFormGroup));
   }
 
+  toggleAscension() {
+    this.filterForm.get('sortOptions.isAscending')?.setValue(!this.filterForm.get('sortOptions.isAscending')?.value)
+  }
+
   submit() {
     const filter = this.filterForm.value as Filter;
 
@@ -146,4 +154,5 @@ export class FilterComponent implements OnInit {
   protected readonly FilterCombination = FilterCombination;
   protected readonly AllFilterFields = AllFilterFields;
   protected readonly FilterInputType = FilterInputType;
+  protected readonly AllSortFields = AllSortFields;
 }
