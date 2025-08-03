@@ -22,6 +22,15 @@ public interface ILocalizationService
     /// <param name="args">Argument to format the translation with</param>
     /// <returns>Formated translated string</returns>
     Task<string> Translate(string userId, string key, params object[] args);
+
+    /// <summary>
+    /// Translate the key in the locale of the user, fallback to English
+    /// </summary>
+    /// <param name="userId">User to get the locale form</param>
+    /// <param name="key">Key to translate</param>
+    /// <param name="args">Argument to format the translation with</param>
+    /// <returns>Formated translated string</returns>
+    Task<string> Translate(int userId, string key, params object[] args);
     /// <summary>
     /// Translate the key in the English local, convince function for AllowAnonymous routes
     /// </summary>
@@ -125,6 +134,12 @@ public class LocalizationService: ILocalizationService
     }
 
     public async Task<string> Translate(string userId, string key, params object[] args)
+    {
+        var userLocale = await _unitOfWork.UsersRepository.GetLocaleAsync(userId);
+        return await Get(userLocale ?? DefaultLocale, key, args);
+    }
+    
+    public async Task<string> Translate(int userId, string key, params object[] args)
     {
         var userLocale = await _unitOfWork.UsersRepository.GetLocaleAsync(userId);
         return await Get(userLocale ?? DefaultLocale, key, args);

@@ -3,6 +3,7 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250802141803_Stock")]
+    partial class Stock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,30 +134,6 @@ namespace API.Migrations
                     b.ToTable("DeliveryLines");
                 });
 
-            modelBuilder.Entity("API.Entities.ManualMigration", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ProductVersion")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("RanAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ManualMigrations");
-                });
-
             modelBuilder.Entity("API.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -183,9 +162,6 @@ namespace API.Migrations
                     b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("StockId")
-                        .HasColumnType("integer");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");
@@ -266,13 +242,9 @@ namespace API.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<long>("RowVersion")
-                        .HasColumnType("bigint");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId")
-                        .IsUnique();
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductStock");
                 });
@@ -291,20 +263,8 @@ namespace API.Migrations
                     b.Property<DateTime>("LastModifiedUtc")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Notes")
-                        .HasColumnType("text");
-
                     b.Property<int>("Operation")
                         .HasColumnType("integer");
-
-                    b.Property<int>("QuantityAfter")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("QuantityBefore")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ReferenceNumber")
-                        .HasColumnType("text");
 
                     b.Property<int>("StockId")
                         .HasColumnType("integer");
@@ -400,8 +360,8 @@ namespace API.Migrations
             modelBuilder.Entity("API.Entities.Stock", b =>
                 {
                     b.HasOne("API.Entities.Product", "Product")
-                        .WithOne("Stock")
-                        .HasForeignKey("API.Entities.Stock", "ProductId")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -411,7 +371,7 @@ namespace API.Migrations
             modelBuilder.Entity("API.Entities.StockHistory", b =>
                 {
                     b.HasOne("API.Entities.Stock", "Stock")
-                        .WithMany("History")
+                        .WithMany()
                         .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -430,16 +390,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Entities.Delivery", b =>
                 {
                     b.Navigation("Lines");
-                });
-
-            modelBuilder.Entity("API.Entities.Product", b =>
-                {
-                    b.Navigation("Stock");
-                });
-
-            modelBuilder.Entity("API.Entities.Stock", b =>
-                {
-                    b.Navigation("History");
                 });
 #pragma warning restore 612, 618
         }

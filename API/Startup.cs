@@ -3,6 +3,7 @@ using System.Reflection;
 using API.Data;
 using API.Extensions;
 using API.Helpers;
+using API.ManualMigrations;
 using API.Middleware;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -89,11 +90,13 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
         try
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var ctx = serviceProvider.GetRequiredService<DataContext>();
                 
                 logger.LogInformation("Running Migrations");
+                
+                await ManualMigrationAddStockForExistingProducts.Migrate(ctx, logger);
                 
                 logger.LogInformation("Running Migrations - complete");
             }).GetAwaiter().GetResult();

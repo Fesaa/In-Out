@@ -24,8 +24,14 @@ public class DataContext: DbContext
                 v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
                 v => JsonSerializer.Deserialize<List<SystemMessage>>(v, JsonSerializerOptions.Default) ?? new List<SystemMessage>()
             );
+        
+        builder.Entity<Stock>()
+            .HasOne(s => s.Product)
+            .WithOne(p => p.Stock)
+            .HasForeignKey<Stock>(s => s.ProductId);
     }
     
+    public DbSet<ManualMigration> ManualMigrations { get; set; }
     public DbSet<ServerSetting> ServerSettings { get; set; }
     public DbSet<User> Users { get; set; }
     
@@ -33,6 +39,8 @@ public class DataContext: DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Delivery> Deliveries { get; set; }
     public DbSet<DeliveryLine> DeliveryLines { get; set; }
+    public DbSet<Stock> ProductStock { get; set; }
+    public DbSet<StockHistory> StockHistory { get; set; }
     
     public DbSet<Client> Clients { get; set; }
     

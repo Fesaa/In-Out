@@ -25,6 +25,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<ILocalizationService, LocalizationService>();
         services.AddScoped<IDeliveryService, DeliveryService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IStockService, StockService>();
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         

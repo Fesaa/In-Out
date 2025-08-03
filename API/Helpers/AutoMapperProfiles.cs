@@ -1,6 +1,7 @@
 ﻿using API.DTOs;
 using API.Entities;
 using AutoMapper;
+using Stock = API.Entities.Stock;
 
 namespace API.Helpers;
 
@@ -23,6 +24,8 @@ public class AutoMapperProfiles: Profile
                 opt =>
                     opt.MapFrom(s => s.Recipient.Id));
         CreateMap<DeliveryLine, DeliveryLineDto>();
+        CreateMap<Stock, StockDto>();
+        CreateMap<StockHistory, StockHistoryDto>();
 
     }
 }

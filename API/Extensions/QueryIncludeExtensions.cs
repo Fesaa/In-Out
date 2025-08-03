@@ -25,4 +25,20 @@ public static class QueryIncludeExtensions
         
         return queryable;
     }
+
+    public static IQueryable<Stock> Includes(this IQueryable<Stock> queryable, StockIncludes includes)
+    {
+        if (includes.HasFlag(StockIncludes.Product))
+        {
+            queryable = queryable.Include(d => d.Product);
+        }
+
+        if (includes.HasFlag(StockIncludes.History))
+        {
+            queryable = queryable.Include(d => d.History)
+                .ThenInclude(h => h.User);
+        }
+        
+        return queryable;
+    }
 }

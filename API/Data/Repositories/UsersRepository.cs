@@ -15,7 +15,9 @@ public interface IUsersRepository
     
     Task<bool> UserExists(string userId);
     Task<User?> GetByUserIdAsync(string userId);
+    Task<User?> GetByUserIdAsync(int userId);
     Task<string?> GetLocaleAsync(string userId);
+    Task<string?> GetLocaleAsync(int userId);
     
     void Add(User user);
     void Update(User user);
@@ -55,10 +57,25 @@ public class UsersRepository(DataContext context, IMapper mapper): IUsersReposit
             .FirstOrDefaultAsync();
     }
 
+    public async Task<User?> GetByUserIdAsync(int userId)
+    {
+        return await context.Users
+            .Where(x => x.Id == userId)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<string?> GetLocaleAsync(string userId)
     {
         return await context.Users
             .Where(x => x.UserId == userId)
+            .Select(x => x.Language)
+            .FirstOrDefaultAsync();
+    }
+    
+    public async Task<string?> GetLocaleAsync(int userId)
+    {
+        return await context.Users
+            .Where(x => x.Id == userId)
             .Select(x => x.Language)
             .FirstOrDefaultAsync();
     }

@@ -5,7 +5,6 @@ using API.Data.Repositories;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
-using API.Extensions;
 
 namespace API.Services;
 
@@ -16,12 +15,16 @@ public interface IDeliveryService
     Task DeleteDelivery(int id);
 }
 
-public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): IDeliveryService
+public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, IStockService stockService): IDeliveryService
 {
     public static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Canceled];
 
     public async Task CreateDelivery(int userId, DeliveryDto dto)
     {
+        var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId);
+        if (user == null)
+            throw new ApplicationException("user.client-not-found");
+        
         var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId);
         if (client == null)
             throw new ApplicationException("errors.client-not-found");
@@ -34,20 +37,12 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): 
                 Quantity = g.Sum(l => l.Quantity),
             });
 
-        var lines = new List<DeliveryLine>();
-        foreach (var deliveryLineDto in dtoLines)
+        var lines = dtoLines.Select(deliveryLineDto => new DeliveryLine
         {
-            var line = new DeliveryLine
-            {
-                ProductId = deliveryLineDto.ProductId,
-                Quantity = deliveryLineDto.Quantity,
-            };
+            ProductId = deliveryLineDto.ProductId,
+            Quantity = deliveryLineDto.Quantity,
+        }).ToList();
 
-            await EnsureEnoughSpace(line.ProductId, line.Quantity);
-
-            lines.Add(line);
-        }
-        
         var delivery = new Delivery
         {
             State = DeliveryState.InProgress,
@@ -57,6 +52,19 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): 
             Lines = lines,
             SystemMessages = [],
         };
+        
+        var result = await stockService.UpdateStockBulkAsync(user, lines.Select(l => new UpdateStockDto
+        {
+            ProductId = l.ProductId,
+            Value = l.Quantity,
+            Operation = StockOperation.Remove,
+            // TODO: Reference and notes?
+        }).ToList());
+
+        if (result.IsFailure)
+        {
+            throw new ApplicationException(result.Error);
+        }
         
         unitOfWork.DeliveryRepository.Add(delivery);
         await unitOfWork.CommitAsync();
@@ -100,16 +108,33 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): 
         var linesLookup = delivery.Lines.ToDictionary(l => l.ProductId, l => l);
         
         var newLines = new List<DeliveryLine>();
+        var updates = new List<UpdateStockDto>();
+        
         foreach (var deliveryLineDto in dtoLines)
         {
             if (linesLookup.TryGetValue(deliveryLineDto.ProductId, out var deliveryLine))
             {
                 var diff = deliveryLineDto.Quantity - deliveryLine.Quantity;
-                await EnsureEnoughSpace(deliveryLine.ProductId, diff);
+                if (diff != 0)
+                {
+                    updates.Add(new UpdateStockDto
+                    {
+                        ProductId = deliveryLine.ProductId,
+                        Value = Math.Abs(diff),
+                        Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
+                        Reference = $"Delivery {delivery.Id} update"
+                    });
+                }
             }
             else
             {
-                await EnsureEnoughSpace(deliveryLineDto.ProductId, deliveryLineDto.Quantity);
+                updates.Add(new UpdateStockDto
+                {
+                    ProductId = deliveryLineDto.ProductId,
+                    Value = deliveryLineDto.Quantity,
+                    Operation = StockOperation.Remove,
+                    Reference = $"Delivery {delivery.Id} update"
+                });
             }
 
             newLines.Add(new DeliveryLine
@@ -117,6 +142,12 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): 
                 ProductId = deliveryLineDto.ProductId,
                 Quantity = deliveryLineDto.Quantity,
             });
+        }
+        
+        var result = await stockService.UpdateStockBulkAsync(user, updates);
+        if (result.IsFailure)
+        {
+            throw new ApplicationException(result.Error);
         }
         
         unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
@@ -134,16 +165,5 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService): 
         
         unitOfWork.DeliveryRepository.Remove(delivery);
         await unitOfWork.CommitAsync();
-    }
-
-    /// <summary>
-    /// Checks if the stock can take the change in amount. Updates it if possible, and throws if not
-    /// </summary>
-    /// <param name="productId"></param>
-    /// <param name="amount"></param>
-    /// <param name="force"></param>
-    private async Task EnsureEnoughSpace(int productId, int amount, bool force = false)
-    {
-        // TODO: Check with stock
     }
 }

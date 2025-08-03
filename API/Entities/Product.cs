@@ -15,6 +15,9 @@ public class Product
     public ProductCategory Category { get; set; }
     public ProductType  Type { get; set; }
     
+    public int? StockId { get; set; }
+    public Stock? Stock { get; set; }
+    
     public bool IsTracked { get; set; }
     public bool Enabled { get; set; }
 }
