@@ -83,6 +83,8 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
         {
             return Result<IList<Stock>>.Failure(await localization.Translate(user.Id, "stock-bulk-empty-list"));
         }
+        
+        dtos = dtos.Where(dto => dto.Value != 0).ToList();
 
         return await unitOfWork.ExecuteWithRetryAsync(async () =>
         {

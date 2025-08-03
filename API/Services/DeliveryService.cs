@@ -29,19 +29,21 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
         if (client == null)
             throw new ApplicationException("errors.client-not-found");
 
-        // Ensure no duplicates
-        var dtoLines = dto.Lines.GroupBy(l => l.ProductId)
+        var lines = dto.Lines.GroupBy(l => l.ProductId)
             .Select(g => new DeliveryLineDto
             {
                 ProductId = g.Key,
                 Quantity = g.Sum(l => l.Quantity),
-            });
+            })
+            .Select(deliveryLineDto => new DeliveryLine
+            {
+                ProductId = deliveryLineDto.ProductId,
+                Quantity = deliveryLineDto.Quantity,
+            }).ToList();
 
-        var lines = dtoLines.Select(deliveryLineDto => new DeliveryLine
-        {
-            ProductId = deliveryLineDto.ProductId,
-            Quantity = deliveryLineDto.Quantity,
-        }).ToList();
+        var productLookup = (await unitOfWork.ProductRepository
+            .GetByIds(lines.Select(l => l.ProductId)))
+            .ToDictionary(p => p.Id, p => p);
 
         var delivery = new Delivery
         {
@@ -53,13 +55,16 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
             SystemMessages = [],
         };
         
-        var result = await stockService.UpdateStockBulkAsync(user, lines.Select(l => new UpdateStockDto
-        {
-            ProductId = l.ProductId,
-            Value = l.Quantity,
-            Operation = StockOperation.Remove,
-            // TODO: Reference and notes?
-        }).ToList());
+        var result = await stockService.UpdateStockBulkAsync(user, lines
+            .Where(l => productLookup[l.ProductId].IsTracked)
+            .Select(l => new UpdateStockDto 
+            { 
+                ProductId = l.ProductId, 
+                Value = l.Quantity, 
+                Operation = StockOperation.Remove, 
+                // TODO: Reference and notes?
+            })
+            .ToList());
 
         if (result.IsFailure)
         {
@@ -103,46 +108,44 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
             {
                 ProductId = g.Key,
                 Quantity = g.Sum(l => l.Quantity),
-            });
+            }).ToList();
         
         var linesLookup = delivery.Lines.ToDictionary(l => l.ProductId, l => l);
-        
-        var newLines = new List<DeliveryLine>();
-        var updates = new List<UpdateStockDto>();
-        
-        foreach (var deliveryLineDto in dtoLines)
-        {
-            if (linesLookup.TryGetValue(deliveryLineDto.ProductId, out var deliveryLine))
-            {
-                var diff = deliveryLineDto.Quantity - deliveryLine.Quantity;
-                if (diff != 0)
-                {
-                    updates.Add(new UpdateStockDto
-                    {
-                        ProductId = deliveryLine.ProductId,
-                        Value = Math.Abs(diff),
-                        Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
-                        Reference = $"Delivery {delivery.Id} update"
-                    });
-                }
-            }
-            else
-            {
-                updates.Add(new UpdateStockDto
-                {
-                    ProductId = deliveryLineDto.ProductId,
-                    Value = deliveryLineDto.Quantity,
-                    Operation = StockOperation.Remove,
-                    Reference = $"Delivery {delivery.Id} update"
-                });
-            }
+        var productLookup = (await unitOfWork.ProductRepository
+                .GetByIds(dtoLines.Select(l => l.ProductId)))
+            .ToDictionary(p => p.Id, p => p);
 
-            newLines.Add(new DeliveryLine
+        var newLines = dtoLines.Select(deliveryLineDto => new DeliveryLine
+        {
+            ProductId = deliveryLineDto.ProductId,
+            Quantity = deliveryLineDto.Quantity,
+        }).ToList();
+        
+        var updates = dtoLines
+            .Where(l => productLookup[l.ProductId].IsTracked)
+            .Select(l =>
             {
-                ProductId = deliveryLineDto.ProductId,
-                Quantity = deliveryLineDto.Quantity,
-            });
-        }
+                if (!linesLookup.TryGetValue(l.ProductId, out var deliveryLine))
+                {
+                    return new UpdateStockDto
+                    {
+                        ProductId = l.ProductId,
+                        Value = l.Quantity,
+                        Operation = StockOperation.Remove,
+                        Reference = $"Delivery {delivery.Id} update"
+                    };
+                }
+
+                var diff = l.Quantity - deliveryLine.Quantity;
+                return new UpdateStockDto
+                {
+                    ProductId = deliveryLine.ProductId,
+                    Value = Math.Abs(diff),
+                    Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
+                    Reference = $"Delivery {delivery.Id} update"
+                };
+            })
+            .ToList();
         
         var result = await stockService.UpdateStockBulkAsync(user, updates);
         if (result.IsFailure)

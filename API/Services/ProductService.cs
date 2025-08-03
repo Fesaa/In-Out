@@ -42,6 +42,16 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
         unitOfWork.ProductRepository.Add(product);
         await unitOfWork.CommitAsync();
 
+        var stock = new Stock
+        {
+            Name = product.Name,
+            Product = product,
+            Quantity = 0,
+        };
+        
+        unitOfWork.StockRepository.Add(stock);
+        await unitOfWork.CommitAsync();
+
         return mapper.Map<ProductDto>(product);
     }
 
@@ -123,6 +133,12 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
 
         unitOfWork.ProductRepository.Delete(product);
         await unitOfWork.CommitAsync();
+
+        if (product.Stock != null)
+        {
+            unitOfWork.StockRepository.Remove(product.Stock);
+            await unitOfWork.CommitAsync();
+        }
     }
     public async Task DeleteProductCategory(int id)
     {

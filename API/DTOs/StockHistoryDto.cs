@@ -10,6 +10,10 @@ public class StockHistoryDto
     
     public StockOperation Operation { get; set; }
     public int Value { get; set; }
+    public int QuantityBefore { get; set; }
+    public int QuantityAfter { get; set; }
+    public string? ReferenceNumber { get; set; }
+    public string? Notes { get; set; }
     
     public DateTime CreatedUtc { get; set; }
     public DateTime LastModifiedUtc { get; set; }

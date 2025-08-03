@@ -1,0 +1,31 @@
+
+<app-nav-bar></app-nav-bar>
+
+<div class="m-md-5 m-2" *transloco="let t; prefix: 'browse-stock'">
+
+  <app-table
+    [items]="stock()"
+    [trackByIdFunc]="trackStock"
+    [pageSize]="20"
+  >
+    <ng-template #header>
+      <tr>
+        <th class="table-header-cell">{{t('name')}}</th>
+        <th class="table-header-cell">{{t('description')}}</th>
+        <th class="table-header-cell">{{t('quantity')}}</th>
+        <th class="table-header-cell">{{t('created')}}</th>
+      </tr>
+    </ng-template>
+
+    <ng-template #cell let-stock>
+      <td class="table-cell">{{ stock.name }}</td>
+      <td class="table-cell">{{ stock.description }}</td>
+      <td class="table-cell">
+        <app-badge colour="primary">{{stock.quantity}}</app-badge>
+      </td>
+      <td class="table-cell">{{ stock.createdUtc ?? '—' }}</td>
+    </ng-template>
+  </app-table>
+
+
+</div>

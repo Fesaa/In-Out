@@ -28,6 +28,7 @@ public interface IStockRepository
     Task<StockDto?> GetDtoByIdAsync(int id, StockIncludes includes = StockIncludes.None);
 
     Task<IList<StockHistory>> GetHistory(int stockId);
+    Task<IList<StockHistoryDto>> GetHistoryDto(int stockId);
     
     void Add(Stock stock);
     void Add(StockHistory stockHistory);
@@ -113,6 +114,14 @@ public class StockRepository(DataContext ctx, IMapper mapper): IStockRepository
     {
         return await ctx.StockHistory
             .Where(s => s.StockId == stockId)
+            .ToListAsync();
+    }
+
+    public async Task<IList<StockHistoryDto>> GetHistoryDto(int stockId)
+    {
+        return await ctx.StockHistory
+            .Where(s => s.StockId == stockId)
+            .ProjectTo<StockHistoryDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
 
