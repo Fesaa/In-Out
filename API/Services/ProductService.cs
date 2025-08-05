@@ -133,12 +133,6 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
 
         unitOfWork.ProductRepository.Delete(product);
         await unitOfWork.CommitAsync();
-
-        if (product.Stock != null)
-        {
-            unitOfWork.StockRepository.Remove(product.Stock);
-            await unitOfWork.CommitAsync();
-        }
     }
     public async Task DeleteProductCategory(int id)
     {

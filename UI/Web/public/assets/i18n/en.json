@@ -79,6 +79,39 @@
     "created": "Created on"
   },
 
+  "browse-stock": {
+    "name": "Name",
+    "description": "Description",
+    "quantity": "Quantity",
+    "actions": "Actions"
+  },
+
+  "stock-history-modal": {
+    "title": "Stock history: {{name}}",
+    "close": "{{common.close}}",
+    "date": "Date",
+    "operation": "Operation",
+    "change": "Change",
+    "reference": "Reference",
+    "notes": "Notes",
+    "actions": "Actions",
+    "empty": "{{common.empty}}"
+  },
+
+  "edit-stock-modal": {
+    "title": "Edit stock: {{name}}",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "product-label": "Product",
+    "product-tooltip": "Assign a product to the stock, each product may only have one stock",
+    "name-label": "Name",
+    "name-tooltip": "The name of your stock, generally equal to your product",
+    "description-label": "Description",
+    "description-tooltip": "Additional info to identify your stock"
+  },
+
   "typeahead": {
     "placeholder": "Search...",
     "aria": {

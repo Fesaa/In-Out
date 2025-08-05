@@ -4,7 +4,7 @@
 <div class="m-md-5 m-2" *transloco="let t; prefix: 'browse-stock'">
 
   <app-table
-    [items]="stock()"
+    [items]="sortedStock()"
     [trackByIdFunc]="trackStock"
     [pageSize]="20"
   >
@@ -13,7 +13,7 @@
         <th class="table-header-cell">{{t('name')}}</th>
         <th class="table-header-cell">{{t('description')}}</th>
         <th class="table-header-cell">{{t('quantity')}}</th>
-        <th class="table-header-cell">{{t('created')}}</th>
+        <th class="table-header-cell">{{t('actions')}}</th>
       </tr>
     </ng-template>
 
@@ -23,7 +23,14 @@
       <td class="table-cell">
         <app-badge colour="primary">{{stock.quantity}}</app-badge>
       </td>
-      <td class="table-cell">{{ stock.createdUtc ?? '—' }}</td>
+      <td class="table-cell d-flex align-items-center gap-2">
+        <button class="btn btn-sm" (click)="viewHistory(stock)">
+          <i class="fas fa-history"></i>
+        </button>
+        <button class="btn btn-sm" (click)="editStock(stock)">
+          <i class="fas fa-edit"></i>
+        </button>
+      </td>
     </ng-template>
   </app-table>
 

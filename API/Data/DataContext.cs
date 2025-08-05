@@ -24,11 +24,6 @@ public class DataContext: DbContext
                 v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
                 v => JsonSerializer.Deserialize<List<SystemMessage>>(v, JsonSerializerOptions.Default) ?? new List<SystemMessage>()
             );
-        
-        builder.Entity<Stock>()
-            .HasOne(s => s.Product)
-            .WithOne(p => p.Stock)
-            .HasForeignKey<Stock>(s => s.ProductId);
     }
     
     public DbSet<ManualMigration> ManualMigrations { get; set; }

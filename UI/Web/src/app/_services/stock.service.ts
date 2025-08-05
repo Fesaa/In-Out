@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Stock} from '../_models/stock';
+import {Stock, StockHistory} from '../_models/stock';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,11 @@ export class StockService {
   }
 
   getHistory(stockId: number) {
-    return this.http.get(`${this.baseUrl}/history/${stockId}`);
+    return this.http.get<StockHistory[]>(`${this.baseUrl}history/${stockId}`);
+  }
+
+  update(stock: Stock) {
+    return this.http.put(`${this.baseUrl}`, stock);
   }
 
 }

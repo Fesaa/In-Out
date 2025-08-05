@@ -76,6 +76,19 @@ a:hover {
   }
 }
 
+.btn-amber {
+  color: var(--text-light);
+  box-shadow: 0 2px 4px var(--shadow-medium);
+  background-color: var(--amber);
+
+  &:hover:not(:disabled) {
+    color: var(--text-light);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px var(--shadow-medium);
+    background-color: var(--sage-green);
+  }
+}
+
 .warning-amber {
   border-left-color: var(--amber);
   background: linear-gradient(135deg, rgba(205, 133, 63, 0.05), rgba(205, 133, 63, 0.02));

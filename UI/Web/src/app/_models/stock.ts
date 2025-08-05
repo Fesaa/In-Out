@@ -1,8 +1,10 @@
+import {Product} from './product';
 
 
 export type Stock = {
   id: number;
   productId: number;
+  product: Product;
   quantity: number;
 
   name: string;

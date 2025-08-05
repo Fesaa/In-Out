@@ -1,0 +1,61 @@
+<ng-container *transloco="let t; prefix: 'stock-history-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title', {name: stock().name})}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+
+      @if (loading()) {
+        <app-loading-spinner size="large"></app-loading-spinner>
+      }
+
+      <app-table
+        [items]="history()"
+        [trackByIdFunc]="trackHistory"
+        [pageSize]="20"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">{{t('date')}}</th>
+            <th class="table-header-cell">{{t('operation')}}</th>
+            <th class="table-header-cell">{{t('change')}}</th>
+            <th class="table-header-cell">{{t('reference')}}</th>
+            <th class="table-header-cell">{{t('notes')}}</th>
+            <th class="table-header-cell">{{t('actions')}}</th>
+          </tr>
+        </ng-template>
+
+        <ng-template #cell let-history>
+          <td class="table-cell">{{ history.createdUtc | utcToLocalTime }}</td>
+          <td class="table-cell">{{ history.operation }}</td>
+          <td class="table-cell">
+            {{ history.quantityBefore }} => {{ history.quantityAfter }}
+          </td>
+          <td class="table-cell">
+            {{ history.referenceNumber | defaultValue }}
+          </td>
+          <td class="table-cell">
+            {{ history.notes | defaultValue }}
+          </td>
+          <td class="table-cell">
+            <div class="d-flex">
+              <button class="btn btn-sm">
+                <i class="fas fa-info"></i>
+              </button>
+            </div>
+          </td>
+        </ng-template>
+      </app-table>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('close')}}
+      </button>
+    </div>
+  </div>
+</ng-container>

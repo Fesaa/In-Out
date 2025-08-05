@@ -2,19 +2,14 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
+using API.Extensions;
 using API.Helpers;
 
 namespace API.Services;
 
 public interface IStockService
 {
-    /// <summary>
-    /// Update a specific stock on behalf of a user
-    /// </summary>
-    /// <param name="user"></param>
-    /// <param name="dto"></param>
-    /// <returns></returns>
-    Task<Result<Stock>> UpdateStockAsync(User user, UpdateStockDto dto);
+    Task UpdateStockAsync(StockDto dto);
     
     /// <summary>
     /// Update several stocks at once, one success if all of them do
@@ -27,56 +22,49 @@ public interface IStockService
 
 public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, ILocalizationService localization): IStockService
 {
-
-    public async Task<Result<Stock>> UpdateStockAsync(User user, UpdateStockDto dto)
+    public async Task UpdateStockAsync(StockDto dto)
     {
-        return await unitOfWork.ExecuteWithRetryAsync(async () =>
+        var stock = await unitOfWork.StockRepository.GetByIdAsync(dto.Id);
+        if (stock == null)
         {
-            var stock = await unitOfWork.StockRepository.GetForProduct(dto.ProductId);
-            if (stock == null)
+            throw new ApplicationException("errors.stock-not-found");
+        }
+
+        if (stock.Name.ToNormalized() != dto.Name.ToNormalized())
+        {
+            stock.Name = dto.Name;
+        }
+
+        if (stock.Description.ToNormalized() != dto.Description.ToNormalized())
+        {
+            stock.Description = dto.Description;
+        }
+
+        if (stock.ProductId != dto.ProductId)
+        {
+            var product = await unitOfWork.ProductRepository.GetById(dto.ProductId);
+            if (product == null)
             {
-                return Result<Stock>.Failure(await localization.Translate(user.Id, "stock-not-found", dto.ProductId));
+                throw new ApplicationException("errors.product-not-found");
             }
-
-            var currentQ = stock.Quantity;
-            var newQ = dto.Operation switch
+            
+            var other = await unitOfWork.StockRepository.GetDtoForProduct(dto.ProductId);
+            if (other != null)
             {
-                StockOperation.Add => stock.Quantity + dto.Value,
-                StockOperation.Remove => stock.Quantity - dto.Value,
-                StockOperation.Set => dto.Value,
-                _ => throw new ArgumentException($"Invalid stock operation ${dto.Operation}")
-            };
-
-            if (newQ < 0)
-            {
-                logger.LogWarning("{UserName} tried to update the stock to a negative value", user.Name);
-                return Result<Stock>.Failure(await localization.Translate(user.Id, "stock-insufficient-stock", dto.ProductId, stock.Quantity, dto.Value));
+                // TODO: Support several stocks per product; Need to update delivery 
+                throw new ApplicationException("errors.product-in-use");
             }
             
-            stock.Quantity = newQ;
+            stock.ProductId = product.Id;
+            stock.Product = product;
+        }
 
-            var history = new StockHistory
-            {
-                StockId = stock.Id,
-                UserId = user.Id,
-                Operation = dto.Operation,
-                QuantityBefore = currentQ,
-                QuantityAfter = newQ,
-                Value = dto.Value,
-                Notes = dto.Notes,
-                ReferenceNumber = dto.Reference,
-            };
-            
-            unitOfWork.StockRepository.Update(stock);
-            unitOfWork.StockRepository.Add(history);
-            
-            logger.LogDebug("Stock updated successfully. StockId: {StockId}, Change: {Change}, New Quantity: {NewQuantity}", 
-                stock.Id, dto.Value, stock.Quantity);
-            
-            return Result<Stock>.Success(stock);
-        });
+        if (unitOfWork.HasChanges())
+        {
+            await unitOfWork.CommitAsync();
+        }
     }
-    
+
     public async Task<Result<IList<Stock>>> UpdateStockBulkAsync(User user, IList<UpdateStockDto> dtos) 
     {
         if (dtos == null || !dtos.Any())
