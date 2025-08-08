@@ -10,6 +10,7 @@ import {StockHistoryModalComponent} from './_components/stock-history-modal/stoc
 import {DefaultModalOptions} from '../_models/default-modal-options';
 import {EditStockModalComponent} from './_components/edit-stock-modal/edit-stock-modal.component';
 import {UpdateStockModalComponent} from './_components/update-stock-modal/update-stock-modal.component';
+import {AuthService, Role} from '../_services/auth.service';
 
 @Component({
   selector: 'app-browse-stock',
@@ -25,6 +26,7 @@ import {UpdateStockModalComponent} from './_components/update-stock-modal/update
 })
 export class BrowseStockComponent implements OnInit {
 
+  protected readonly authService = inject(AuthService);
   private readonly stockService = inject(StockService);
   private readonly modalService = inject(ModalService);
 
@@ -69,5 +71,5 @@ export class BrowseStockComponent implements OnInit {
   }
 
 
-
+  protected readonly Role = Role;
 }

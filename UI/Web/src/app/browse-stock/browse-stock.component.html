@@ -23,16 +23,22 @@
       <td class="table-cell">
         <app-badge colour="primary">{{stock.quantity}}</app-badge>
       </td>
+
       <td class="table-cell d-flex align-items-center gap-2">
+
         <button class="btn btn-sm" (click)="viewHistory(stock)">
           <i class="fas fa-history"></i>
         </button>
-        <button class="btn btn-sm" (click)="editStock(stock)">
-          <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm" (click)="updateStock(stock)">
-          <i class="fas fa-pencil"></i>
-        </button>
+
+        @if (authService.roles().includes(Role.ManageStock)) {
+          <button class="btn btn-sm" (click)="editStock(stock)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn btn-sm" (click)="updateStock(stock)">
+            <i class="fas fa-pencil"></i>
+          </button>
+        }
+
       </td>
     </ng-template>
   </app-table>
