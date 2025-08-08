@@ -13,7 +13,17 @@
   "errors": {
     "generic": "An error has occurred",
     "no-fallback-category": "Cannot delete category while no fallback category exists",
-    "not-found": "Something was not found!"
+    "not-found": "Something was not found!",
+    "client-already-exists": "This client already exists",
+    "client-not-found": "Client not found",
+    "delivery-not-found": "Delivery not found",
+    "delivery-locked": "This delivery cannot be changed",
+    "cannot-change-recipient": "Cannot change recipient",
+    "stock-not-found": "Stock not found",
+    "product-not-found": "Product not found",
+    "product-in-use": "Product is tracked in stock",
+    "name-in-use": "This name is already being used",
+    "not-enough-categories": "Not enough categories referenced in your equest"
   },
 
   "confirm-modal": {

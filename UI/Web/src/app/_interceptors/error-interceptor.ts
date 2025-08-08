@@ -47,6 +47,22 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   private handleValidationError(error: any) {
+    const err = error.error;
+    if (err.hasOwnProperty('message') && err.message.trim() !== '') {
+      if (err.message != 'User is not authenticated' && error.message !== 'errors.user-not-auth') {
+        console.error('500 error: ', error);
+      }
+      this.toast(err.message);
+      return;
+    }
+    if (error.hasOwnProperty('message') && error.message.trim() !== '') {
+      if (error.message !== 'User is not authenticated' && error.message !== 'errors.user-not-auth') {
+        console.error('500 error: ', error);
+      }
+      return;
+    }
+
+
     if (Array.isArray(error.error)) {
       const modalStateErrors: any[] = [];
       if (error.error.length > 0 && error.error[0].hasOwnProperty('message')) {

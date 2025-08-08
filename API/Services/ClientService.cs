@@ -111,7 +111,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
     {
         var client = await unitOfWork.ClientRepository.GetClientById(id);
         if  (client == null)
-            throw new ApplicationException("errors.no-client-found");
+            throw new ApplicationException("errors.client-not-found");
         
         unitOfWork.ClientRepository.Delete(client);
         await unitOfWork.CommitAsync();

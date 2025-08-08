@@ -87,7 +87,7 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
             if (missingStockIds.Count != 0)
             {
                 return Result<IList<Stock>>.Failure(
-                    await localization.Translate(user.Id, "stock-bulk-stocks-not-found", string.Join(", ", missingStockIds))
+                    await localization.Translate(user.Id, "errors.stock-bulk-stocks-not-found", string.Join(", ", missingStockIds))
                 );
             }
 
@@ -109,7 +109,7 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
                     logger.LogWarning("{UserName} tried to update stock {StockId} to a negative value in bulk operation", 
                         user.Name, dto.ProductId);
                     return Result<IList<Stock>>.Failure(
-                        await localization.Translate(user.Id, "stock-bulk-insufficient-stock", dto.ProductId, stock.Quantity, dto.Value)
+                        await localization.Translate(user.Id, "errors.stock-bulk-insufficient-stock", dto.ProductId, stock.Quantity, dto.Value)
                     );
                 }
                 

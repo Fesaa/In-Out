@@ -23,7 +23,7 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
     {
         var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId);
         if (user == null)
-            throw new ApplicationException("user.client-not-found");
+            throw new ApplicationException("errors.client-not-found");
         
         var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId);
         if (client == null)

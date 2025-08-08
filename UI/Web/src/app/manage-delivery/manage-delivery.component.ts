@@ -279,7 +279,7 @@ export class ManageDeliveryComponent implements OnInit {
       },
       error: err => {
         console.error(err);
-        this.toastr.error(translate("manage-delivery.failed"), err);
+        this.toastr.error(translate("manage-delivery.failed"));
         this.submitting.set(false);
       }
     })
