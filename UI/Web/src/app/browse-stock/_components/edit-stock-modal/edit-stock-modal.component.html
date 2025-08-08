@@ -41,7 +41,7 @@
             @if (stockForm.get('product'); as control) {
               <app-settings-item [control]="control" [title]="t('product-label')" [subtitle]="t('product-tooltip')" [canEdit]="false" [showEdit]="false">
                 <ng-template #view>
-                  <app-type-ahead [settings]="productTypeaheadSettings" (selectedData)="onItemSelect($event)" />
+                  <app-type-ahead [locked]="true" [settings]="productTypeaheadSettings" />
                 </ng-template>
               </app-settings-item>
             }

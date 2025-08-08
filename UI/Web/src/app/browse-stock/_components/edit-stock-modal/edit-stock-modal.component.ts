@@ -53,9 +53,6 @@ export class EditStockModalComponent implements OnInit {
     const stock = this.stock();
 
     const data: Stock = this.stockForm.value as Stock;
-
-    stock.product = data.product;
-    stock.productId = data.product.id;
     stock.name = data.name;
     stock.description = data.description;
 
@@ -70,11 +67,6 @@ export class EditStockModalComponent implements OnInit {
     }).add(() => this.saving.set(false));
   }
 
-  onItemSelect(product: Product[] | Product) {
-    console.log("updating product", product);
-    this.stockForm.get('product')!.setValue(product as Product);
-  }
-
   ngOnInit(): void {
     this.productService.allProducts(true).subscribe((products) => {
       this.products.set(products);
@@ -83,10 +75,6 @@ export class EditStockModalComponent implements OnInit {
     const stock = this.stock();
 
     this.productTypeaheadSettings = new TypeaheadSettings<Product>();
-    this.productTypeaheadSettings.multiple = false;
-    this.productTypeaheadSettings.fetchFn = (f) => of(this.products().filter(p => {
-      return p.name.toLowerCase().includes(f.toLowerCase());
-    }));
     this.productTypeaheadSettings.savedData = stock.product;
 
     this.stockForm = this.fb.group({

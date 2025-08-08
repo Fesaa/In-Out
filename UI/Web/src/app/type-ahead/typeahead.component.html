@@ -31,21 +31,28 @@
     }
 
     <div class="input-wrapper">
-      <input
-        #input
-        type="text"
-        class="typeahead-input"
-        [id]="settings().id"
-        [disabled]="disabled() || locked()"
-        [formControl]="searchControl"
-        [placeholder]="t('placeholder')"
-        (focus)="onFocus()"
-        (blur)="onBlur()"
-        (keydown)="onKeyDown($event)"
-        [attr.aria-expanded]="showDropdown()"
-        [attr.aria-haspopup]="true"
-        [attr.aria-autocomplete]="'list'"
-        role="combobox">
+
+      @if (disabled() || locked()) {
+        <div class="typeahead-input">
+          {{searchControl.value}}
+        </div>
+      } @else {
+        <input
+          #input
+          type="text"
+          class="typeahead-input"
+          [id]="settings().id"
+          [disabled]="disabled() || locked()"
+          [formControl]="searchControl"
+          [placeholder]="t('placeholder')"
+          (focus)="onFocus()"
+          (blur)="onBlur()"
+          (keydown)="onKeyDown($event)"
+          [attr.aria-expanded]="showDropdown()"
+          [attr.aria-haspopup]="true"
+          [attr.aria-autocomplete]="'list'"
+          role="combobox">
+      }
 
       @if (settings().showLocked) {
         <button
