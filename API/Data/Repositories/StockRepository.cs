@@ -121,6 +121,7 @@ public class StockRepository(DataContext ctx, IMapper mapper): IStockRepository
     {
         return await ctx.StockHistory
             .Where(s => s.StockId == stockId)
+            .OrderByDescending(s => s.CreatedUtc)
             .ProjectTo<StockHistoryDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }

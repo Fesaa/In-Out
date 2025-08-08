@@ -33,3 +33,13 @@ export enum StockOperation {
   Remove = 1,
   Set = 2,
 }
+
+export type UpdateStock = {
+  productId: number;
+  operation: StockOperation;
+  value: number;
+  notes: string;
+  reference?: string;
+}
+
+export const AllStocksOperations: StockOperation[] = [StockOperation.Add, StockOperation.Remove, StockOperation.Set];

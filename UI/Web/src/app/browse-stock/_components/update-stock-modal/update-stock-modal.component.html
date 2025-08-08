@@ -1,0 +1,85 @@
+<ng-container *transloco="let t; prefix: 'update-stock-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title', {name: stock().name})}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+
+
+      <form [formGroup]="updateForm" class="row g-0 mb-2">
+
+        <div class="col-md-6 col-sm-12 mt-2">
+          @if (updateForm.get('operation'); as control) {
+            <app-settings-item [control]="control" [title]="t('operation-label')" [subtitle]="t('operation-tooltip')">
+              <ng-template #view>
+                {{control.value | stockOperation}}
+              </ng-template>
+              <ng-template #edit>
+                <select class="form-select" formControlName="operation">
+                  @for (op of AllStocksOperations; track op) {
+                    <option [ngValue]="op">{{op | stockOperation}}</option>
+                  }
+                </select>
+              </ng-template>
+            </app-settings-item>
+          }
+        </div>
+
+        <div class="col-md-6 col-sm-12 mt-2">
+          @if (updateForm.get('value'); as control) {
+            <app-settings-item [control]="control" [title]="t('value-label')" [subtitle]="t('value-tooltip')">
+              <ng-template #view>
+                {{control.value}}
+              </ng-template>
+              <ng-template #edit>
+                <input type="number" formControlName="value" class="form-input form-control">
+              </ng-template>
+            </app-settings-item>
+          }
+        </div>
+
+        <div class="col-md-12 col-sm-12 mt-2">
+          @if (updateForm.get('reference'); as control) {
+            <app-settings-item [control]="control" [title]="t('reference-label')" [subtitle]="t('reference-tooltip')">
+              <ng-template #view>
+                {{control.value | defaultValue}}
+              </ng-template>
+              <ng-template #edit>
+                <input type="text" formControlName="reference" class="form-input form-control">
+              </ng-template>
+            </app-settings-item>
+          }
+        </div>
+
+        <div class="col-md-12 col-sm-12 mt-2">
+          @if (updateForm.get('notes'); as control) {
+            <app-settings-item [control]="control" [title]="t('notes-label')" [subtitle]="t('notes-tooltip')">
+              <ng-template #view>
+                {{control.value | defaultValue}}
+              </ng-template>
+              <ng-template #edit>
+                <textarea type="text" formControlName="notes" class="form-input form-control">
+                </textarea>
+              </ng-template>
+            </app-settings-item>
+          }
+        </div>
+
+      </form>
+
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('close')}}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="save()">
+        {{t('save')}}
+      </button>
+    </div>
+  </div>
+</ng-container>

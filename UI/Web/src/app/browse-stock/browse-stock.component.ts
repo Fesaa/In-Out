@@ -9,6 +9,7 @@ import {ModalService} from '../_services/modal.service';
 import {StockHistoryModalComponent} from './_components/stock-history-modal/stock-history-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
 import {EditStockModalComponent} from './_components/edit-stock-modal/edit-stock-modal.component';
+import {UpdateStockModalComponent} from './_components/update-stock-modal/update-stock-modal.component';
 
 @Component({
   selector: 'app-browse-stock',
@@ -37,9 +38,13 @@ export class BrowseStockComponent implements OnInit {
   }));
 
   ngOnInit(): void {
+    this.load();
+  }
+
+  private load() {
     this.stockService.getAll().subscribe(stocks => {
       this.stock.set(stocks);
-    })
+    });
   }
 
   trackStock(idx: number, stock: Stock) {
@@ -54,6 +59,13 @@ export class BrowseStockComponent implements OnInit {
   editStock(stock: Stock) {
     const [modal, component] = this.modalService.open(EditStockModalComponent, DefaultModalOptions);
     component.stock.set(stock);
+  }
+
+  updateStock(stock: Stock) {
+    const [modal, component] = this.modalService.open(UpdateStockModalComponent, DefaultModalOptions);
+    component.stock.set(stock);
+
+    modal.result.then(() => this.load());
   }
 
 

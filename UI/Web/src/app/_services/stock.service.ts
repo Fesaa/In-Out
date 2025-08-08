@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {Stock, StockHistory} from '../_models/stock';
+import {Stock, StockHistory, UpdateStock} from '../_models/stock';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,10 @@ export class StockService {
 
   update(stock: Stock) {
     return this.http.put(`${this.baseUrl}`, stock);
+  }
+
+  doOperation(dto: UpdateStock) {
+    return this.http.post(`${this.baseUrl}`, dto);
   }
 
 }

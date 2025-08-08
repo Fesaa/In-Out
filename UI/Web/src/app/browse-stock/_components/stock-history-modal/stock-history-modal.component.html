@@ -30,7 +30,7 @@
 
         <ng-template #cell let-history>
           <td class="table-cell">{{ history.createdUtc | utcToLocalTime }}</td>
-          <td class="table-cell">{{ history.operation }}</td>
+          <td class="table-cell">{{ history.operation | stockOperation}}</td>
           <td class="table-cell">
             {{ history.quantityBefore }} => {{ history.quantityAfter }}
           </td>

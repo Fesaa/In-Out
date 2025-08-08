@@ -10,6 +10,7 @@ import {BadgeComponent} from '../../../shared/components/badge/badge.component';
 import {TableComponent} from '../../../shared/components/table/table.component';
 import {UtcToLocalTimePipe} from '../../../_pipes/utc-to-local-time.pipe';
 import {DefaultValuePipe} from '../../../_pipes/default-value.pipe';
+import {StockOperationPipe} from '../../../_pipes/stock-operation-pipe';
 
 @Component({
   selector: 'app-stock-history-modal',
@@ -21,7 +22,8 @@ import {DefaultValuePipe} from '../../../_pipes/default-value.pipe';
     BadgeComponent,
     TableComponent,
     UtcToLocalTimePipe,
-    DefaultValuePipe
+    DefaultValuePipe,
+    StockOperationPipe
   ],
   templateUrl: './stock-history-modal.component.html',
   styleUrl: './stock-history-modal.component.scss',

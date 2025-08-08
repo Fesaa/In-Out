@@ -112,6 +112,28 @@
     "description-tooltip": "Additional info to identify your stock"
   },
 
+  "update-stock-modal": {
+    "title": "Update stock: {{name}}",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "operation-label": "Operation",
+    "operation-tooltip": "The operation to enact on the select stop. Add, remove, set",
+    "value-label": "Value",
+    "value-tooltip": "The value to use in the operation",
+    "notes-label": "Notes",
+    "notes-tooltip": "Optional notes on why this update had to happen",
+    "reference-label": "Reference",
+    "reference-tooltip": "Optional reference to what causes the change to happen, will be auto generated for you if left empty"
+  },
+
+  "stock-operation-pipe": {
+    "add": "Add",
+    "remove": "Remove",
+    "set": "Set"
+  },
+
   "typeahead": {
     "placeholder": "Search...",
     "aria": {
