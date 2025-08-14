@@ -8,6 +8,12 @@ namespace API.Controllers;
 
 public class ClientController(IUnitOfWork unitOfWork, IClientService clientService, IMapper mapper) : BaseApiController
 {
+    
+    [HttpPost("by-id")]
+    public async Task<ActionResult<IList<ClientDto>>> GetClientDtosByIds(IList<int> ids)
+    {
+        return Ok(await unitOfWork.ClientRepository.GetClientDtosByIds(ids));
+    }
 
     /// <summary>
     /// Get all clients

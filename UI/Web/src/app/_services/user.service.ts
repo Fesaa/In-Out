@@ -19,4 +19,8 @@ export class UserService {
     return this.httpClient.get<User[]>(this.baseUrl + '/search?query=' + query);
   }
 
+  getByIds(ids: number[]) {
+    return this.httpClient.post<User[]>(`${this.baseUrl}/by-id`, ids)
+  }
+
 }

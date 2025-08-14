@@ -27,6 +27,10 @@ export class ProductService {
     return this.http.get<Product>(`${this.baseUrl}${id}`);
   }
 
+  getByIds(ids: number[]) {
+    return this.http.post<Product[]>(`${this.baseUrl}by-id`, ids)
+  }
+
   createProduct(product: Product): Observable<void> {
     return this.http.post<void>(this.baseUrl, product);
   }

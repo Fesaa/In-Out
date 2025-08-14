@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, inject, OnInit, Output} from '@angular/core';
 import {
-  AllFilterComparisons,
-  AllFilterFields, AllSortFields,
+  AllFilterFields,
+  AllSortFields,
   deserializeFilterFromQuery,
   Filter,
   FilterCombination,
@@ -12,11 +12,9 @@ import {
   SortField
 } from '../_models/filter';
 import {FormArray, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {DeliveryService} from '../_services/delivery.service';
+import {Router} from '@angular/router';
 import {FilterService} from '../_services/filter.service';
-import {ToastrService} from 'ngx-toastr';
-import {catchError, debounceTime, distinctUntilChanged, of, tap} from 'rxjs';
+import {catchError, debounceTime, distinctUntilChanged, map, of, tap} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FilterComparisonPipe} from '../_pipes/filter-comparison-pipe';
 import {FilterFieldPipe} from '../_pipes/filter-field-pipe';
@@ -24,6 +22,8 @@ import {TypeaheadComponent} from '../type-ahead/typeahead.component';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {SortFieldPipe} from '../_pipes/sort-field-pipe';
 import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
+import {UserService} from '../_services/user.service';
+import {AsyncPipe} from '@angular/common';
 
 export type FilterStatementFormGroup = FormGroup<{
   comparison: FormControl<FilterComparison>,
@@ -40,7 +40,8 @@ export type FilterStatementFormGroup = FormGroup<{
     TypeaheadComponent,
     TranslocoDirective,
     SortFieldPipe,
-    SettingsItemComponent
+    SettingsItemComponent,
+    AsyncPipe
   ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
@@ -50,6 +51,7 @@ export class FilterComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly userService = inject(UserService);
   protected readonly filterService = inject(FilterService);
 
   @Output() search = new EventEmitter<Filter>();
@@ -76,7 +78,6 @@ export class FilterComponent implements OnInit {
       tap(() => {
         const filter = this.filterForm.value as Filter;
         const query = serializeFilterToQuery(filter);
-        console.log(query)
 
         this.router.navigateByUrl(`${this.router.url.split('?')[0]}?${query}`, { replaceUrl: true });
       }), catchError(err => {
@@ -87,18 +88,17 @@ export class FilterComponent implements OnInit {
 
   ngOnInit(): void {
     const query = this.router.url.split('?')[1] ?? '';
-    if (!query) {
-      this.submit();
-      return;
-    }
+    const filter$ = query
+      ? of(deserializeFilterFromQuery(query))
+      : this.loadDefaultFilter();
 
-    const filter = deserializeFilterFromQuery(query);
-    filter.statements.forEach(() => {
-      this.addFilterStatement();
-    });
-
-    this.filterForm.setValue(filter);
-    this.submit();
+    filter$.pipe(
+      tap(filter => filter.statements.forEach(() => {
+        this.addFilterStatement();
+      })),
+      tap((filter) => this.filterForm.setValue(filter)),
+      tap(() => this.submit()),
+    ).subscribe();
   }
 
   addFilterStatement() {
@@ -134,6 +134,28 @@ export class FilterComponent implements OnInit {
 
   toggleAscension() {
     this.filterForm.get('sortOptions.isAscending')?.setValue(!this.filterForm.get('sortOptions.isAscending')?.value)
+  }
+
+  private loadDefaultFilter() {
+    return this.userService.currentUser().pipe(
+      map(user => {
+        return {
+          limit: 0,
+          sortOptions: {
+            sortField: SortField.CreationDate,
+            isAscending: true,
+          },
+          combination: FilterCombination.And,
+          statements: [
+            {
+              field: FilterField.From,
+              comparison: FilterComparison.Equals,
+              value: user.id+'',
+            },
+          ],
+        } as Filter
+      })
+    );
   }
 
   submit() {

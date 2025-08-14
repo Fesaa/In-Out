@@ -9,6 +9,12 @@ namespace API.Controllers;
 public class UserController(IUnitOfWork unitOfWork, IUserService userService, IMapper mapper): BaseApiController
 {
 
+    [HttpPost("by-id")]
+    public async Task<ActionResult<IList<UserDto>>> GetByIds(IList<int> ids)
+    {
+        return Ok(await unitOfWork.UsersRepository.GetByIds(ids));
+    }
+
     [HttpGet]
     public async Task<ActionResult<UserDto>> CurrentUser()
     {

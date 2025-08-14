@@ -9,6 +9,12 @@ namespace API.Controllers;
 public class ProductsController(IUnitOfWork unitOfWork, IProductService productService): BaseApiController
 {
 
+    [HttpPost("by-ids")]
+    public async Task<ActionResult<IList<ProductDto>>> GetProductsByIds(IList<int> ids)
+    {
+        return Ok(await unitOfWork.ProductRepository.GetDtoByIds(ids));
+    }
+
     /// <summary>
     /// Retrieve all products
     /// </summary>

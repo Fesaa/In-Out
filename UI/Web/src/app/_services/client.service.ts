@@ -23,6 +23,10 @@ export class ClientService {
     return this.http.get<Client>(`${this.baseUrl}${id}`);
   }
 
+  getByIds(ids: number[]) {
+    return this.http.post<Client[]>(`${this.baseUrl}by-id`, ids)
+  }
+
   create(dto: Client): Observable<void> {
     return this.http.post<void>(this.baseUrl, dto);
   }

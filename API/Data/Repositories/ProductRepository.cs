@@ -12,6 +12,7 @@ public interface IProductRepository
 {
     Task<Product?> GetById(int id);
     Task<IList<Product>> GetByIds(IEnumerable<int> ids);
+    Task<IList<ProductDto>> GetDtoByIds(IEnumerable<int> ids);
     Task<ProductCategory?> GetCategoryById(int id);
     Task<Product?> GetByName(string name);
     Task<ProductCategory?> GetFirstCategory();
@@ -41,6 +42,14 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
     public async Task<IList<Product>> GetByIds(IEnumerable<int> ids)
     {
         return await ctx.Products.Where(p => ids.Contains(p.Id)).ToListAsync();
+    }
+
+    public async Task<IList<ProductDto>> GetDtoByIds(IEnumerable<int> ids)
+    {
+        return await ctx.Products
+            .Where(p => ids.Contains(p.Id))
+            .ProjectTo<ProductDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 
     public async Task<ProductCategory?> GetCategoryById(int id)

@@ -14,6 +14,7 @@ public interface IClientRepository
     Task<ClientDto?> GetClientDtoById(int id);
     Task<IList<Client>> GetClients();
     Task<IList<ClientDto>> GetClientDtos();
+    Task<IList<ClientDto>> GetClientDtosByIds(IList<int> ids);
     Task<IList<ClientDto>> SearchClients(string search);
     
     void Add(Client client);
@@ -54,6 +55,14 @@ public class ClientRepository(DataContext ctx, IMapper mapper): IClientRepositor
     public async Task<IList<ClientDto>> GetClientDtos()
     {
         return await ctx.Clients
+            .ProjectTo<ClientDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
+
+    public async Task<IList<ClientDto>> GetClientDtosByIds(IList<int> ids)
+    {
+        return await ctx.Clients
+            .Where(c => ids.Contains(c.Id))
             .ProjectTo<ClientDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }

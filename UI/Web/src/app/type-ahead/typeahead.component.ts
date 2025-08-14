@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, computed,
   ContentChild, DestroyRef, effect, ElementRef,
   EventEmitter,
@@ -9,7 +9,17 @@ import {
   Output, signal, TemplateRef,
   ViewChild
 } from '@angular/core';
-import {catchError, debounceTime, distinctUntilChanged, Observable, of, startWith, Subject, switchMap} from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged, filter,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  take, tap
+} from 'rxjs';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NgTemplateOutlet} from '@angular/common';
@@ -38,6 +48,10 @@ export class TypeaheadSettings<T>  {
    * Data to preload the typeahead with on first load
    */
   savedData!: T[] | T;
+  /**
+   * An observable that can be called to load saved data
+   */
+  preLoadMethod?: Observable<T[] | T | undefined>;
   /**
    * Function to compare the elements. Should return all elements that fit the matching criteria.
    * This is only used with non-Observable based fetchFn, but must be defined for all uses of typeahead.
@@ -195,16 +209,28 @@ export class TypeaheadComponent<T> implements OnInit {
       });
   }
 
+  private setSavedData(settings: TypeaheadSettings<T>, data: T[] | T) {
+    if (settings.multiple && Array.isArray(data)) {
+      this.selectedItems.set([...data]);
+    } else if (!settings.multiple && !Array.isArray(data)) {
+      this.selectedItems.set([data]);
+
+      const displayData = this.getDisplayText(data);
+      this.searchControl.setValue(displayData);
+    }
+  }
+
   ngOnInit(): void {
     const settings = this.settings();
 
     if (settings.savedData) {
-      if (settings.multiple && Array.isArray(settings.savedData)) {
-        this.selectedItems.set([...settings.savedData]);
-      } else if (!settings.multiple && !Array.isArray(settings.savedData)) {
-        this.selectedItems.set([settings.savedData]);
-        this.searchControl.setValue(this.getDisplayText(settings.savedData));
-      }
+      this.setSavedData(settings, settings.savedData);
+    } else if (settings.preLoadMethod) {
+      settings.preLoadMethod.pipe(
+        take(1),
+        filter(data => !!data),
+        tap(data => this.setSavedData(settings, data!)))
+        .subscribe();
     }
 
     // Setup form control if provided

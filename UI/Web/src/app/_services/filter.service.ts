@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {FilterComparison, FilterField, FilterInputType} from '../_models/filter';
 import {TypeaheadSettings} from '../type-ahead/typeahead.component';
 import {ClientService} from './client.service';
-import {map, Observable, of} from 'rxjs';
+import {forkJoin, map, Observable, of, tap} from 'rxjs';
 import {UserService} from './user.service';
 import {ProductService} from './product.service';
 import {DeliveryStatePipe} from '../_pipes/delivery-state-pipe';
@@ -22,15 +22,15 @@ export class FilterService {
   private readonly productService = inject(ProductService);
   private readonly deliveryStatePipe = inject(DeliveryStatePipe);
 
-  getTypeaheadSettings(group: FilterStatementFormGroup): TypeaheadSettings<any> {
+  getTypeaheadSettings(group: FilterStatementFormGroup): TypeaheadSettings<unknown> {
     const comparison = group.get('comparison')!.value;
 
     const settings = new TypeaheadSettings();
     settings.multiple = this.isMultiComparison(comparison);
     settings.unique = true;
     settings.minCharacters = 0;
+    settings.preLoadMethod = this.fromFormValue(group);
     settings.fetchFn = this.fetchFn(group);
-
 
     return settings;
   }
@@ -184,5 +184,40 @@ export class FilterService {
 
     }
   }
+
+  private fromFormValue(group: FilterStatementFormGroup): Observable<unknown> {
+    const field = group.get('field')!.value;
+    const comparison = group.get('comparison')!.value;
+    const value = group.get('value')!.value;
+    if (!value) return of();
+
+    const isMulti = this.isMultiComparison(comparison);
+    const ids = isMulti ? value.split(',') : [value];
+
+    const multiTransformer$ = map((data: any[]) => {
+      if (isMulti) return data;
+
+      return data.length > 0 ? data[0] : undefined;
+    });
+
+    switch (field) {
+      case FilterField.Recipient:
+        return this.clientService.getByIds(ids.map(id => parseInt(id))).pipe(multiTransformer$);
+      case FilterField.From:
+        return this.userService.getByIds(ids.map(id => parseInt(id))).pipe(multiTransformer$);
+      case FilterField.DeliveryState:
+        return of(ids.map(v => parseInt(v) as DeliveryState)).pipe(multiTransformer$);
+      case FilterField.Products:
+        return this.productService.getByIds(ids.map(id => parseInt(id))).pipe(multiTransformer$);
+      case FilterField.LastModified:
+      case FilterField.Created:
+        return of(new Date(value));
+
+      case FilterField.Lines:
+        return of(Number(value));
+    }
+
+  }
+
 
 }

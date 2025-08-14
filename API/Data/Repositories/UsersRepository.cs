@@ -10,6 +10,7 @@ namespace API.Data.Repositories;
 
 public interface IUsersRepository
 {
+    Task<IList<UserDto>> GetByIds(IList<int> ids);
     Task<IList<UserDto>> GetAll();
     Task<IList<UserDto>> Search(string query);
     
@@ -25,6 +26,14 @@ public interface IUsersRepository
 
 public class UsersRepository(DataContext context, IMapper mapper): IUsersRepository
 {
+
+    public async Task<IList<UserDto>> GetByIds(IList<int> ids)
+    {
+        return await context.Users
+            .Where(u => ids.Contains(u.Id))
+            .ProjectTo<UserDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
+    }
 
     public async Task<IList<UserDto>> GetAll()
     {

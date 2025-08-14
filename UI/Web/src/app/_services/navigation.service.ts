@@ -116,7 +116,7 @@ export class NavigationService {
     return this._items.filter(item => this.canAccess(item, roles));
   });
 
-  public showNavBar = signal(false);
+  public showNavBar = signal(true);
 
   private canAccess(item: NavigationItem, roles: Role[]): boolean {
     if (item.requiredRoles.length === 0 && (!item.blacklistedRoles || item.blacklistedRoles.length === 0)) {
