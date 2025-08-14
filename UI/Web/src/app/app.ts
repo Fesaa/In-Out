@@ -3,10 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import {AuthService} from './_services/auth.service';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {TranslocoModule, TranslocoService} from '@jsverse/transloco';
+import {NavBarComponent} from './nav-bar/nav-bar.component';
+import {NavigationService} from './_services/navigation.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TranslocoModule],
+  imports: [RouterOutlet, TranslocoModule, NavBarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
@@ -15,6 +17,7 @@ export class App implements OnInit {
 
   protected readonly oidcService = inject(AuthService);
   private readonly transLoco = inject(TranslocoService);
+  protected readonly navService = inject(NavigationService);
 
   ngOnInit(): void {
     this.updateVh();

@@ -9,7 +9,6 @@ import {DeliveryStatePipe} from '../_pipes/delivery-state-pipe';
 import {BadgeComponent} from '../shared/components/badge/badge.component';
 import {ToastrService} from 'ngx-toastr';
 import {FilterComponent} from '../filter/filter.component';
-import {NavBarComponent} from '../nav-bar/nav-bar.component';
 import {UtcToLocalTimePipe} from '../_pipes/utc-to-local-time.pipe';
 
 @Component({
@@ -21,7 +20,6 @@ import {UtcToLocalTimePipe} from '../_pipes/utc-to-local-time.pipe';
     DeliveryStatePipe,
     BadgeComponent,
     FilterComponent,
-    NavBarComponent,
     UtcToLocalTimePipe,
   ],
   templateUrl: './browse-deliveries.component.html',

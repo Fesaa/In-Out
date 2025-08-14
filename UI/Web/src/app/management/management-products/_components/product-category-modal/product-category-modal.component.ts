@@ -8,13 +8,13 @@ import {
   model,
   OnInit, signal
 } from '@angular/core';
-import {ProductCategory} from '../../../../../_models/product';
+import {ProductCategory} from '../../../../_models/product';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {ProductService} from '../../../../../_services/product.service';
+import {ProductService} from '../../../../_services/product.service';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {SettingsItemComponent} from '../../../../../shared/components/settings-item/settings-item.component';
-import {LoadingSpinnerComponent} from '../../../../../shared/components/loading-spinner/loading-spinner.component';
+import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
+import {LoadingSpinnerComponent} from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-product-category-modal',

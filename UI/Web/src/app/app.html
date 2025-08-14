@@ -1,3 +1,8 @@
 <div *transloco="let t;">
+
+  @if (navService.showNavBar()) {
+    <app-nav-bar></app-nav-bar>
+  }
+
   <router-outlet></router-outlet>
 </div>

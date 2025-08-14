@@ -15,11 +15,10 @@ import {ClientService} from '../_services/client.service';
 import {User} from '../_models/user';
 import {AuthService, Role} from '../_services/auth.service';
 import {ToastrService} from 'ngx-toastr';
-import {NavBarComponent} from '../nav-bar/nav-bar.component';
 
 @Component({
   selector: 'app-manage-delivery',
-  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, NavBarComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink],
   templateUrl: './manage-delivery.component.html',
   styleUrl: './manage-delivery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

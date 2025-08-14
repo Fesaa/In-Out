@@ -1,12 +1,12 @@
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {TranslocoDirective} from "@jsverse/transloco";
-import {ModalService} from '../../../_services/modal.service';
-import {Client} from '../../../_models/client';
-import {ClientService} from '../../../_services/client.service';
-import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
-import {TableComponent} from '../../../shared/components/table/table.component';
+import {ModalService} from '../../_services/modal.service';
+import {Client} from '../../_models/client';
+import {ClientService} from '../../_services/client.service';
+import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/loading-spinner.component';
+import {TableComponent} from '../../shared/components/table/table.component';
 import {ClientModalComponent} from './_components/client-modal/client-modal.component';
-import {DefaultModalOptions} from '../../../_models/default-modal-options';
+import {DefaultModalOptions} from '../../_models/default-modal-options';
 
 @Component({
   selector: 'app-management-clients',

@@ -1,11 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, model, OnInit, signal} from '@angular/core';
 import {TranslocoDirective} from '@jsverse/transloco';
-import {LoadingSpinnerComponent} from '../../../../../shared/components/loading-spinner/loading-spinner.component';
-import {Client} from '../../../../../_models/client';
+import {LoadingSpinnerComponent} from '../../../../shared/components/loading-spinner/loading-spinner.component';
+import {Client} from '../../../../_models/client';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ModalDismissReasons, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {ClientService} from '../../../../../_services/client.service';
-import {SettingsItemComponent} from '../../../../../shared/components/settings-item/settings-item.component';
+import {ClientService} from '../../../../_services/client.service';
+import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
 
 @Component({
   selector: 'app-client-modal',

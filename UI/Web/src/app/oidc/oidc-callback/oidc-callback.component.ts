@@ -4,6 +4,7 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {AuthService} from '../../_services/auth.service';
 import {Router} from '@angular/router';
 import {AuthGuard} from '../../_guards/auth-guard';
+import {NavigationService} from '../../_services/navigation.service';
 
 @Component({
   selector: 'app-oidc-callback',
@@ -15,9 +16,10 @@ import {AuthGuard} from '../../_guards/auth-guard';
   styleUrl: './oidc-callback.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OidcCallbackComponent implements OnInit{
+export class OidcCallbackComponent implements OnInit {
 
   private readonly authService = inject(AuthService);
+  private readonly navService = inject(NavigationService);
   private readonly router = inject(Router);
 
   showErrorMessage = signal(false);
@@ -31,6 +33,8 @@ export class OidcCallbackComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    this.navService.showNavBar.set(false);
+
     setTimeout(() => {
       if (!this.authService.isAuthenticated()) {
         this.showErrorMessage.set(true);

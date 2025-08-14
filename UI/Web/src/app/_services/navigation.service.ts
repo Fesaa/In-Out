@@ -1,4 +1,4 @@
-import {computed, inject, Injectable} from '@angular/core';
+import {computed, inject, Injectable, signal} from '@angular/core';
 import {AuthService, Role} from './auth.service';
 
 export enum ManagementSettingsId {
@@ -80,11 +80,25 @@ export class NavigationService {
       routerLink: '/stock/browse'
     },
     {
-      id: NavigationsId.Management,
-      translationKey: 'navigation.items.management',
-      icon: 'fas fa-cogs',
+      id: ManagementSettingsId.Products,
+      translationKey: 'navigation.management.items.products',
+      icon: 'fas fa-boxes-stacked',
+      requiredRoles: [Role.ManageStock],
+      routerLink: '/management/products'
+    },
+    {
+      id: ManagementSettingsId.Clients,
+      translationKey: 'navigation.management.items.clients',
+      icon: 'fas fa-users',
+      requiredRoles: [],
+      routerLink: '/management/clients'
+    },
+    {
+      id: ManagementSettingsId.Server,
+      translationKey: 'navigation.management.items.server',
+      icon: 'fas fa-server',
       requiredRoles: [Role.ManageApplication],
-      routerLink: '/management'
+      routerLink: '/management/server'
     },
     {
       id: NavigationsId.Logout,
@@ -96,43 +110,13 @@ export class NavigationService {
       }
     }
   ];
-  private _managementItems: NavigationItem[] = [
-    {
-      id: ManagementSettingsId.Overview,
-      translationKey: 'navigation.management.items.overview',
-      icon: 'fas fa-gauge',
-      requiredRoles: [],
-    },
-    {
-      id: ManagementSettingsId.Products,
-      translationKey: 'navigation.management.items.products',
-      icon: 'fas fa-boxes-stacked',
-      requiredRoles: [Role.ManageStock],
-    },
-    {
-      id: ManagementSettingsId.Clients,
-      translationKey: 'navigation.management.items.clients',
-      icon: 'fas fa-users',
-      requiredRoles: [],
-    },
-    {
-      id: ManagementSettingsId.Server,
-      translationKey: 'navigation.management.items.server',
-      icon: 'fas fa-server',
-      requiredRoles: [Role.ManageApplication],
-    },
-  ];
 
   public items = computed(() => {
     const roles = this.auth.roles();
     return this._items.filter(item => this.canAccess(item, roles));
   });
 
-  public managementItems = computed(() => {
-    const roles = this.auth.roles();
-    if (!roles.includes(Role.ManageApplication)) return [];
-    return this._managementItems.filter(item => this.canAccess(item, roles));
-  });
+  public showNavBar = signal(false);
 
   private canAccess(item: NavigationItem, roles: Role[]): boolean {
     if (item.requiredRoles.length === 0 && (!item.blacklistedRoles || item.blacklistedRoles.length === 0)) {

@@ -8,16 +8,16 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import {ProductService} from '../../../_services/product.service';
-import {Product, ProductCategory} from '../../../_models/product';
+import {ProductService} from '../../_services/product.service';
+import {Product, ProductCategory} from '../../_models/product';
 import {forkJoin} from 'rxjs';
-import {TableComponent} from '../../../shared/components/table/table.component';
+import {TableComponent} from '../../shared/components/table/table.component';
 import {translate, TranslocoDirective} from '@jsverse/transloco';
 import {ProductCategoryModalComponent} from './_components/product-category-modal/product-category-modal.component';
-import {DefaultModalOptions} from '../../../_models/default-modal-options';
-import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
+import {DefaultModalOptions} from '../../_models/default-modal-options';
+import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/loading-spinner.component';
 import {ProductModalComponent} from './_components/product-modal/product-modal.component';
-import {ModalService} from '../../../_services/modal.service';
+import {ModalService} from '../../_services/modal.service';
 import {CdkDragDrop, CdkDragHandle, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({

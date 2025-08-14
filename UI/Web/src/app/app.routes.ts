@@ -3,10 +3,12 @@ import {DashboardComponent} from './dashboard/dashboard.component';
 import {AuthGuard} from './_guards/auth-guard';
 import {roleGuard} from './_guards/role-guard';
 import {Role} from './_services/auth.service';
-import {ManagementDashboardComponent} from './management/management-dashboard/management-dashboard.component';
 import {ManageDeliveryComponent} from './manage-delivery/manage-delivery.component';
 import {BrowseDeliveriesComponent} from './browse-deliveries/browse-deliveries.component';
 import {BrowseStockComponent} from './browse-stock/browse-stock.component';
+import {ManagementProductsComponent} from './management/management-products/management-products.component';
+import {ManagementClientsComponent} from './management/management-clients/management-clients.component';
+import {ManagementServerComponent} from './management/management-server/management-server.component';
 
 export const routes: Routes = [
   {
@@ -49,7 +51,20 @@ export const routes: Routes = [
   {
     path: 'management',
     canActivate: [roleGuard(Role.ManageApplication)],
-    component: ManagementDashboardComponent,
+    children: [
+      {
+        path: 'products',
+        component: ManagementProductsComponent,
+      },
+      {
+        path: 'clients',
+        component: ManagementClientsComponent
+      },
+      {
+        path: 'server',
+        component: ManagementServerComponent,
+      }
+    ],
   },
   {
     path: 'oidc',

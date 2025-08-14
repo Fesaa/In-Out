@@ -8,14 +8,14 @@ import {
   OnInit,
   signal
 } from '@angular/core';
-import {AllProductTypes, Product, ProductCategory, ProductType} from '../../../../../_models/product';
-import {ProductService} from '../../../../../_services/product.service';
+import {AllProductTypes, Product, ProductCategory, ProductType} from '../../../../_models/product';
+import {ProductService} from '../../../../_services/product.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {LoadingSpinnerComponent} from '../../../../../shared/components/loading-spinner/loading-spinner.component';
+import {LoadingSpinnerComponent} from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {SettingsItemComponent} from '../../../../../shared/components/settings-item/settings-item.component';
-import {ProductTypePipe} from '../../../../../_pipes/product-type-pipe';
+import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
+import {ProductTypePipe} from '../../../../_pipes/product-type-pipe';
 
 @Component({
   selector: 'app-product-modal',

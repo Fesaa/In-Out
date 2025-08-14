@@ -4,7 +4,6 @@ import {Stock} from '../_models/stock';
 import {BadgeComponent} from '../shared/components/badge/badge.component';
 import {TableComponent} from '../shared/components/table/table.component';
 import {TranslocoDirective} from '@jsverse/transloco';
-import {NavBarComponent} from '../nav-bar/nav-bar.component';
 import {ModalService} from '../_services/modal.service';
 import {StockHistoryModalComponent} from './_components/stock-history-modal/stock-history-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
@@ -18,7 +17,6 @@ import {AuthService, Role} from '../_services/auth.service';
     BadgeComponent,
     TableComponent,
     TranslocoDirective,
-    NavBarComponent,
   ],
   templateUrl: './browse-stock.component.html',
   styleUrl: './browse-stock.component.scss',
