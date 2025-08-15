@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Reflection;
 using API.Data;
+using API.Exceptions;
 using API.Extensions;
 using API.Helpers;
 using API.ManualMigrations;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Serilog.Events;
 
 namespace API;
 
@@ -115,6 +117,11 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             });
         }
 
+        app.UseSerilogRequestLogging(opts =>
+        {
+            //opts.EnrichDiagnosticContext = LogEnricher.EnrichFromRequest;
+            opts.IncludeQueryInRequestPath = true;
+        });
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseResponseCompression();
         app.UseRouting();
@@ -150,11 +157,6 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 ctx.Context.Response.Headers[HeaderNames.CacheControl] = "public,max-age=" + TimeSpan.FromHours(24);
                 ctx.Context.Response.Headers["X-Robots-Tag"] = "noindex,nofollow";
             }
-        });
-        app.UseSerilogRequestLogging(opts =>
-        {
-            //opts.EnrichDiagnosticContext = LogEnricher.EnrichFromRequest;
-            opts.IncludeQueryInRequestPath = true;
         });
         app.UseEndpoints(endpoints =>
         {

@@ -2,5 +2,6 @@
   "client-update-company-number-note": "This clients company number has updated since this delivery was started. From: {0} to {1}.",
   "client-update-address-note": "This clients address has updated since this delivery was started. From {0} to {1}.",
   "client-update-invoice-email": "This clients invoice email has updated since this delivery was started. From {0} to {1}.",
-  "stock-bulk-stocks-not-found": "Couldn't find stock for product ids: {0}"
+  "stock-bulk-stocks-not-found": "Couldn't find stock for product ids: {0}",
+  "stock-bulk-insufficient-stock": "{0} does not have enough items in stock. Have {1}, want: {2}"
 }

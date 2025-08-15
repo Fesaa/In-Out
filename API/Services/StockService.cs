@@ -1,4 +1,5 @@
 using API.Data;
+using API.Data.Repositories;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
@@ -37,7 +38,7 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
             var stockHistories = new List<StockHistory>();
             
             var productIds = dtos.Select(d => d.ProductId).Distinct().ToList();
-            var stocks = await unitOfWork.StockRepository.GetByProductIdsAsync(productIds);
+            var stocks = await unitOfWork.StockRepository.GetByProductIdsAsync(productIds, StockIncludes.Product);
             var stockLookup = stocks.ToDictionary(s => s.ProductId, s => s);
             
             var missingStockIds = productIds.Where(id => !stockLookup.ContainsKey(id)).ToList();
@@ -66,7 +67,7 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
                     logger.LogWarning("{UserName} tried to update stock {StockId} to a negative value in bulk operation", 
                         user.Name, dto.ProductId);
                     return Result<IList<Stock>>.Failure(
-                        await localization.Translate(user.Id, "errors.stock-bulk-insufficient-stock", dto.ProductId, stock.Quantity, dto.Value)
+                        await localization.Translate(user.Id, "stock-bulk-insufficient-stock", stock.Product.Name, stock.Quantity, dto.Value)
                     );
                 }
                 

@@ -67,6 +67,10 @@ export class ManageDeliveryComponent implements OnInit {
     const submitting = this.submitting();
     const validState = this.delivery().state === DeliveryState.InProgress;
 
+    // Force revalidate signal
+    this.selectedClient();
+    this.selectedUser();
+
     return this.deliveryForm.valid
       && totalItems > 0
       && !submitting
