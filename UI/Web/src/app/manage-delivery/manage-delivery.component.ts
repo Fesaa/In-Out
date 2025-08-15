@@ -219,6 +219,7 @@ export class ManageDeliveryComponent implements OnInit {
     const control = this.deliveryForm.get(`product_${productId}`) as unknown as FormControl<number>;
     if (control) {
       control.setValue(Math.max(0, quantity));
+      this.deliveryForm.markAsDirty();
     }
   }
 
@@ -265,6 +266,10 @@ export class ManageDeliveryComponent implements OnInit {
 
   onSubmit() {
     if (!this.deliveryForm.valid || this.submitting()) {
+      return;
+    }
+
+    if (!this.deliveryForm.dirty) {
       return;
     }
 
