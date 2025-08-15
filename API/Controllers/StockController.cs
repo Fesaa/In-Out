@@ -47,7 +47,11 @@ public class StockController(ILogger<StockController> logger, IUnitOfWork unitOf
             dto.Reference = $"Manual stock update on {DateTime.UtcNow.ToShortDateString()} @ {DateTime.UtcNow.ToLongTimeString()} by {user.Name}";
         }
         
-        await stockService.UpdateStockBulkAsync(user, [dto]);
+        var res = await stockService.UpdateStockBulkAsync(user, [dto]);
+        if (res.IsFailure)
+        {
+            return BadRequest(res.Error);
+        }
         return Ok();
     }
     

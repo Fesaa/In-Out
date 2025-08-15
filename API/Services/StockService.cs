@@ -72,22 +72,22 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
             return Result<IList<Stock>>.Failure(await localization.Translate(user.Id, "stock-bulk-empty-list"));
         }
         
-        dtos = dtos.Where(dto => dto.Value != 0).ToList();
+        dtos = dtos.Where(dto => dto.Value != 0 && dto.Operation != StockOperation.Set).ToList();
 
         return await unitOfWork.ExecuteWithRetryAsync(async () =>
         {
             var results = new List<Stock>();
             var stockHistories = new List<StockHistory>();
             
-            var stockIds = dtos.Select(d => d.ProductId).Distinct().ToList();
-            var stocks = await unitOfWork.StockRepository.GetByIdsAsync(stockIds);
-            var stockLookup = stocks.ToDictionary(s => s.Id, s => s);
+            var productIds = dtos.Select(d => d.ProductId).Distinct().ToList();
+            var stocks = await unitOfWork.StockRepository.GetByProductIdsAsync(productIds);
+            var stockLookup = stocks.ToDictionary(s => s.ProductId, s => s);
             
-            var missingStockIds = stockIds.Where(id => !stockLookup.ContainsKey(id)).ToList();
+            var missingStockIds = productIds.Where(id => !stockLookup.ContainsKey(id)).ToList();
             if (missingStockIds.Count != 0)
             {
                 return Result<IList<Stock>>.Failure(
-                    await localization.Translate(user.Id, "errors.stock-bulk-stocks-not-found", string.Join(", ", missingStockIds))
+                    await localization.Translate(user.Id, "stock-bulk-stocks-not-found", string.Join(", ", missingStockIds))
                 );
             }
 
