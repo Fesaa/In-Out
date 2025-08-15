@@ -1,0 +1,9 @@
+UI/Web/.idea
+UI/Web/.angualr
+UI/Web/dist
+UI/Web/node_modules
+
+.idea
+
+API/bin
+API/obj

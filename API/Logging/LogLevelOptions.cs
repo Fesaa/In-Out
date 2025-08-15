@@ -18,7 +18,7 @@ public static class LogLevelOptions
     public static LoggerConfiguration CreateConfig(LoggerConfiguration configuration)
     {
         var outputTemplate =
-            $"[{BuildInfo.AppName}] [{{@t:yyyy-MM-dd HH:mm:ss.fff zzz}}] [{{@l:u4}}] {{SourceContext}} {{@m:lj}}\n{{@x}}";
+            $"[{BuildInfo.AppName}] [{{@t:yyyy-MM-dd HH:mm:ss.fff zzz}}] [{{@l}}] {{SourceContext}} {{@m:lj}}\n{{@x}}";
         return configuration
             .MinimumLevel.ControlledBy(LogLevelSwitch)
             .MinimumLevel.Override("Microsoft", MicrosoftLogLevelSwitch)
