@@ -33,12 +33,14 @@ export class BrowseStockComponent implements OnInit {
   stock = signal<Stock[]>([]);
   categories = signal<ProductCategory[]>([])
 
-  sortedStock = computed(() => this.stock().sort((a, b) => {
-    if (a.product.isTracked && !b.product.isTracked) return -1;
-    if (a.product.isTracked && !b.product.isTracked) return 1;
+  sortedStock = computed(() => this.stock()
+    .filter(s => s.product.isTracked)
+    .sort((a, b) => {
+      if (a.product.isTracked && !b.product.isTracked) return -1;
+      if (a.product.isTracked && !b.product.isTracked) return 1;
 
-    return a.name.localeCompare(b.name);
-  }));
+      return a.name.localeCompare(b.name);
+    }));
 
   ngOnInit(): void {
     this.load();
