@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {Delivery, DeliveryLine, DeliveryState} from '../_models/delivery';
 import {Product, ProductCategory, ProductType} from '../_models/product';
-import {catchError, forkJoin, of, switchMap, take} from 'rxjs';
+import {catchError, forkJoin, of, switchMap, take, tap} from 'rxjs';
 import {ProductService} from '../_services/product.service';
 import {UserService} from '../_services/user.service';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -15,6 +15,11 @@ import {ClientService} from '../_services/client.service';
 import {User} from '../_models/user';
 import {AuthService, Role} from '../_services/auth.service';
 import {ToastrService} from 'ngx-toastr';
+import {
+  TransitionDeliveryModalComponent
+} from '../browse-deliveries/_components/transition-delivery-modal/transition-delivery-modal.component';
+import {DefaultModalOptions} from '../_models/default-modal-options';
+import {ModalService} from '../_services/modal.service';
 
 @Component({
   selector: 'app-manage-delivery',
@@ -28,6 +33,8 @@ export class ManageDeliveryComponent implements OnInit {
   protected readonly authService = inject(AuthService);
   protected readonly ProductType = ProductType;
   protected readonly Role = Role;
+
+  private readonly modalService = inject(ModalService);
   private readonly deliveryService = inject(DeliveryService);
   private readonly productService = inject(ProductService);
   private readonly userService = inject(UserService);
@@ -130,16 +137,16 @@ export class ManageDeliveryComponent implements OnInit {
         ]);
       })
     ).subscribe(([user, categories, products, delivery]) => {
+      this.user.set(user);
+      this.products.set(products);
+      this.categories.set(categories);
+      this.loading.set(false);
+
       if (delivery) {
         this.delivery.set(delivery);
       } else {
         this.setDefaultUser(user);
       }
-
-      this.user.set(user);
-      this.products.set(products);
-      this.categories.set(categories);
-      this.loading.set(false);
     });
   }
 
@@ -286,6 +293,7 @@ export class ManageDeliveryComponent implements OnInit {
       next: () => {
         this.toastr.success(translate("manage-delivery.success"));
         this.submitting.set(false);
+        this.promptTransition();
       },
       error: err => {
         console.error(err);
@@ -295,11 +303,27 @@ export class ManageDeliveryComponent implements OnInit {
     });
   }
 
+  private promptTransition() {
+    const [modal, component] = this.modalService.open(TransitionDeliveryModalComponent, DefaultModalOptions);
+    component.delivery.set(this.delivery());
+
+    modal.closed.pipe(
+      tap((nextState: DeliveryState | undefined) => {
+        if (nextState === undefined) return;
+
+        this.delivery.update(d => {
+          d.state = nextState;
+          return d;
+        });
+      })
+    ).subscribe();
+  }
+
   private setupClientTypeaheadSettings(): void {
     const clientTypeaheadSettings = new TypeaheadSettings<Client>();
     clientTypeaheadSettings.id = 'client-typeahead';
     clientTypeaheadSettings.multiple = false;
-    clientTypeaheadSettings.minCharacters = 2;
+    clientTypeaheadSettings.minCharacters = 1;
 
     const delivery = this.delivery();
     if (delivery.recipient) {

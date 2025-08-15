@@ -111,6 +111,7 @@
 
   "browse-stock": {
     "name": "Name",
+    "category": "Category",
     "description": "Description",
     "quantity": "Quantity",
     "actions": "Actions"

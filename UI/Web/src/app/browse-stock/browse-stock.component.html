@@ -9,6 +9,7 @@
     <ng-template #header>
       <tr>
         <th class="table-header-cell">{{t('name')}}</th>
+        <th class="table-header-cell">{{t('category')}}</th>
         <th class="table-header-cell">{{t('description')}}</th>
         <th class="table-header-cell">{{t('quantity')}}</th>
         <th class="table-header-cell">{{t('actions')}}</th>
@@ -17,6 +18,7 @@
 
     <ng-template #cell let-stock>
       <td class="table-cell">{{ stock.name }}</td>
+      <td class="table-cell">{{ categoryName(stock.product.categoryId) }}</td>
       <td class="table-cell">{{ stock.description }}</td>
       <td class="table-cell">
         <app-badge colour="primary">{{stock.quantity}}</app-badge>
@@ -29,9 +31,6 @@
         </button>
 
         @if (authService.roles().includes(Role.ManageStock)) {
-          <button class="btn btn-sm" (click)="editStock(stock)">
-            <i class="fas fa-edit"></i>
-          </button>
           <button class="btn btn-sm" (click)="updateStock(stock)">
             <i class="fas fa-pencil"></i>
           </button>

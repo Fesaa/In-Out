@@ -117,6 +117,13 @@ export class NavigationService {
   });
 
   public showNavBar = signal(true);
+  isMobileMenuOpen = signal(false);
+  isAccountDropdownOpen = signal(false);
+
+  close() {
+    this.isMobileMenuOpen.set(false);
+    this.isAccountDropdownOpen.set(false);
+  }
 
   private canAccess(item: NavigationItem, roles: Role[]): boolean {
     if (item.requiredRoles.length === 0 && (!item.blacklistedRoles || item.blacklistedRoles.length === 0)) {

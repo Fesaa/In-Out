@@ -37,9 +37,8 @@ export enum FilterField {
   LastModified = 6,
 }
 
-export const AllFilterFields: FilterField[] = Object.values(FilterField).filter(
-  (v): v is FilterField => typeof v === 'number'
-);
+export const AllFilterFields: FilterField[] = [FilterField.From, FilterField.Recipient, FilterField.DeliveryState,
+FilterField.Created, FilterField.LastModified, FilterField.Products, FilterField.Lines];
 
 export enum FilterComparison {
   Contains = 0,

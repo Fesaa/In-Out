@@ -71,9 +71,6 @@ export class NavBarComponent implements OnInit {
     return this.navService.items().filter(i => !main.includes(i));
   })
 
-  isMobileMenuOpen = signal(false);
-  isAccountDropdownOpen = signal(false);
-
   ngOnInit(): void {
   }
 
@@ -82,22 +79,22 @@ export class NavBarComponent implements OnInit {
   }
 
   toggleMobileMenu() {
-    this.isMobileMenuOpen.update(v => !v);
+    this.navService.isMobileMenuOpen.update(v => !v);
   }
 
   toggleAccountDropdown() {
-    this.isAccountDropdownOpen.update(v => !v);
+    this.navService.isAccountDropdownOpen.update(v => !v);
   }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (
-      this.isAccountDropdownOpen() &&
+      this.navService.isAccountDropdownOpen() &&
       !target.closest('.account-dropdown') &&
       !target.closest('.account-toggle')
     ) {
-      this.isAccountDropdownOpen.set(false);
+      this.navService.isAccountDropdownOpen.set(false);
     }
   }
 

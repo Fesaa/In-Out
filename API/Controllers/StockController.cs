@@ -24,14 +24,6 @@ public class StockController(ILogger<StockController> logger, IUnitOfWork unitOf
         return Ok(await unitOfWork.StockRepository.GetAllDtoAsync(StockIncludes.Product));
     }
 
-    [HttpPut]
-    [Authorize(Policy = PolicyConstants.ManageStock)]
-    public async Task<IActionResult> UpdateStock(StockDto stock)
-    {
-        await stockService.UpdateStockAsync(stock);
-        return Ok();
-    }
-
     [HttpPost]
     [Authorize(Policy = PolicyConstants.ManageStock)]
     public async Task<IActionResult> UpdateStock(UpdateStockDto dto)

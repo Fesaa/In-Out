@@ -24,7 +24,13 @@ public class AutoMapperProfiles: Profile
                 opt =>
                     opt.MapFrom(s => s.Recipient.Id));
         CreateMap<DeliveryLine, DeliveryLineDto>();
-        CreateMap<Stock, StockDto>();
+        CreateMap<Stock, StockDto>()
+            .ForMember(d => d.Name, 
+                opt => 
+                    opt.MapFrom(s => s.Product.Name))
+            .ForMember(d => d.Description, 
+                opt => 
+                    opt.MapFrom(s => s.Product.Description));
         CreateMap<StockHistory, StockHistoryDto>();
 
     }

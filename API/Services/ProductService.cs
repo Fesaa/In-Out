@@ -25,9 +25,6 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
 {
     public async Task<ProductDto> CreateProduct(ProductDto dto)
     {
-        var other = await unitOfWork.ProductRepository.GetByName(dto.Name);
-        if (other != null) throw new ApplicationException("errors.name-in-use");
-
         var product = new Product
         {
             Name = dto.Name,
@@ -44,7 +41,6 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
 
         var stock = new Stock
         {
-            Name = product.Name,
             Product = product,
             Quantity = 0,
         };
@@ -82,9 +78,6 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
 
         if (extProduct.NormalizedName != dto.Name.ToNormalized())
         {
-            var other = await unitOfWork.ProductRepository.GetByName(dto.Name);
-            if (other != null) throw new ApplicationException("errors.name-in-use");
-
             extProduct.Name = dto.Name;
             extProduct.NormalizedName = dto.Name.ToNormalized();
         }

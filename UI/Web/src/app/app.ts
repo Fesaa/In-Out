@@ -1,10 +1,13 @@
-import {Component, HostListener, inject, OnInit} from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
+import {NavigationStart, Router, RouterOutlet} from '@angular/router';
 import {AuthService} from './_services/auth.service';
 import {DashboardComponent} from './dashboard/dashboard.component';
 import {TranslocoModule, TranslocoService} from '@jsverse/transloco';
 import {NavBarComponent} from './nav-bar/nav-bar.component';
 import {NavigationService} from './_services/navigation.service';
+import {filter} from 'rxjs';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-root',
@@ -18,9 +21,30 @@ export class App implements OnInit {
   protected readonly oidcService = inject(AuthService);
   private readonly transLoco = inject(TranslocoService);
   protected readonly navService = inject(NavigationService);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly ngbModal = inject(NgbModal)
 
   ngOnInit(): void {
     this.updateVh();
+
+    this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationStart),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(async (event) => {
+        if (this.ngbModal.hasOpenModals()) {
+          this.ngbModal.dismissAll();
+        }
+
+        this.navService.close();
+
+        if ((event as any).navigationTrigger === 'popstate') {
+          const currentRoute = this.router.routerState;
+          await this.router.navigateByUrl(currentRoute.snapshot.url, { skipLocationChange: true });
+        }
+      });
   }
 
   @HostListener('window:resize')

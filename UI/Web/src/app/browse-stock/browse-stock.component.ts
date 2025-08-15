@@ -7,9 +7,10 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {ModalService} from '../_services/modal.service';
 import {StockHistoryModalComponent} from './_components/stock-history-modal/stock-history-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
-import {EditStockModalComponent} from './_components/edit-stock-modal/edit-stock-modal.component';
 import {UpdateStockModalComponent} from './_components/update-stock-modal/update-stock-modal.component';
 import {AuthService, Role} from '../_services/auth.service';
+import {ProductCategory} from '../_models/product';
+import {ProductService} from '../_services/product.service';
 
 @Component({
   selector: 'app-browse-stock',
@@ -25,10 +26,12 @@ import {AuthService, Role} from '../_services/auth.service';
 export class BrowseStockComponent implements OnInit {
 
   protected readonly authService = inject(AuthService);
+  private readonly productService = inject(ProductService);
   private readonly stockService = inject(StockService);
   private readonly modalService = inject(ModalService);
 
   stock = signal<Stock[]>([]);
+  categories = signal<ProductCategory[]>([])
 
   sortedStock = computed(() => this.stock().sort((a, b) => {
     if (a.product.isTracked && !b.product.isTracked) return -1;
@@ -39,6 +42,14 @@ export class BrowseStockComponent implements OnInit {
 
   ngOnInit(): void {
     this.load();
+
+    this.productService.getCategories(false).subscribe(categories => {
+      this.categories.set(categories);
+    });
+  }
+
+  categoryName(id: number) {
+    return this.categories().find(c => c.id === id)?.name ?? '';
   }
 
   private load() {
@@ -53,11 +64,6 @@ export class BrowseStockComponent implements OnInit {
 
   viewHistory(stock: Stock) {
     const [modal, component] = this.modalService.open(StockHistoryModalComponent, DefaultModalOptions);
-    component.stock.set(stock);
-  }
-
-  editStock(stock: Stock) {
-    const [modal, component] = this.modalService.open(EditStockModalComponent, DefaultModalOptions);
     component.stock.set(stock);
   }
 

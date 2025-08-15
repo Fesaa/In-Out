@@ -22,10 +22,8 @@ public class ManualMigrationAddStockForExistingProducts
         {
             ctx.ProductStock.Add(new Stock
             {
-                Name = product.Name,
                 Product = product,
                 Quantity = 0,
-                Description = string.Empty,
                 History = []
             });
         }

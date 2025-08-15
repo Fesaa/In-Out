@@ -14,7 +14,6 @@ public interface IProductRepository
     Task<IList<Product>> GetByIds(IEnumerable<int> ids);
     Task<IList<ProductDto>> GetDtoByIds(IEnumerable<int> ids);
     Task<ProductCategory?> GetCategoryById(int id);
-    Task<Product?> GetByName(string name);
     Task<ProductCategory?> GetFirstCategory();
     Task<ProductCategory?> GetCategoryByName(string name);
     Task<IList<Product>> GetAll(bool onlyEnabled = false);
@@ -55,12 +54,6 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
     public async Task<ProductCategory?> GetCategoryById(int id)
     {
         return await ctx.ProductCategories.Where(p => p.Id == id).FirstOrDefaultAsync();
-    }
-
-    public Task<Product?> GetByName(string name)
-    {
-        var normalized = name.ToNormalized();
-        return ctx.Products.Where(p => p.NormalizedName == normalized).FirstOrDefaultAsync();
     }
 
     public async Task<ProductCategory?> GetFirstCategory()
