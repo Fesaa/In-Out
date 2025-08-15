@@ -2,6 +2,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
+using API.Exceptions;
 using API.Extensions;
 
 namespace API.Services;
@@ -22,7 +23,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         {
             var others = await unitOfWork.ClientRepository.GetClientByCompanyNumber(dto.CompanyNumber.Trim());
             if (others != null)
-                throw new ApplicationException("errors.client-already-exists");
+                throw new InOutException("errors.client-already-exists");
         }
 
         var client = new Client
@@ -45,7 +46,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
     {
         var client = await unitOfWork.ClientRepository.GetClientById(dto.Id);
         if (client == null)
-            throw new ApplicationException("errors.client-not-found");
+            throw new InOutException("errors.client-not-found");
 
         var systemNotes = new List<SystemMessage>();
 
@@ -61,7 +62,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
             {
                 var others = await unitOfWork.ClientRepository.GetClientByCompanyNumber(dto.CompanyNumber.Trim());
                 if (others != null)
-                    throw new ApplicationException("errors.client-already-exists");
+                    throw new InOutException("errors.client-already-exists");
             }
             
             logger.LogDebug("Updating CompanyNumber for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
@@ -111,11 +112,11 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
     {
         var client = await unitOfWork.ClientRepository.GetClientById(id);
         if  (client == null)
-            throw new ApplicationException("errors.client-not-found");
+            throw new InOutException("errors.client-not-found");
 
         var deliveries = await unitOfWork.DeliveryRepository.GetDeliveriesForClient(client.Id, [DeliveryState.InProgress, DeliveryState.Completed]);
         if (deliveries.Count > 0)
-            throw new ApplicationException("errors.unfinished-deliveries");
+            throw new InOutException("errors.unfinished-deliveries");
         
         unitOfWork.ClientRepository.Delete(client);
         await unitOfWork.CommitAsync();

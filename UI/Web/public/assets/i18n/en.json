@@ -14,6 +14,7 @@
     "generic": "An error has occurred",
     "no-fallback-category": "Cannot delete category while no fallback category exists",
     "not-found": "Something was not found!",
+    "unfinished-deliveries": "Cannot delete client, unhandled deliveries left",
     "client-already-exists": "This client already exists",
     "client-not-found": "Client not found",
     "delivery-not-found": "Delivery not found",

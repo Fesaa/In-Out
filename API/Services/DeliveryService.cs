@@ -5,6 +5,7 @@ using API.Data.Repositories;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
+using API.Exceptions;
 using API.Extensions;
 
 namespace API.Services;
@@ -25,11 +26,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
     {
         var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId);
         if (user == null)
-            throw new ApplicationException("errors.client-not-found");
+            throw new InOutException("errors.client-not-found");
         
         var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId);
         if (client == null)
-            throw new ApplicationException("errors.client-not-found");
+            throw new InOutException("errors.client-not-found");
 
         var lines = dto.Lines.GroupBy(l => l.ProductId)
             .Select(g => new DeliveryLineDto
@@ -70,7 +71,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
 
         if (result.IsFailure)
         {
-            throw new ApplicationException(result.Error);
+            throw new InOutException(result.Error);
         }
         
         unitOfWork.DeliveryRepository.Add(delivery);
@@ -83,13 +84,13 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
     {
         var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id, DeliveryIncludes.Complete);
         if (delivery == null)
-            throw new ApplicationException("errors.delivery-not-found");
+            throw new InOutException("errors.delivery-not-found");
         
         if (FinalDeliveryStates.Contains(delivery.State))
-            throw new ApplicationException("errors.delivery-locked");
+            throw new InOutException("errors.delivery-locked");
         
         if (delivery.Recipient.Id != dto.ClientId)
-            throw new ApplicationException("errors.cannot-change-recipient");
+            throw new InOutException("errors.cannot-change-recipient");
         
         var user = await userService.GetUser(actor);
         if (delivery.UserId != user.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
@@ -169,7 +170,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         var result = await stockService.UpdateStockBulkAsync(user, updates);
         if (result.IsFailure)
         {
-            throw new ApplicationException(result.Error);
+            throw new InOutException(result.Error);
         }
         
         unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
@@ -185,7 +186,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
     {
         var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(id);
         if (delivery == null)
-            throw new ApplicationException("errors.delivery-not-found");
+            throw new InOutException("errors.delivery-not-found");
         
         unitOfWork.DeliveryRepository.Remove(delivery);
         await unitOfWork.CommitAsync();
@@ -197,11 +198,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         
         var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(deliveryId);
         if (delivery == null)
-            throw new ApplicationException("errors.delivery-not-found");
+            throw new InOutException("errors.delivery-not-found");
 
         var validNextStates = GetStateOptions(delivery.State, canHandleDeliveries);
         if (!validNextStates.Contains(nextState))
-            throw new ApplicationException("errors.invalid-next-state");
+            throw new InOutException("errors.invalid-next-state");
 
         delivery.State = nextState;
         await unitOfWork.CommitAsync();

@@ -1,6 +1,7 @@
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Exceptions;
 using API.Extensions;
 using AutoMapper;
 
@@ -54,7 +55,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     public async Task<ProductCategoryDto> CreateProductCategory(ProductCategoryDto dto)
     {
         var extCategory = await unitOfWork.ProductRepository.GetCategoryByName(dto.Name);
-        if (extCategory != null) throw new ApplicationException("errors.name-in-use");
+        if (extCategory != null) throw new InOutException("errors.name-in-use");
 
         var category = new ProductCategory
         {
@@ -74,7 +75,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     public async Task UpdateProduct(ProductDto dto)
     {
         var extProduct = await unitOfWork.ProductRepository.GetById(dto.Id);
-        if (extProduct == null) throw new ApplicationException("errors.product-not-found");
+        if (extProduct == null) throw new InOutException("errors.product-not-found");
 
         if (extProduct.NormalizedName != dto.Name.ToNormalized())
         {
@@ -98,12 +99,12 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     public async Task UpdateProductCategory(ProductCategoryDto dto)
     {
         var category = await unitOfWork.ProductRepository.GetCategoryById(dto.Id);
-        if (category == null) throw new ApplicationException("errors.product-not-found");
+        if (category == null) throw new InOutException("errors.product-not-found");
 
         if (category.NormalizedName != dto.Name.ToNormalized())
         {
             var other = await unitOfWork.ProductRepository.GetCategoryByName(dto.Name);
-            if (other != null) throw new ApplicationException("errors.name-in-use");
+            if (other != null) throw new InOutException("errors.name-in-use");
 
             category.Name = dto.Name;
             category.NormalizedName = dto.Name.ToNormalized();
@@ -122,7 +123,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     public async Task DeleteProduct(int id)
     {
         var product = await unitOfWork.ProductRepository.GetById(id);
-        if (product == null) throw new ApplicationException("errors.product-not-found");
+        if (product == null) throw new InOutException("errors.product-not-found");
 
         unitOfWork.ProductRepository.Delete(product);
         await unitOfWork.CommitAsync();
@@ -130,14 +131,14 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     public async Task DeleteProductCategory(int id)
     {
         var category = await unitOfWork.ProductRepository.GetCategoryById(id);
-        if (category == null) throw new ApplicationException("errors.product-not-found");
+        if (category == null) throw new InOutException("errors.product-not-found");
         
         var products = await unitOfWork.ProductRepository.GetByCategory(category);
         if (products.Count > 0)
         {
             var defaultCategory = await unitOfWork.ProductRepository.GetFirstCategory();
             if (defaultCategory == null || defaultCategory.Id == category.Id)
-                throw new ApplicationException("errors.no-fallback-category");
+                throw new InOutException("errors.no-fallback-category");
             
             foreach (var product in products)
             {
@@ -154,7 +155,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     {
         ids = ids.Distinct().ToList();
         var categories = await unitOfWork.ProductRepository.GetAllCategories();
-        if (ids.Count != categories.Count) throw new ApplicationException("errors.not-enough-categories");
+        if (ids.Count != categories.Count) throw new InOutException("errors.not-enough-categories");
         
         foreach (var category in categories)
         {

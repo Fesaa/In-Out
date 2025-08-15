@@ -60,59 +60,29 @@ public class DeliveryController(ILogger<DeliveryController> logger,
     public async Task<ActionResult<DeliveryDto>> Create(DeliveryDto dto)
     {
         var user = await userService.GetUser(User);
+        var delivery = await deliveryService.CreateDelivery(user.Id, dto);
 
-        try
-        {
-            var delivery = await deliveryService.CreateDelivery(user.Id, dto);
-
-            return Ok(mapper.Map<DeliveryDto>(delivery));
-        }
-        catch (ApplicationException e)
-        {
-            return BadRequest(e.Message);
-        }
+        return Ok(mapper.Map<DeliveryDto>(delivery));
     }
 
     [HttpPut]
     public async Task<IActionResult> Update(DeliveryDto dto)
     {
-        try
-        {
-            var delivery = await deliveryService.UpdateDelivery(User, dto);
-
-            return Ok(mapper.Map<DeliveryDto>(delivery));
-        }
-        catch (ApplicationException e)
-        {
-            return BadRequest(e.Message);
-        }
+        var delivery = await deliveryService.UpdateDelivery(User, dto);
+        return Ok(mapper.Map<DeliveryDto>(delivery));
     }
 
     [HttpPost("transition")]
     public async Task<IActionResult> UpdateState([FromQuery] int deliveryId, [FromQuery] DeliveryState nextState)
     {
-        try
-        {
-            await deliveryService.TransitionDelivery(User, deliveryId, nextState);
-        }
-        catch (ApplicationException e)
-        {
-            return BadRequest(e.Message);
-        }
+        await deliveryService.TransitionDelivery(User, deliveryId, nextState);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        try
-        {
-            await deliveryService.DeleteDelivery(id);
-        } 
-        catch (ApplicationException e)
-        {
-            return BadRequest(e.Message);
-        }
+        await deliveryService.DeleteDelivery(id);
         return Ok();
     }
     

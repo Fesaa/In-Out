@@ -65,15 +65,8 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto product)
     {
-        try
-        {
-            var res = await productService.CreateProduct(product);
-            return Ok(res);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var res = await productService.CreateProduct(product);
+        return Ok(res);
     }
 
     /// <summary>
@@ -85,15 +78,8 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<ActionResult<ProductCategoryDto>> CreateCategory(ProductCategoryDto category)
     {
-        try
-        {
-            var res = await productService.CreateProductCategory(category);
-            return Ok(res);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var res = await productService.CreateProductCategory(category);
+        return Ok(res);
     }
 
     /// <summary>
@@ -105,15 +91,8 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> UpdateProduct(ProductDto product)
     {
-        try
-        {
-            await productService.UpdateProduct(product);
-            return Ok();
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await productService.UpdateProduct(product);
+        return Ok();
     }
 
     /// <summary>
@@ -125,15 +104,8 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> UpdateCategory(ProductCategoryDto category)
     {
-        try
-        {
-            await productService.UpdateProductCategory(category);
-            return Ok();
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await productService.UpdateProductCategory(category);
+        return Ok();
     }
 
     /// <summary>
@@ -145,15 +117,8 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> DeleteProduct(int id)
     {
-        try
-        {
-            await productService.DeleteProduct(id);
-            return Ok();
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await productService.DeleteProduct(id);
+        return Ok();
     }
 
     /// <summary>
@@ -165,29 +130,15 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
-        try
-        {
-            await productService.DeleteProductCategory(id);
-            return Ok();
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await productService.DeleteProductCategory(id);
+        return Ok();
     }
     
     [HttpPost("category/order")]
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> OrderCategories(IList<int> ids)
     {
-        try
-        {
-            await productService.OrderCategories(ids);
-            return Ok();
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await productService.OrderCategories(ids);
+        return Ok();
     }
 }

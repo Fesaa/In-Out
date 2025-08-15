@@ -48,14 +48,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     [HttpPost]
     public async Task<IActionResult> CreateClient(ClientDto dto)
     {
-        try
-        {
-            await clientService.CreateClient(dto);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await clientService.CreateClient(dto);
         return Ok();
     }
 
@@ -66,14 +59,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     [Authorize(Policy = PolicyConstants.ManageClients)]
     public async Task<IActionResult> UpdateClient(ClientDto dto)
     {
-        try
-        {
-            await clientService.UpdateClient(dto);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await clientService.UpdateClient(dto);
         return Ok();
     }
 
@@ -84,14 +70,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     [Authorize(Policy = PolicyConstants.ManageClients)]
     public async Task<IActionResult> DeleteClient(int id)
     {
-        try
-        {
-            await clientService.DeleteClient(id);
-        }
-        catch (ApplicationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        await clientService.DeleteClient(id);
         return Ok();
     }
 }

@@ -1,7 +1,6 @@
 using System.Net;
 using System.Text.Json;
 using API.Exceptions;
-using ApplicationException = System.ApplicationException;
 
 namespace API.Middleware;
 
@@ -21,18 +20,22 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
         catch (Exception ex)
         {
             var errorMessage = string.IsNullOrEmpty(ex.Message) ? "Internal Server Error" : ex.Message;
-            if (ex is ApplicationException)
+            var statusCode = (int) HttpStatusCode.InternalServerError;
+            
+            if (ex is InOutException)
             {
                 if (!ex.Message.StartsWith("errors."))
                 {
                     errorMessage = "errors." + errorMessage;
                 }
+
+                statusCode = (int)HttpStatusCode.BadRequest;
             }
             
             logger.LogDebug(ex, "An exception occurred while handling an http request.");
             
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            context.Response.StatusCode = statusCode;
 
             var response = new ApiException(context.Response.StatusCode, errorMessage, ex.StackTrace);
             var json = JsonSerializer.Serialize(response, JsonSerializerOptions);
