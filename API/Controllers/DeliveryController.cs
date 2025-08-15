@@ -7,11 +7,14 @@ using API.Entities.Enums;
 using API.Extensions;
 using API.Helpers;
 using API.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class DeliveryController(ILogger<DeliveryController> logger, IUnitOfWork unitOfWork, IDeliveryService deliveryService, IUserService userService): BaseApiController
+public class DeliveryController(ILogger<DeliveryController> logger,
+    IUnitOfWork unitOfWork, IDeliveryService deliveryService,
+    IUserService userService, IMapper mapper): BaseApiController
 {
 
     [HttpGet("{id}")]
@@ -54,20 +57,20 @@ public class DeliveryController(ILogger<DeliveryController> logger, IUnitOfWork 
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(DeliveryDto dto)
+    public async Task<ActionResult<DeliveryDto>> Create(DeliveryDto dto)
     {
         var user = await userService.GetUser(User);
 
         try
         {
-            await deliveryService.CreateDelivery(user.Id, dto);
+            var delivery = await deliveryService.CreateDelivery(user.Id, dto);
+
+            return Ok(mapper.Map<DeliveryDto>(delivery));
         }
         catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }
-        
-        return Ok();
     }
 
     [HttpPut]
@@ -75,13 +78,14 @@ public class DeliveryController(ILogger<DeliveryController> logger, IUnitOfWork 
     {
         try
         {
-            await deliveryService.UpdateDelivery(User, dto);
+            var delivery = await deliveryService.UpdateDelivery(User, dto);
+
+            return Ok(mapper.Map<DeliveryDto>(delivery));
         }
         catch (ApplicationException e)
         {
             return BadRequest(e.Message);
         }
-        return Ok();
     }
 
     [HttpPost("transition")]

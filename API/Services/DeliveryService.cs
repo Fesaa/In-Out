@@ -11,8 +11,8 @@ namespace API.Services;
 
 public interface IDeliveryService
 {
-    Task CreateDelivery(int userId, DeliveryDto  dto);
-    Task UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto);
+    Task<Delivery> CreateDelivery(int userId, DeliveryDto  dto);
+    Task<Delivery> UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto);
     Task DeleteDelivery(int id);
     Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState);
 }
@@ -21,7 +21,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
 {
     private static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Cancelled, DeliveryState.Handled];
 
-    public async Task CreateDelivery(int userId, DeliveryDto dto)
+    public async Task<Delivery> CreateDelivery(int userId, DeliveryDto dto)
     {
         var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId);
         if (user == null)
@@ -75,9 +75,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         
         unitOfWork.DeliveryRepository.Add(delivery);
         await unitOfWork.CommitAsync();
+
+        return delivery;
     }
 
-    public async Task UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto)
+    public async Task<Delivery> UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto)
     {
         var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id, DeliveryIncludes.Complete);
         if (delivery == null)
@@ -159,7 +161,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         {
             unitOfWork.DeliveryRepository.Update(delivery);
             await unitOfWork.CommitAsync();
-            return;
+            return delivery;
         }
 
         logger.LogDebug("Delivery update resulted in {Length} stock updates", updates.Count);
@@ -175,6 +177,8 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         
         unitOfWork.DeliveryRepository.Update(delivery);
         await unitOfWork.CommitAsync();
+
+        return delivery;
     }
 
     public async Task DeleteDelivery(int id)

@@ -113,6 +113,13 @@ export class ManageDeliveryComponent implements OnInit {
         this.toggleCategory(category.id, true);
       })
     });
+
+    effect(() => {
+      const delivery = this.delivery();
+      if (delivery && delivery.id !== -1) {
+        this.router.navigateByUrl(`${this.router.url.split('?')[0]}?deliveryId=${delivery.id}`, { replaceUrl: true });
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -290,9 +297,11 @@ export class ManageDeliveryComponent implements OnInit {
 
     this.submitting.set(true);
     action$.subscribe({
-      next: () => {
+      next: (delivery) => {
         this.toastr.success(translate("manage-delivery.success"));
         this.submitting.set(false);
+        this.delivery.set(delivery);
+
         this.promptTransition();
       },
       error: err => {

@@ -17,11 +17,11 @@ export class DeliveryService {
   }
 
   createDelivery(data: Delivery) {
-    return this.httpClient.post(`${this.baseUrl}/`, data);
+    return this.httpClient.post<Delivery>(`${this.baseUrl}/`, data);
   }
 
   updateDelivery(data: Delivery) {
-    return this.httpClient.put(`${this.baseUrl}/`, data);
+    return this.httpClient.put<Delivery>(`${this.baseUrl}/`, data);
   }
 
   deleteDelivery(id: number) {
