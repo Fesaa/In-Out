@@ -1,7 +1,9 @@
+using API.Constants;
 using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -60,6 +62,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="product"></param>
     /// <returns></returns>
     [HttpPost]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto product)
     {
         try
@@ -79,6 +82,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="category"></param>
     /// <returns></returns>
     [HttpPost("category")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<ActionResult<ProductCategoryDto>> CreateCategory(ProductCategoryDto category)
     {
         try
@@ -98,6 +102,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="product"></param>
     /// <returns></returns>
     [HttpPut]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> UpdateProduct(ProductDto product)
     {
         try
@@ -117,6 +122,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="category"></param>
     /// <returns></returns>
     [HttpPut("category")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> UpdateCategory(ProductCategoryDto category)
     {
         try
@@ -136,6 +142,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> DeleteProduct(int id)
     {
         try
@@ -155,6 +162,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("category/{id}")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> DeleteCategory(int id)
     {
         try
@@ -169,6 +177,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     }
     
     [HttpPost("category/order")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> OrderCategories(IList<int> ids)
     {
         try

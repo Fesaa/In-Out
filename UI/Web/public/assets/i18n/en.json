@@ -23,11 +23,12 @@
     "product-not-found": "Product not found",
     "product-in-use": "Product is tracked in stock",
     "name-in-use": "This name is already being used",
-    "not-enough-categories": "Not enough categories referenced in your equest"
+    "not-enough-categories": "Not enough categories referenced in your request"
   },
 
   "confirm-modal": {
     "title": "Confirm your next action",
+    "generic": "Are you certain you want to continue with this action?",
     "cancel": "{{common.cancel}}",
     "confirm": "{{common.confirm}}",
     "close": "{{common.close}}"

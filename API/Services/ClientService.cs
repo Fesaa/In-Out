@@ -112,6 +112,10 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         var client = await unitOfWork.ClientRepository.GetClientById(id);
         if  (client == null)
             throw new ApplicationException("errors.client-not-found");
+
+        var deliveries = await unitOfWork.DeliveryRepository.GetDeliveriesForClient(client.Id, [DeliveryState.InProgress, DeliveryState.Completed]);
+        if (deliveries.Count > 0)
+            throw new ApplicationException("errors.unfinished-deliveries");
         
         unitOfWork.ClientRepository.Delete(client);
         await unitOfWork.CommitAsync();

@@ -54,6 +54,8 @@ public static class IdentityServiceExtensions
             .AddPolicy(PolicyConstants.HandleDeliveries)
             .AddPolicy(PolicyConstants.ManageStock)
             .AddPolicy(PolicyConstants.ManageApplication)
+            .AddPolicy(PolicyConstants.ManageProducts)
+            .AddPolicy(PolicyConstants.ManageClients)
             ;
 
         return services;

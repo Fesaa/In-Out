@@ -50,19 +50,21 @@ export const routes: Routes = [
   },
   {
     path: 'management',
-    canActivate: [roleGuard(Role.ManageApplication)],
     children: [
       {
         path: 'products',
         component: ManagementProductsComponent,
+        canActivate: [roleGuard(Role.ManageProducts)]
       },
       {
         path: 'clients',
-        component: ManagementClientsComponent
+        component: ManagementClientsComponent,
+        canActivate: [roleGuard(Role.ManageClients)]
       },
       {
         path: 'server',
         component: ManagementServerComponent,
+        canActivate: [roleGuard(Role.ManageApplication)],
       }
     ],
   },

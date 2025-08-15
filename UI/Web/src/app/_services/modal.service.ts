@@ -3,6 +3,7 @@ import {NgbModal, NgbModalOptions, NgbModalRef} from '@ng-bootstrap/ng-bootstrap
 import {ConfirmModalComponent} from '../shared/components/confirm-modal/confirm-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
 import {firstValueFrom, take} from 'rxjs';
+import {translate} from '@jsverse/transloco';
 
 @Injectable({
   providedIn: 'root'
@@ -36,9 +37,7 @@ export class ModalService {
   }) {
     const [_, component] = this.open(ConfirmModalComponent, DefaultModalOptions);
 
-    if (options.question) {
-      component.question.set(options.question);
-    }
+    component.question.set(options.question ?? translate('confirm-modal.generic'));
 
     if (options.title) {
       component.title.set(options.title);

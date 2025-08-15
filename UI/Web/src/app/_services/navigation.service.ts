@@ -83,14 +83,14 @@ export class NavigationService {
       id: ManagementSettingsId.Products,
       translationKey: 'navigation.management.items.products',
       icon: 'fas fa-boxes-stacked',
-      requiredRoles: [Role.ManageStock],
+      requiredRoles: [Role.ManageProducts],
       routerLink: '/management/products'
     },
     {
       id: ManagementSettingsId.Clients,
       translationKey: 'navigation.management.items.clients',
       icon: 'fas fa-users',
-      requiredRoles: [],
+      requiredRoles: [Role.ManageClients],
       routerLink: '/management/clients'
     },
     {

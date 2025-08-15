@@ -1,7 +1,9 @@
+using API.Constants;
 using API.Data;
 using API.DTOs;
 using API.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -61,6 +63,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     /// Update an existing client
     /// </summary>
     [HttpPut]
+    [Authorize(Policy = PolicyConstants.ManageClients)]
     public async Task<IActionResult> UpdateClient(ClientDto dto)
     {
         try
@@ -78,6 +81,7 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     /// Delete a client by ID
     /// </summary>
     [HttpDelete("{id}")]
+    [Authorize(Policy = PolicyConstants.ManageClients)]
     public async Task<IActionResult> DeleteClient(int id)
     {
         try
