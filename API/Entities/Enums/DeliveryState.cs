@@ -23,5 +23,5 @@ public enum DeliveryState
     /// The delivery has been cancelled, all items will be returned to stock. Cannot be changed
     /// </summary>
     [Description("Cancelled")]
-    Canceled,
+    Cancelled,
 }

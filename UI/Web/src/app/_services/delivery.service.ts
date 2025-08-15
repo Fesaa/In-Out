@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Delivery} from '../_models/delivery';
+import {Delivery, DeliveryState} from '../_models/delivery';
 import {Filter} from '../_models/filter';
 
 @Injectable({
@@ -30,6 +30,10 @@ export class DeliveryService {
 
   filter(filter: Filter) {
     return this.httpClient.post<Delivery[]>(this.baseUrl+'/filter', filter);
+  }
+
+  transitionDelivery(id: number, nextState: DeliveryState) {
+    return this.httpClient.post(`${this.baseUrl}/transition?deliveryId=${id}&nextState=${nextState}`, {})
   }
 
 }

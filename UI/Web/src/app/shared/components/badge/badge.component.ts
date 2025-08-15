@@ -6,6 +6,7 @@ import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core
   template: `
     <span
       [class]="badgeClass()"
+      [class.clickable]="clickAble()"
       role="status"
     >
       <ng-content></ng-content>
@@ -16,6 +17,7 @@ import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core
 export class BadgeComponent {
 
   colour = input<'primary' | 'secondary' | 'error' | 'warning'>('primary');
+  clickAble = input(false);
 
   badgeClass = computed(() => `badge badge--${this.colour()}`);
 }

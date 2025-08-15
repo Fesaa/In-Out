@@ -51,7 +51,7 @@ public static class IdentityServiceExtensions
         services.AddAuthorizationBuilder()
             .AddPolicy(PolicyConstants.CreateForOthers)
             .AddPolicy(PolicyConstants.ViewAllDeliveries)
-            .AddPolicy(PolicyConstants.ExportDeliveryRapport)
+            .AddPolicy(PolicyConstants.HandleDeliveries)
             .AddPolicy(PolicyConstants.ManageStock)
             .AddPolicy(PolicyConstants.ManageApplication)
             ;

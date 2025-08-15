@@ -1,0 +1,51 @@
+<ng-container *transloco="let t; prefix: 'transition-delivery-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title', {name: delivery().recipient?.name})}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+
+      <h3>{{t('cur-label', {state: currentState() | deliveryState})}}</h3>
+
+      <div class="row">
+        @for (nextState of stateOptions(); track nextState) {
+          <div class="col-md-6 col-sm-12 p-1">
+            <button class="btn w-100"
+                    [class.btn-olive]="selectedNextState() === nextState"
+                    [class.btn-option]="selectedNextState() !== nextState"
+                    (click)="selectedNextState.set(nextState)"
+            >
+              {{ nextState | deliveryState }}
+            </button>
+          </div>
+        } @empty {
+          <span>{{ t('no-transition-possible') }}</span>
+        }
+      </div>
+
+      @if (selectedNextState(); as selectedState) {
+        <div class="mt-3">
+          <div class="text-muted">{{selectedState | deliveryStateTooltip}}</div>
+        </div>
+      }
+
+
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('cancel')}}
+      </button>
+      <button type="button" class="btn btn-olive" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <app-loading-spinner />
+        }
+        <span>{{ !saving() ? t('save') : t('saving')}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

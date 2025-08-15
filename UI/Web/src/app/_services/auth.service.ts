@@ -18,7 +18,7 @@ export enum OidcEvents {
 
 export enum Role {
   CreateForOthers = 'CreateForOthers',
-  ExportDeliveryRapport = 'ExportDeliveryRapport',
+  HandleDeliveries = 'HandleDeliveries',
   ManageStock = 'ManageStock',
   ViewAllDeliveries = 'ViewAllDeliveries',
   ManageApplication = 'ManageApplication',

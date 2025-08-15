@@ -128,6 +128,31 @@ a:hover {
   }
 }
 
+.btn-option {
+  background-color: var(--background-secondary);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 3px var(--shadow-light);
+  border: 1px solid var(--surface-border);
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--surface-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px var(--shadow-medium);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px var(--shadow-light);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+
 .action-buttons {
   display: flex;
   gap: 12px;

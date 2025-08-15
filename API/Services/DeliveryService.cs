@@ -13,11 +13,12 @@ public interface IDeliveryService
     Task CreateDelivery(int userId, DeliveryDto  dto);
     Task UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto);
     Task DeleteDelivery(int id);
+    Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState);
 }
 
 public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, IStockService stockService): IDeliveryService
 {
-    public static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Canceled];
+    private static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Cancelled, DeliveryState.Handled];
 
     public async Task CreateDelivery(int userId, DeliveryDto dto)
     {
@@ -90,8 +91,7 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
         var user = await userService.GetUser(actor);
         if (delivery.UserId != user.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
             throw new UnauthorizedAccessException();
-        
-        delivery.State = dto.State;
+
         delivery.Message = dto.Message;
 
         if (delivery.UserId != dto.FromId)
@@ -132,7 +132,7 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
                         ProductId = l.ProductId,
                         Value = l.Quantity,
                         Operation = StockOperation.Remove,
-                        Reference = $"Delivery {delivery.Id} update"
+                        Reference = $"Delivery {delivery.Id} update",
                     };
                 }
 
@@ -142,7 +142,7 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
                     ProductId = deliveryLine.ProductId,
                     Value = Math.Abs(diff),
                     Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
-                    Reference = $"Delivery {delivery.Id} update"
+                    Reference = $"Delivery {delivery.Id} update",
                 };
             })
             .ToList();
@@ -169,4 +169,52 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
         unitOfWork.DeliveryRepository.Remove(delivery);
         await unitOfWork.CommitAsync();
     }
+
+    public async Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState)
+    {
+        var canHandleDeliveries = actor.IsInRole(PolicyConstants.HandleDeliveries);
+        
+        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(deliveryId);
+        if (delivery == null)
+            throw new ApplicationException("errors.delivery-not-found");
+
+        var validNextStates = GetStateOptions(delivery.State, canHandleDeliveries);
+        if (!validNextStates.Contains(nextState))
+            throw new ApplicationException("errors.invalid-next-state");
+
+        delivery.State = nextState;
+        await unitOfWork.CommitAsync();
+    }
+    
+    private static List<DeliveryState> GetStateOptions(DeliveryState currentState, bool canHandleDeliveries)
+    {
+        switch (currentState)
+        {
+            case DeliveryState.InProgress:
+                return [DeliveryState.Completed, DeliveryState.Cancelled,];
+
+            case DeliveryState.Completed:
+                var states = new List<DeliveryState>
+                {
+                    DeliveryState.InProgress,
+                    DeliveryState.Cancelled,
+                };
+
+                if (canHandleDeliveries)
+                {
+                    states.Add(DeliveryState.Handled);
+                }
+
+                return states;
+
+            case DeliveryState.Handled:
+                return canHandleDeliveries ? [DeliveryState.Completed] : [];
+
+            case DeliveryState.Cancelled:
+            default:
+                return [];
+
+        }
+    }
+
 }

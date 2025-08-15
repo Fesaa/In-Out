@@ -13,6 +13,7 @@
         <th class="table-header-cell">{{t('to')}}</th>
         <th class="table-header-cell">{{t('state')}}</th>
         <th class="table-header-cell">{{t('created')}}</th>
+        <th class="table-header-cell">{{t('actions')}}</th>
       </tr>
     </ng-template>
 
@@ -20,9 +21,20 @@
       <td class="table-cell">{{ delivery.from.name }}</td>
       <td class="table-cell">{{ delivery.recipient.name }}</td>
       <td class="table-cell">
-        <app-badge colour="primary">{{delivery.state | deliveryState}}</app-badge>
+        <app-badge colour="primary" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
       </td>
       <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
+      <td class="table-cell d-flex align-items-center gap-2">
+
+        <button class="btn btn-sm" [ngbTooltip]="t('transition')" (click)="transitionDelivery(delivery)">
+          <i class="fas fa-arrows-spin"></i>
+        </button>
+
+        <a class="btn btn-sm" href="/delivery/manage?deliveryId={{delivery.id}}" target="_blank" >
+          <i class="fas fa-pencil"></i>
+        </a>
+
+      </td>
     </ng-template>
   </app-table>
 

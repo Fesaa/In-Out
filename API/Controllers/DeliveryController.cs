@@ -3,6 +3,7 @@ using API.Data;
 using API.Data.Repositories;
 using API.DTOs;
 using API.DTOs.Filter;
+using API.Entities.Enums;
 using API.Extensions;
 using API.Helpers;
 using API.Services;
@@ -75,6 +76,20 @@ public class DeliveryController(ILogger<DeliveryController> logger, IUnitOfWork 
         try
         {
             await deliveryService.UpdateDelivery(User, dto);
+        }
+        catch (ApplicationException e)
+        {
+            return BadRequest(e.Message);
+        }
+        return Ok();
+    }
+
+    [HttpPost("transition")]
+    public async Task<IActionResult> UpdateState([FromQuery] int deliveryId, [FromQuery] DeliveryState nextState)
+    {
+        try
+        {
+            await deliveryService.TransitionDelivery(User, deliveryId, nextState);
         }
         catch (ApplicationException e)
         {

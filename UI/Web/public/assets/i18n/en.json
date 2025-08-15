@@ -86,7 +86,26 @@
     "from": "From",
     "to": "Recipient",
     "state": "Delivery state",
-    "created": "Created on"
+    "created": "Created on",
+    "actions": "Actions",
+    "transition": "Transition"
+  },
+
+  "transition-delivery-modal": {
+    "title": "Transition delivery state",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "cur-label": "Current state: {{state}}",
+    "no-transition-possible": "You cannot change the state of this delivery"
+  },
+
+  "delivery-state-tooltips": {
+    "in-progress": "The delivery is still being worked on and should not be processed",
+    "completed": "The delivery is ready to be processed",
+    "handled": "The delivery has been processed",
+    "cancelled": "The delivery has been canceled"
   },
 
   "browse-stock": {
