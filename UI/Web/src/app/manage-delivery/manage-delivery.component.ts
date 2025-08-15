@@ -56,10 +56,14 @@ export class ManageDeliveryComponent implements OnInit {
   });
 
   canSubmit = computed(() => {
+    const totalItems = this.totalItems();
+    const submitting = this.submitting();
+    const validState = this.delivery().state === DeliveryState.InProgress;
+
     return this.deliveryForm.valid
-      && this.totalItems() > 0
-      && !this.submitting()
-      && this.delivery().state === DeliveryState.InProgress;
+      && totalItems > 0
+      && !submitting
+      && validState;
   });
 
   delivery = signal<Delivery>({
@@ -288,7 +292,7 @@ export class ManageDeliveryComponent implements OnInit {
         this.toastr.error(translate("manage-delivery.failed"));
         this.submitting.set(false);
       }
-    })
+    });
   }
 
   private setupClientTypeaheadSettings(): void {

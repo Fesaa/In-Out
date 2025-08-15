@@ -5,6 +5,7 @@ using API.Data.Repositories;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
+using API.Extensions;
 
 namespace API.Services;
 
@@ -16,7 +17,7 @@ public interface IDeliveryService
     Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState);
 }
 
-public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, IStockService stockService): IDeliveryService
+public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOfWork, IUserService userService, IStockService stockService): IDeliveryService
 {
     private static readonly IList<DeliveryState> FinalDeliveryStates = [DeliveryState.Completed, DeliveryState.Cancelled, DeliveryState.Handled];
 
@@ -63,7 +64,7 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
                 ProductId = l.ProductId, 
                 Value = l.Quantity, 
                 Operation = StockOperation.Remove, 
-                // TODO: Reference and notes?
+                Reference = $"Delivery creation by {user.Name} to {client.Name}",
             })
             .ToList());
 
@@ -132,20 +133,36 @@ public class DeliveryService(IUnitOfWork unitOfWork, IUserService userService, I
                         ProductId = l.ProductId,
                         Value = l.Quantity,
                         Operation = StockOperation.Remove,
-                        Reference = $"Delivery {delivery.Id} update",
+                        Reference = $"Delivery {delivery.Id} update to {delivery.Recipient.Name} by {user.Name}",
                     };
                 }
 
                 var diff = l.Quantity - deliveryLine.Quantity;
+                if (diff == 0)
+                {
+                    return null;
+                }
+
+                logger.LogDebug("Updating stock for product {ProductId} with diff {diff}", deliveryLine.ProductId, diff);
                 return new UpdateStockDto
                 {
                     ProductId = deliveryLine.ProductId,
                     Value = Math.Abs(diff),
                     Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
-                    Reference = $"Delivery {delivery.Id} update",
+                    Reference = $"Delivery {delivery.Id} update to {delivery.Recipient.Name} by {user.Name}",
                 };
             })
+            .RequireNotNull()
             .ToList();
+
+        if (updates.Count == 0)
+        {
+            unitOfWork.DeliveryRepository.Update(delivery);
+            await unitOfWork.CommitAsync();
+            return;
+        }
+
+        logger.LogDebug("Delivery update resulted in {Length} stock updates", updates.Count);
         
         var result = await stockService.UpdateStockBulkAsync(user, updates);
         if (result.IsFailure)
