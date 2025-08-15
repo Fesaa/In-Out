@@ -46,6 +46,16 @@ export class ManagementProductsComponent implements OnInit {
 
   productWarning = computed(() => this.products().length === 0 && this.categories().length > 0)
   categoriesWarning = computed(() => this.categories().length === 0);
+  sortedProducts = computed(() => this.products().sort((p1, p2) => {
+    const category = (id: number) => this.categories()
+      .find(c => c.id === id)?.sortValue ?? 999_999_999;
+
+    if (p1.categoryId !== p2.categoryId) {
+      return category(p1.categoryId) - category(p2.categoryId)
+    }
+
+    return p1.name.toLowerCase().localeCompare(p2.name.toLowerCase());
+  }));
 
   ngOnInit(): void {
     forkJoin([
@@ -121,7 +131,13 @@ export class ManagementProductsComponent implements OnInit {
       return;
     }
 
-    this.productService.deleteCategory(category.id).subscribe({next: () => this.loadProducts()});
+    this.productService.deleteCategory(category.id).subscribe({
+      next: () => {
+        this.loadProducts();
+        this.categories.update(categories => categories
+          .filter(c => c.id !== category.id));
+      }
+    });
   }
 
   newDefaultCategory(category: ProductCategory) {

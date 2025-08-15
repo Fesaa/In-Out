@@ -247,6 +247,8 @@
     },
     "products": {
       "title": "Product Management",
+      "products-table-label": "Products",
+      "categories-table-label": "Categories",
       "create-category": "Create Category ",
       "create-first-category": "Create Your First Category",
       "create-product": "Create Product ",

@@ -71,7 +71,10 @@
     }
 
     @if (products().length > 0) {
-      <app-table [trackByIdFunc]="productTracker" [items]="products()"
+
+      <h5>{{t('products-table-label')}}</h5>
+
+      <app-table [trackByIdFunc]="productTracker" [items]="sortedProducts()"
                  *transloco="let t; prefix: 'management.products.table'">
         <ng-template #header>
           <tr>
@@ -120,56 +123,57 @@
     }
 
     @if (categories().length > 0) {
-      <div class="mt-4">
-        <app-table [pagination]="false"
-                   [dragAble]="true" (onDrop)="onCategoryDrop($event)"
-                   [items]="categories()" [trackByIdFunc]="categoryTracker"
-                   *transloco="let t; prefix: 'management.products.categories.table'">
-          <ng-template #header>
-            <tr>
-              <th class="table-header-cell">
-              </th>
-              <th class="table-header-cell">
-                {{t('header.name')}}
-              </th>
-              <th class="table-header-cell">
-                {{t('header.size')}}
-              </th>
-              <th class="table-header-cell">
-                {{t('header.actions')}}
-              </th>
-            </tr>
-          </ng-template>
-          <ng-template #cell let-item let-position="idx">
-            <td class="table-cell">
-                <span class="fas fa-grip-lines drag-handle" cdkDragHandle></span>
-              </td>
-              <td class="table-cell">
-                {{item.name}}
-              </td>
-              <td class="table-cell">
-                {{t('cell.item', {count: categorySize(item)})}}
-              </td>
-              <td class="table-cell d-flex align-items-center gap-2">
-                <button
-                  type="button"
-                  class="btn btn-sm p-1"
-                  (click)="createOrUpdateCategory(item)"
-                >
-                  <i class="fas fa-edit" aria-hidden="true"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-sm p-1 text-danger"
-                  (click)="deleteCategory(item)"
-                  [disabled]="categories().length === 1"
-                >
-                  <i class="fas fa-trash" aria-hidden="true"></i>
-                </button>
-              </td>
-          </ng-template>
-        </app-table>
-      </div>
+
+      <h5 class="mt-4">{{t('categories-table-label')}}</h5>
+
+      <app-table [pagination]="false"
+                 [dragAble]="true" (onDrop)="onCategoryDrop($event)"
+                 [items]="categories()" [trackByIdFunc]="categoryTracker"
+                 *transloco="let t; prefix: 'management.products.categories.table'">
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">
+            </th>
+            <th class="table-header-cell">
+              {{t('header.name')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.size')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.actions')}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template #cell let-item let-position="idx">
+          <td class="table-cell">
+            <span class="fas fa-grip-lines drag-handle" cdkDragHandle></span>
+          </td>
+          <td class="table-cell">
+            {{item.name}}
+          </td>
+          <td class="table-cell">
+            {{t('cell.item', {count: categorySize(item)})}}
+          </td>
+          <td class="table-cell d-flex align-items-center gap-2">
+            <button
+              type="button"
+              class="btn btn-sm p-1"
+              (click)="createOrUpdateCategory(item)"
+            >
+              <i class="fas fa-edit" aria-hidden="true"></i>
+            </button>
+            <button
+              type="button"
+              class="btn btn-sm p-1 text-danger"
+              (click)="deleteCategory(item)"
+              [disabled]="categories().length === 1"
+            >
+              <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </td>
+        </ng-template>
+      </app-table>
     }
   </div>
 }
