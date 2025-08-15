@@ -140,10 +140,10 @@ export class FilterComponent implements OnInit {
     return this.userService.currentUser().pipe(
       map(user => {
         return {
-          limit: 0,
+          limit: 25,
           sortOptions: {
             sortField: SortField.CreationDate,
-            isAscending: true,
+            isAscending: false,
           },
           combination: FilterCombination.And,
           statements: [
