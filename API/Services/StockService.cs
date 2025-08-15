@@ -64,8 +64,8 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
 
                 if (newQ < 0)
                 {
-                    logger.LogWarning("{UserName} tried to update stock {StockId} to a negative value in bulk operation", 
-                        user.Name, dto.ProductId);
+                    logger.LogWarning("{UserId} tried to update stock {StockId} to a negative value in bulk operation", 
+                        user.Id, dto.ProductId);
                     return Result<IList<Stock>>.Failure(
                         await localization.Translate(user.Id, "stock-bulk-insufficient-stock", stock.Product.Name, stock.Quantity, dto.Value)
                     );
@@ -94,8 +94,8 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
             unitOfWork.StockRepository.UpdateRange(results);
             unitOfWork.StockRepository.AddRange(stockHistories);
             
-            logger.LogInformation("Bulk stock update completed successfully. {Count} stocks updated by {UserName}", 
-                results.Count, user.Name);
+            logger.LogInformation("Bulk stock update completed successfully. {Count} stocks updated by {UserId}", 
+                results.Count, user.Id);
             
             return Result<IList<Stock>>.Success(results);
         });
