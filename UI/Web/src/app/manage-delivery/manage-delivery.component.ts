@@ -55,6 +55,13 @@ export class ManageDeliveryComponent implements OnInit {
     return map;
   });
 
+  canSubmit = computed(() => {
+    return this.deliveryForm.valid
+      && this.totalItems() > 0
+      && !this.submitting()
+      && this.delivery().state === DeliveryState.InProgress;
+  });
+
   delivery = signal<Delivery>({
     id: -1,
     state: DeliveryState.InProgress,
@@ -319,4 +326,6 @@ export class ManageDeliveryComponent implements OnInit {
 
     this.fromTypeaheadSettings.set(fromTypeaheadSettings);
   }
+
+  protected readonly DeliveryState = DeliveryState;
 }
