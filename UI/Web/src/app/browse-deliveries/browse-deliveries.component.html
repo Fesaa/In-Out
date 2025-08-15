@@ -21,7 +21,7 @@
       <td class="table-cell">{{ delivery.from.name }}</td>
       <td class="table-cell">{{ delivery.recipient.name }}</td>
       <td class="table-cell">
-        <app-badge colour="primary" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
+        <app-badge [colour]="stateBadgeColour(delivery.state)" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
       </td>
       <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
       <td class="table-cell d-flex align-items-center gap-2">

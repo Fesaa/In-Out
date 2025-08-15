@@ -1,5 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core';
 
+export type BadgeColour = 'primary' | 'secondary' | 'error' | 'warning';
+
 @Component({
   selector: 'app-badge',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +18,7 @@ import {ChangeDetectionStrategy, Component, computed, input} from '@angular/core
 })
 export class BadgeComponent {
 
-  colour = input<'primary' | 'secondary' | 'error' | 'warning'>('primary');
+  colour = input<BadgeColour>('primary');
   clickAble = input(false);
 
   badgeClass = computed(() => `badge badge--${this.colour()}`);

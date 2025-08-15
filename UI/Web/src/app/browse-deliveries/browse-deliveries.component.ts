@@ -6,7 +6,7 @@ import {DeliveryService} from '../_services/delivery.service';
 import {TableComponent} from '../shared/components/table/table.component';
 import {translate, TranslocoDirective} from '@jsverse/transloco';
 import {DeliveryStatePipe} from '../_pipes/delivery-state-pipe';
-import {BadgeComponent} from '../shared/components/badge/badge.component';
+import {BadgeColour, BadgeComponent} from '../shared/components/badge/badge.component';
 import {ToastrService} from 'ngx-toastr';
 import {FilterComponent} from '../filter/filter.component';
 import {UtcToLocalTimePipe} from '../_pipes/utc-to-local-time.pipe';
@@ -77,6 +77,18 @@ export class BrowseDeliveriesComponent {
         }));
       })
     ).subscribe();
+  }
+
+  stateBadgeColour(state: DeliveryState): BadgeColour {
+    switch (state) {
+      case DeliveryState.InProgress:
+      case DeliveryState.Completed:
+        return 'secondary'
+      case DeliveryState.Cancelled:
+        return "error"
+      case DeliveryState.Handled:
+        return 'primary'
+    }
   }
 
 
