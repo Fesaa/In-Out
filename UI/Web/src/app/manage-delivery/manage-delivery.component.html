@@ -16,7 +16,7 @@
                 @if (delivery().id === -1) {
                   {{ t('new-delivery') }}
                 } @else {
-                  {{ t('edit-delivery-with-id', { id: delivery().id }) }}
+                  {{ t('edit-delivery-with-id', { id: delivery().id, name: selectedClient()?.name ?? t('unknown') }) }}
                 }
               </h1>
               @if (totalItems() > 0) {
@@ -167,6 +167,16 @@
                 }
               </div>
             }
+          }
+        </div>
+
+        <div class="col-12 mb-3">
+          @if (deliveryForm.get('message'); as formControl) {
+            <app-settings-item [canEdit]="false" [showEdit]="false" [title]="t('message-label')" [subtitle]="t('message-tooltip')" [control]="formControl">
+              <ng-template #view>
+                <textarea formControlName="message" class="form-control"></textarea>
+              </ng-template>
+            </app-settings-item>
           }
         </div>
       </div>
