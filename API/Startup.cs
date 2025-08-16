@@ -8,8 +8,10 @@ using API.ManualMigrations;
 using API.Middleware;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.Extensions.Primitives;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using Serilog;
@@ -94,6 +96,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
+                .AddNpgsqlInstrumentation()
                 .AddMeter(BuildInfo.AppName)
                 .AddPrometheusExporter());
     }
@@ -169,6 +172,26 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 ctx.Context.Response.Headers["X-Robots-Tag"] = "noindex,nofollow";
             }
         });
+
+
+
+        var apiKey = cfg.GetValue<string>("ApiKey");
+        app.Use(async (ctx, next) =>
+        {
+            if (ctx.Request.Path.StartsWithSegments("/metrics"))
+            {
+                if (!ctx.Request.Query.TryGetValue("api-key", out var key) ||
+                    key != apiKey || string.IsNullOrWhiteSpace(apiKey))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await ctx.Response.WriteAsync("Unauthorized");
+                    return;
+                }
+            }
+
+            await next();
+        });
+        
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
