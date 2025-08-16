@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Serilog;
 using Serilog.Events;
 
@@ -85,6 +87,15 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
         });
         services.AddResponseCaching();
         // TODO: Rate limitter
+
+        services.AddOpenTelemetry()
+            .ConfigureResource(src => src
+                .AddService(BuildInfo.AppName))
+            .WithMetrics(metrics => metrics
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddMeter(BuildInfo.AppName)
+                .AddPrometheusExporter());
     }
 
     public void Configure(IApplicationBuilder app, IServiceProvider serviceProvider, IHostApplicationLifetime applicationLifetime)
@@ -164,6 +175,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             //endpoints.MapHub<MessageHub>("hubs/messages");
             //endpoints.MapHub<LogHub>("hubs/logs");
             endpoints.MapFallbackToController("Index", "Fallback");
+            endpoints.MapPrometheusScrapingEndpoint();
         });
         
         applicationLifetime.ApplicationStarted.Register(() =>
