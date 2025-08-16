@@ -7,6 +7,7 @@ using API.Entities;
 using API.Entities.Enums;
 using API.Exceptions;
 using API.Extensions;
+using API.Helpers.Telemetry;
 
 namespace API.Services;
 
@@ -31,6 +32,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId);
         if (client == null)
             throw new InOutException("errors.client-not-found");
+        
+        using var tracker = TelemetryHelper.TrackOperation("create_client", new Dictionary<string, object?>
+        {
+            ["user_id"] = userId,
+        });
 
         var lines = dto.Lines.GroupBy(l => l.ProductId)
             .Select(g => new DeliveryLineDto
@@ -95,6 +101,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         var user = await userService.GetUser(actor);
         if (delivery.UserId != user.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
             throw new UnauthorizedAccessException();
+        
+        using var tracker = TelemetryHelper.TrackOperation("update_client", new Dictionary<string, object?>
+        {
+            ["user_id"] = user.Id,
+        });
 
         delivery.Message = dto.Message;
 
@@ -205,6 +216,12 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
             throw new InOutException("errors.invalid-next-state");
 
         delivery.State = nextState;
+
+        if (delivery.State == DeliveryState.Cancelled)
+        {
+            // TODO: Refund stock
+        }
+        
         await unitOfWork.CommitAsync();
     }
     
