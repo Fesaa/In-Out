@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace API.Entities;
+namespace API.Extensions;
 
 public static class QueryableExtensions
 {

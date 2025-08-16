@@ -61,7 +61,8 @@
   "manage-delivery": {
     "loading": "Loading...",
     "new-delivery": "New Delivery",
-    "edit-delivery-with-id": "Edit Delivery #{{id}}",
+    "edit-delivery-with-id": "Edit Delivery #{{id}} to {{name}}",
+    "unknown": "unknown",
     "items-selected": "{{count}} items selected",
     "save-delivery": "Save Delivery",
     "save": "{{common.save}}",
@@ -71,7 +72,9 @@
     "from": "From",
     "success": "Successfully updated your delivery",
     "failed": "Failed to submit your delivery, check your input",
-    "delivery-locked": "This delivery cannot be changed in its current state"
+    "delivery-locked": "This delivery cannot be changed in its current state",
+    "message-label": "Message",
+    "message-tooltip": "An optional message, as extra information"
   },
 
   "filter": {

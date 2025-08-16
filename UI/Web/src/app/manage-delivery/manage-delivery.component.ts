@@ -20,10 +20,11 @@ import {
 } from '../browse-deliveries/_components/transition-delivery-modal/transition-delivery-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
 import {ModalService} from '../_services/modal.service';
+import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
 
 @Component({
   selector: 'app-manage-delivery',
-  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, SettingsItemComponent],
   templateUrl: './manage-delivery.component.html',
   styleUrl: './manage-delivery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

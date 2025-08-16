@@ -1,6 +1,5 @@
 using API.DTOs;
 using API.Entities;
-using API.Entities.Enums;
 using API.Extensions;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -71,31 +70,31 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
 
     public async Task<IList<Product>> GetAll(bool onlyEnabled = false)
     {
-        return await ctx.Products
-            .WhereIf(onlyEnabled, p => p.Enabled)
+        return await QueryableExtensions
+            .WhereIf(ctx.Products, onlyEnabled, p => p.Enabled)
             .ToListAsync();
     }
 
     public async Task<IList<ProductDto>> GetAllDto(bool onlyEnabled = false)
     {
-        return await ctx.Products
-            .WhereIf(onlyEnabled, p => p.Enabled)
+        return await QueryableExtensions
+            .WhereIf(ctx.Products, onlyEnabled, p => p.Enabled)
             .ProjectTo<ProductDto>(mapper.ConfigurationProvider)
             .ToListAsync();
     }
 
     public async Task<IList<ProductCategory>> GetAllCategories(bool onlyEnabled = false)
     {
-        return await ctx.ProductCategories
-            .WhereIf(onlyEnabled, p => p.Enabled)
+        return await QueryableExtensions
+            .WhereIf(ctx.ProductCategories, onlyEnabled, p => p.Enabled)
             .OrderBy(p => p.SortValue)
             .ToListAsync();
     }
 
     public async Task<IList<ProductCategoryDto>> GetAllCategoriesDtos(bool onlyEnabled = false)
     {
-        return await ctx.ProductCategories
-            .WhereIf(onlyEnabled, p => p.Enabled)
+        return await QueryableExtensions
+            .WhereIf(ctx.ProductCategories, onlyEnabled, p => p.Enabled)
             .OrderBy(p => p.SortValue)
             .ProjectTo<ProductCategoryDto>(mapper.ConfigurationProvider)
             .ToListAsync();

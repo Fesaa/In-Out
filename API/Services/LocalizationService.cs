@@ -1,5 +1,6 @@
 using System.Text.Json;
 using API.Data;
+using API.Helpers.Telemetry;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace API.Services;
@@ -78,6 +79,11 @@ public class LocalizationService: ILocalizationService
 
     public async Task<Dictionary<string, string>?> LoadLanguage(string languageCode)
     {
+        using var tracker = TelemetryHelper.TrackOperation("load_language", new Dictionary<string, object?>
+        {
+            ["language"] = languageCode,
+        });
+        
         if (string.IsNullOrWhiteSpace(languageCode))
         {
             languageCode = DefaultLocale;
@@ -105,6 +111,12 @@ public class LocalizationService: ILocalizationService
 
     public async Task<string> Get(string locale, string key, params object[] args)
     {
+        using var tracker = TelemetryHelper.TrackOperation("get_translations", new Dictionary<string, object?>
+        {
+            ["locale"] = locale,
+            ["key"] = key,
+        });
+        
         var cacheKey = $"{locale}_{key}";
         if (!_memoryCache.TryGetValue(cacheKey, out string? translatedString))
         {
