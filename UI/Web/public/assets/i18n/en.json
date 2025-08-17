@@ -89,6 +89,7 @@
     "from": "From",
     "to": "Recipient",
     "state": "Delivery state",
+    "size": "Size",
     "created": "Created on",
     "actions": "Actions",
     "transition": "Transition"

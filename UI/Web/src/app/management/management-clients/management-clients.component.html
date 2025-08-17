@@ -67,13 +67,17 @@
             {{item.name}}
           </td>
           <td class="table-cell">
-            {{item.companyNumber}}
+            {{item.companyNumber | defaultValue}}
           </td>
           <td class="table-cell">
-            <a [href]="'mailto:' + item.contactEmail">{{item.contactEmail}}</a>
+            @if (item.contactEmail) {
+              <a [href]="'mailto:' + item.contactEmail">{{item.contactEmail}}</a>
+            } @else {
+              {{null | defaultValue}}
+            }
           </td>
           <td class="table-cell">
-            {{item.contactNumber}}
+            {{item.contactNumber | defaultValue}}
           </td>
           <td class="table-cell d-flex align-items-center gap-2">
             <button

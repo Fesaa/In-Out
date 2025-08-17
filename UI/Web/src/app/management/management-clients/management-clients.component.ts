@@ -7,6 +7,7 @@ import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/l
 import {TableComponent} from '../../shared/components/table/table.component';
 import {ClientModalComponent} from './_components/client-modal/client-modal.component';
 import {DefaultModalOptions} from '../../_models/default-modal-options';
+import {DefaultValuePipe} from '../../_pipes/default-value.pipe';
 
 @Component({
   selector: 'app-management-clients',
@@ -14,6 +15,7 @@ import {DefaultModalOptions} from '../../_models/default-modal-options';
     TranslocoDirective,
     LoadingSpinnerComponent,
     TableComponent,
+    DefaultValuePipe,
   ],
   templateUrl: './management-clients.component.html',
   styleUrl: './management-clients.component.scss',
