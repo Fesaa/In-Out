@@ -58,6 +58,26 @@
     "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
   },
 
+  "import-client-modal": {
+    "title": "Import clients from CSV",
+    "cancel": "{{common.cancel}}",
+    "create": "{{common.create}}",
+    "close": "{{common.close}}",
+    "import": "Import",
+    "next": "Next",
+    "import-description": "Select your csv export, to mass import clients from a known source"
+  },
+
+  "client-field-pipe": {
+    "name": "Name",
+    "address": "Address",
+    "company-number": "Company Number",
+    "contact-email": "Contact Email",
+    "contact-name": "Contact Name",
+    "contact-number": "Contact Number",
+    "invoice-email": "Invoice email"
+  },
+
   "manage-delivery": {
     "loading": "Loading...",
     "new-delivery": "New Delivery",
@@ -305,7 +325,10 @@
           "companyNumber": "Company number",
           "contactEmail": "Email",
           "contactNumber": "Phone number",
-          "actions": "{{common.actions}}"
+          "actions": "{{common.actions}}",
+          "address": "Address",
+          "invoiceEmail": "Invoice Email",
+          "contactName": "Contact Name"
         }
       }
     }

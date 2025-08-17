@@ -31,6 +31,10 @@ export class ClientService {
     return this.http.post<void>(this.baseUrl, dto);
   }
 
+  createBulk(dtos: Client[]): Observable<void> {
+    return this.http.post<void>(this.baseUrl+"create-bulk", dtos);
+  }
+
   update(dto: Client): Observable<void> {
     return this.http.put<void>(this.baseUrl, dto);
   }
