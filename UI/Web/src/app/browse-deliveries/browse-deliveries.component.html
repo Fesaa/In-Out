@@ -12,6 +12,7 @@
         <th class="table-header-cell">{{t('from')}}</th>
         <th class="table-header-cell">{{t('to')}}</th>
         <th class="table-header-cell">{{t('state')}}</th>
+        <th class="table-header-cell">{{t('size')}}</th>
         <th class="table-header-cell">{{t('created')}}</th>
         <th class="table-header-cell">{{t('actions')}}</th>
       </tr>
@@ -23,16 +24,25 @@
       <td class="table-cell">
         <app-badge [colour]="stateBadgeColour(delivery.state)" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
       </td>
+      <td class="table-cell">
+        <app-badge>{{delivery.lines.length}}</app-badge>
+      </td>
       <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
-      <td class="table-cell d-flex align-items-center gap-2">
+      <td class="table-cell">
 
-        <button class="btn btn-sm" [ngbTooltip]="t('transition')" (click)="transitionDelivery(delivery)">
-          <i class="fas fa-arrows-spin"></i>
-        </button>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-sm" [ngbTooltip]="t('transition')" (click)="transitionDelivery(delivery)">
+            <i class="fas fa-arrows-spin"></i>
+          </button>
 
-        <a class="btn btn-sm" href="/delivery/manage?deliveryId={{delivery.id}}" target="_blank" >
-          <i class="fas fa-pencil"></i>
-        </a>
+          <a class="btn btn-sm" href="/delivery/manage?deliveryId={{delivery.id}}" target="_blank" >
+            <i class="fas fa-pencil"></i>
+          </a>
+
+          <button class="btn btn-sm">
+            <i class="fas fa-info"></i>
+          </button>
+        </div>
 
       </td>
     </ng-template>

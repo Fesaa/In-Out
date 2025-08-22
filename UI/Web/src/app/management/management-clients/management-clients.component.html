@@ -5,7 +5,8 @@
       <div class="action-buttons">
         <button
           type="button"
-          class="btn btn-olive">
+          class="btn btn-olive"
+          (click)="importClients()">
           <i class="fas fa-file-import" aria-hidden="true"></i>
           {{t('import-clients')}}
         </button>
@@ -42,39 +43,8 @@
     <app-loading-spinner size="large"></app-loading-spinner>
   } @else {
     <div class="mt-4">
-      <app-table [items]="clients()" [trackByIdFunc]="clientTracker" *transloco="let t; prefix: 'management.clients.table'">
-        <ng-template #header>
-          <tr>
-            <th class="table-header-cell">
-              {{t('header.name')}}
-            </th>
-            <th class="table-header-cell">
-              {{t('header.companyNumber')}}
-            </th>
-            <th class="table-header-cell">
-              {{t('header.contactEmail')}}
-            </th>
-            <th class="table-header-cell">
-              {{t('header.contactNumber')}}
-            </th>
-            <th class="table-header-cell">
-              {{t('header.actions')}}
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template #cell let-item>
-          <td class="table-cell">
-            {{item.name}}
-          </td>
-          <td class="table-cell">
-            {{item.companyNumber}}
-          </td>
-          <td class="table-cell">
-            <a [href]="'mailto:' + item.contactEmail">{{item.contactEmail}}</a>
-          </td>
-          <td class="table-cell">
-            {{item.contactNumber}}
-          </td>
+      <app-clients-table [clients]="clients()" [showActions]="true">
+        <ng-template #actions let-item>
           <td class="table-cell d-flex align-items-center gap-2">
             <button
               type="button"
@@ -92,7 +62,7 @@
             </button>
           </td>
         </ng-template>
-      </app-table>
+      </app-clients-table>
     </div>
   }
 

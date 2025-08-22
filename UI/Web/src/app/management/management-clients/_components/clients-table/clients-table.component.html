@@ -1,0 +1,66 @@
+<app-table [items]="clients()" [trackByIdFunc]="clientTracker" *transloco="let t; prefix: 'management.clients.table'">
+  <ng-template #header>
+    <tr>
+      <th class="table-header-cell">
+        {{t('header.name')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.address')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.companyNumber')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.invoiceEmail')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.contactName')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.contactEmail')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.contactNumber')}}
+      </th>
+      @if (showActions()) {
+        <th class="table-header-cell">
+          {{t('header.actions')}}
+        </th>
+      }
+    </tr>
+  </ng-template>
+  <ng-template #cell let-item>
+    <td class="table-cell">
+      {{item.name}}
+    </td>
+    <td class="table-cell">
+      {{item.address | defaultValue}}
+    </td>
+    <td class="table-cell">
+      {{item.companyNumber | defaultValue}}
+    </td>
+    <td class="table-cell">
+      @if (item.invoiceEmail) {
+        <a [href]="'mailto:' + item.invoiceEmail">{{item.invoiceEmail}}</a>
+      } @else {
+        {{null | defaultValue}}
+      }
+    </td>
+    <td class="table-cell">
+      {{item.contactName | defaultValue}}
+    </td>
+    <td class="table-cell">
+      @if (item.contactEmail) {
+        <a [href]="'mailto:' + item.contactEmail">{{item.contactEmail}}</a>
+      } @else {
+        {{null | defaultValue}}
+      }
+    </td>
+    <td class="table-cell">
+      {{item.contactNumber | defaultValue}}
+    </td>
+    @if (showActions()) {
+      <ng-container [ngTemplateOutlet]="actionsRef" [ngTemplateOutletContext]="{$implicit: item}"></ng-container>
+    }
+  </ng-template>
+</app-table>

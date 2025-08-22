@@ -39,7 +39,8 @@ public static class ApplicationServiceExtensions
 
     private static void AddPostgres(this IServiceCollection services, IConfiguration configuration)
     {
-        var pgConnectionString = configuration.GetConnectionString("Postgres");
+        var pgConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+                                 ?? configuration.GetConnectionString("Postgres");
 
         services.AddDbContextPool<DataContext>(options =>
         {

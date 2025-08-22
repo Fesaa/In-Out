@@ -3,8 +3,8 @@ using API.Data.Repositories;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
-using API.Extensions;
 using API.Helpers;
+using API.Helpers.Telemetry;
 
 namespace API.Services;
 
@@ -25,12 +25,18 @@ public class StockService(ILogger<StockService> logger, IUnitOfWork unitOfWork, 
 
     public async Task<Result<IList<Stock>>> UpdateStockBulkAsync(User user, IList<UpdateStockDto> dtos) 
     {
-        if (dtos == null || !dtos.Any())
+        dtos = dtos.Where(dto => dto.Value != 0 || dto.Operation == StockOperation.Set).ToList();
+
+        if (!dtos.Any())
         {
             return Result<IList<Stock>>.Failure(await localization.Translate(user.Id, "stock-bulk-empty-list"));
         }
-        
-        dtos = dtos.Where(dto => dto.Value != 0 || dto.Operation == StockOperation.Set).ToList();
+
+        using var tracker = TelemetryHelper.TrackOperation("bulk_stock_update", new Dictionary<string, object?>
+        {
+            ["user_id"] = user.Id,
+            ["update_operations"] = dtos.Count,
+        });
 
         return await unitOfWork.ExecuteWithRetryAsync(async () =>
         {

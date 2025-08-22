@@ -58,10 +58,31 @@
     "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
   },
 
+  "import-client-modal": {
+    "title": "Import clients from CSV",
+    "cancel": "{{common.cancel}}",
+    "create": "{{common.create}}",
+    "close": "{{common.close}}",
+    "import": "Import",
+    "next": "Next",
+    "import-description": "Select your csv export, to mass import clients from a known source"
+  },
+
+  "client-field-pipe": {
+    "name": "Name",
+    "address": "Address",
+    "company-number": "Company Number",
+    "contact-email": "Contact Email",
+    "contact-name": "Contact Name",
+    "contact-number": "Contact Number",
+    "invoice-email": "Invoice email"
+  },
+
   "manage-delivery": {
     "loading": "Loading...",
     "new-delivery": "New Delivery",
-    "edit-delivery-with-id": "Edit Delivery #{{id}}",
+    "edit-delivery-with-id": "Edit Delivery #{{id}} to {{name}}",
+    "unknown": "unknown",
     "items-selected": "{{count}} items selected",
     "save-delivery": "Save Delivery",
     "save": "{{common.save}}",
@@ -71,7 +92,9 @@
     "from": "From",
     "success": "Successfully updated your delivery",
     "failed": "Failed to submit your delivery, check your input",
-    "delivery-locked": "This delivery cannot be changed in its current state"
+    "delivery-locked": "This delivery cannot be changed in its current state",
+    "message-label": "Message",
+    "message-tooltip": "An optional message, as extra information"
   },
 
   "filter": {
@@ -89,6 +112,7 @@
     "from": "From",
     "to": "Recipient",
     "state": "Delivery state",
+    "size": "Size",
     "created": "Created on",
     "actions": "Actions",
     "transition": "Transition"
@@ -304,7 +328,10 @@
           "companyNumber": "Company number",
           "contactEmail": "Email",
           "contactNumber": "Phone number",
-          "actions": "{{common.actions}}"
+          "actions": "{{common.actions}}",
+          "address": "Address",
+          "invoiceEmail": "Invoice Email",
+          "contactName": "Contact Name"
         }
       }
     }
