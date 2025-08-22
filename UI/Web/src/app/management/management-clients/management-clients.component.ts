@@ -7,6 +7,9 @@ import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/l
 import {TableComponent} from '../../shared/components/table/table.component';
 import {ClientModalComponent} from './_components/client-modal/client-modal.component';
 import {DefaultModalOptions} from '../../_models/default-modal-options';
+import {DefaultValuePipe} from '../../_pipes/default-value.pipe';
+import {ImportClientModalComponent} from './_components/import-client-modal/import-client-modal.component';
+import {ClientsTableComponent} from './_components/clients-table/clients-table.component';
 
 @Component({
   selector: 'app-management-clients',
@@ -14,6 +17,8 @@ import {DefaultModalOptions} from '../../_models/default-modal-options';
     TranslocoDirective,
     LoadingSpinnerComponent,
     TableComponent,
+    DefaultValuePipe,
+    ClientsTableComponent,
   ],
   templateUrl: './management-clients.component.html',
   styleUrl: './management-clients.component.scss',
@@ -45,13 +50,19 @@ export class ManagementClientsComponent implements OnInit {
     return `${client.id}`
   }
 
+  importClients() {
+    const [modal, component] = this.modalService.open(ImportClientModalComponent, DefaultModalOptions);
+
+    modal.closed.subscribe(() => this.loadClients());
+  }
+
   createOrUpdateClient(client?: Client) {
     const [modal, component] = this.modalService.open(ClientModalComponent, DefaultModalOptions);
     if (client) {
       component.client.set(client);
     }
 
-    modal.closed.subscribe(() => this.loadClients())
+    modal.closed.subscribe(() => this.loadClients());
   }
 
   async deleteClient(client: Client) {

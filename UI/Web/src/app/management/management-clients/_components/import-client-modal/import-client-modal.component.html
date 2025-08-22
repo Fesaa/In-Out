@@ -1,0 +1,61 @@
+<ng-container *transloco="let t; prefix: 'import-client-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title')}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+
+      @switch (currentStage()) {
+        @case (StageId.FileImport) {
+          <div class="row g-0">
+            <p>{{t('import-description')}}</p>
+            <form [formGroup]="uploadForm" enctype="multipart/form-data">
+              <file-upload [multiple]="false" formControlName="files"></file-upload>
+            </form>
+          </div>
+        }
+        @case (StageId.HeaderMatch) {
+          <form [formGroup]="headerMatchForm" class="row">
+            @for (headerMappingControl of headerArray.controls; track headerMappingControl.get('header')!.value) {
+              @let header = headerMappingControl.get('header')!.value;
+
+              <div class="col-md-6 col-sm-12">
+                <app-settings-item [control]="headerMappingControl" [title]="header" [canEdit]="false" [showEdit]="false">
+                  <ng-template #view>
+                    <div [formGroup]="headerMappingControl">
+                      <select class="form-select" formControlName="field">
+                        @for (field of fields; track field) {
+                          <option [ngValue]="field">{{field | clientField}}</option>
+                        }
+                      </select>
+                    </div>
+                  </ng-template>
+                </app-settings-item>
+              </div>
+
+            }
+          </form>
+        }
+        @case (StageId.Confirm) {
+          <app-clients-table [clients]="clients()" [showActions]="false"></app-clients-table>
+        }
+      }
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('cancel')}}
+      </button>
+      <button type="button" class="btn btn-olive" (click)="nextStep()" [disabled]="isSaving() || !canMoveToNext()">
+        @if (isSaving()) {
+          <app-loading-spinner />
+        }
+        <span>{{isSaving() ? t('saving') : buttonLabel()}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

@@ -6,6 +6,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {ModalDismissReasons, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ClientService} from '../../../../_services/client.service';
 import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
+import {DefaultValuePipe} from '../../../../_pipes/default-value.pipe';
 
 @Component({
   selector: 'app-client-modal',
@@ -14,7 +15,8 @@ import {SettingsItemComponent} from '../../../../shared/components/settings-item
     LoadingSpinnerComponent,
     FormsModule,
     ReactiveFormsModule,
-    SettingsItemComponent
+    SettingsItemComponent,
+    DefaultValuePipe
   ],
   templateUrl: './client-modal.component.html',
   styleUrl: './client-modal.component.scss',

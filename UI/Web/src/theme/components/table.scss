@@ -39,3 +39,9 @@
     font-weight: 500;
   }
 }
+
+.table-header-cell:last-child,
+.table-cell:last-child {
+  width: 1%;
+  white-space: nowrap;
+}

@@ -53,6 +53,18 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
     }
 
     /// <summary>
+    /// Create several clients at once
+    /// </summary>
+    /// <param name="dtos"></param>
+    /// <returns></returns>
+    [HttpPost("create-bulk")]
+    public async Task<ActionResult> CreateClientBulk(IList<ClientDto> dtos)
+    {
+        await clientService.CreateClients(dtos);
+        return Ok();
+    }
+
+    /// <summary>
     /// Update an existing client
     /// </summary>
     [HttpPut]

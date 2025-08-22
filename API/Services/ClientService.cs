@@ -10,6 +10,7 @@ namespace API.Services;
 public interface IClientService
 {
     Task CreateClient(ClientDto dto);
+    Task CreateClients(IList<ClientDto> dtos);
     Task UpdateClient(ClientDto dto);
     Task DeleteClient(int id);
 }
@@ -18,6 +19,22 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
 {
 
     public async Task CreateClient(ClientDto dto)
+    {
+        await CreateClientFromDto(dto);
+        await unitOfWork.CommitAsync();
+    }
+
+    public async Task CreateClients(IList<ClientDto> dtos)
+    {
+        foreach (var dto in dtos)
+        {
+            await CreateClientFromDto(dto);
+        }
+
+        await unitOfWork.CommitAsync();
+    }
+
+    private async Task CreateClientFromDto(ClientDto dto)
     {
         if (!string.IsNullOrWhiteSpace(dto.CompanyNumber))
         {
@@ -39,7 +56,6 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         };
         
         unitOfWork.ClientRepository.Add(client);
-        await unitOfWork.CommitAsync();
     }
 
     public async Task UpdateClient(ClientDto dto)
