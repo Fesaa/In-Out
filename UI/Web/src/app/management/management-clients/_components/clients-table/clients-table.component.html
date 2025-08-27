@@ -8,19 +8,19 @@
         {{t('header.address')}}
       </th>
       <th class="table-header-cell">
-        {{t('header.companyNumber')}}
-      </th>
-      <th class="table-header-cell">
-        {{t('header.invoiceEmail')}}
-      </th>
-      <th class="table-header-cell">
         {{t('header.contactName')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.contactNumber')}}
       </th>
       <th class="table-header-cell">
         {{t('header.contactEmail')}}
       </th>
       <th class="table-header-cell">
-        {{t('header.contactNumber')}}
+        {{t('header.invoiceEmail')}}
+      </th>
+      <th class="table-header-cell">
+        {{t('header.companyNumber')}}
       </th>
       @if (showActions()) {
         <th class="table-header-cell">
@@ -37,17 +37,10 @@
       {{item.address | defaultValue}}
     </td>
     <td class="table-cell">
-      {{item.companyNumber | defaultValue}}
-    </td>
-    <td class="table-cell">
-      @if (item.invoiceEmail) {
-        <a [href]="'mailto:' + item.invoiceEmail">{{item.invoiceEmail}}</a>
-      } @else {
-        {{null | defaultValue}}
-      }
-    </td>
-    <td class="table-cell">
       {{item.contactName | defaultValue}}
+    </td>
+    <td class="table-cell">
+      {{item.contactNumber | defaultValue}}
     </td>
     <td class="table-cell">
       @if (item.contactEmail) {
@@ -57,7 +50,14 @@
       }
     </td>
     <td class="table-cell">
-      {{item.contactNumber | defaultValue}}
+      @if (item.invoiceEmail) {
+        <a [href]="'mailto:' + item.invoiceEmail">{{item.invoiceEmail}}</a>
+      } @else {
+        {{null | defaultValue}}
+      }
+    </td>
+    <td class="table-cell">
+      {{item.companyNumber | defaultValue}}
     </td>
     @if (showActions()) {
       <ng-container [ngTemplateOutlet]="actionsRef" [ngTemplateOutletContext]="{$implicit: item}"></ng-container>
