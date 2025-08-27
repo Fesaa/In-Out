@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {translate} from '@jsverse/transloco';
 import {FilterComparison} from '../_models/filter';
 

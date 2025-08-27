@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {ProductType} from '../_models/product';
 import {translate} from '@jsverse/transloco';
 

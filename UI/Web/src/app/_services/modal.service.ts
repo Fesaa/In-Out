@@ -2,7 +2,7 @@ import {inject, Injectable, TemplateRef, Type} from '@angular/core';
 import {NgbModal, NgbModalOptions, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import {ConfirmModalComponent} from '../shared/components/confirm-modal/confirm-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
-import {firstValueFrom, take} from 'rxjs';
+import {firstValueFrom} from 'rxjs';
 import {translate} from '@jsverse/transloco';
 
 @Injectable({

@@ -23,7 +23,6 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {SortFieldPipe} from '../_pipes/sort-field-pipe';
 import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
 import {UserService} from '../_services/user.service';
-import {AsyncPipe} from '@angular/common';
 
 export type FilterStatementFormGroup = FormGroup<{
   comparison: FormControl<FilterComparison>,
@@ -41,7 +40,6 @@ export type FilterStatementFormGroup = FormGroup<{
     TranslocoDirective,
     SortFieldPipe,
     SettingsItemComponent,
-    AsyncPipe
   ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',

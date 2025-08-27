@@ -12,7 +12,7 @@ import {ProductService} from '../../_services/product.service';
 import {Product, ProductCategory} from '../../_models/product';
 import {forkJoin} from 'rxjs';
 import {TableComponent} from '../../shared/components/table/table.component';
-import {translate, TranslocoDirective} from '@jsverse/transloco';
+import {TranslocoDirective} from '@jsverse/transloco';
 import {ProductCategoryModalComponent} from './_components/product-category-modal/product-category-modal.component';
 import {DefaultModalOptions} from '../../_models/default-modal-options';
 import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/loading-spinner.component';

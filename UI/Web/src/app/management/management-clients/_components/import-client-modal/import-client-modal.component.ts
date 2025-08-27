@@ -12,8 +12,6 @@ import Papa from 'papaparse';
 import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
 import {ClientFieldPipe} from '../../../../_pipes/client-field-pipe';
 import {Client} from '../../../../_models/client';
-import {TableComponent} from '../../../../shared/components/table/table.component';
-import {DefaultValuePipe} from '../../../../_pipes/default-value.pipe';
 import {ClientsTableComponent} from '../clients-table/clients-table.component';
 
 enum StageId {
@@ -50,8 +48,6 @@ type HeaderMappingControl = FormGroup<{
     FileUploadComponent,
     SettingsItemComponent,
     ClientFieldPipe,
-    TableComponent,
-    DefaultValuePipe,
     ClientsTableComponent,
   ],
   templateUrl: './import-client-modal.component.html',

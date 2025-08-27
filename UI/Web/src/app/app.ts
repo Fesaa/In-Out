@@ -1,7 +1,6 @@
 import {Component, DestroyRef, HostListener, inject, OnInit} from '@angular/core';
 import {NavigationStart, Router, RouterOutlet} from '@angular/router';
 import {AuthService} from './_services/auth.service';
-import {DashboardComponent} from './dashboard/dashboard.component';
 import {TranslocoModule, TranslocoService} from '@jsverse/transloco';
 import {NavBarComponent} from './nav-bar/nav-bar.component';
 import {NavigationService} from './_services/navigation.service';

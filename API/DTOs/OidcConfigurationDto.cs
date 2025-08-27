@@ -9,5 +9,8 @@ public sealed record OidcConfigurationDto
     
     [Required]
     public string ClientId { get; init; }
+    
+    [Required]
+    public string ClientSecret { get; init; }
 
 }

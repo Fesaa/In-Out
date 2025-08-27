@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, model, signal} from '@angular/core';
 import {Delivery, DeliveryState} from '../../../_models/delivery';
-import {NgbActiveModal, NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
 import {translate, TranslocoDirective} from '@jsverse/transloco';
 import {DeliveryStatePipe} from '../../../_pipes/delivery-state-pipe';

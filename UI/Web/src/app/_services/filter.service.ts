@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {FilterComparison, FilterField, FilterInputType} from '../_models/filter';
 import {TypeaheadSettings} from '../type-ahead/typeahead.component';
 import {ClientService} from './client.service';
-import {forkJoin, map, Observable, of, tap} from 'rxjs';
+import {map, Observable, of} from 'rxjs';
 import {UserService} from './user.service';
 import {ProductService} from './product.service';
 import {DeliveryStatePipe} from '../_pipes/delivery-state-pipe';

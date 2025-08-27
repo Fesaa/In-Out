@@ -1,7 +1,9 @@
 using API.Data;
 using API.DTOs;
+using API.Extensions;
 using API.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -14,12 +16,22 @@ public class UserController(IUnitOfWork unitOfWork, IUserService userService, IM
     {
         return Ok(await unitOfWork.UsersRepository.GetByIds(ids));
     }
+    
+    [AllowAnonymous]
+    [HttpGet("has-cookie")]
+    public ActionResult<bool> HasCookie()
+    {
+        return Ok(Request.Cookies.ContainsKey(OidcService.CookieName));
+    }
 
     [HttpGet]
     public async Task<ActionResult<UserDto>> CurrentUser()
     {
         var user = await userService.GetUser(User);
-        return Ok(mapper.Map<UserDto>(user));
+        var dto = mapper.Map<UserDto>(user);
+
+        dto.Roles = HttpContext.User.GetRoles();
+        return Ok(dto);
     }
 
     [HttpGet("all")]

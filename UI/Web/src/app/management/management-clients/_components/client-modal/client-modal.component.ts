@@ -3,7 +3,7 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {LoadingSpinnerComponent} from '../../../../shared/components/loading-spinner/loading-spinner.component';
 import {Client} from '../../../../_models/client';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {ModalDismissReasons, NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
+import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ClientService} from '../../../../_services/client.service';
 import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
 import {DefaultValuePipe} from '../../../../_pipes/default-value.pipe';

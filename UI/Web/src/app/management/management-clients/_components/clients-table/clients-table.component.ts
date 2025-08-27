@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ContentChild, input, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, ContentChild, input, TemplateRef} from '@angular/core';
 import {TableComponent} from '../../../../shared/components/table/table.component';
 import {Client} from '../../../../_models/client';
 import {TranslocoDirective} from '@jsverse/transloco';

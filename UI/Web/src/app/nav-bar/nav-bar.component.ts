@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  OnInit,
-  Signal,
-  signal
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, HostListener, inject, OnInit, Signal} from '@angular/core';
 import {NgTemplateOutlet, TitleCasePipe} from "@angular/common";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {RouterLink} from '@angular/router';

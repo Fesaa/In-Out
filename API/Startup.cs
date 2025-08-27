@@ -27,7 +27,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
 
         services.AddControllers();
         services.AddCors();
-        services.AddIdentityServices(cfg);
+        services.AddIdentityServices(cfg, env);
         services.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", new OpenApiInfo
