@@ -375,4 +375,13 @@ export class ManageDeliveryComponent implements OnInit {
   }
 
   protected readonly DeliveryState = DeliveryState;
+
+  onToggleChange($event: Event, productId: number) {
+    const checkbox = $event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      this.incrementProduct(productId);
+    } else {
+      this.decrementProduct(productId);
+    }
+  }
 }

@@ -126,7 +126,7 @@
                             <div class="product-type mt-1">
                               <span class="badge"
                                     style="background-color: var(--background-accent); color: var(--text-secondary); font-size: 11px;">
-                                @if (product.type === 0) {
+                                @if (product.type === ProductType.Consumable) {
                                   {{ t('consumable') }}
                                 } @else {
                                   {{ t('one-time') }}
@@ -135,31 +135,40 @@
                             </div>
                           </div>
 
-                          <div class="quantity-controls d-flex align-items-center gap-2">
-                            @if (quantity > 0) {
+                          @if (product.type === ProductType.Consumable) {
+                            <div class="quantity-controls d-flex align-items-center gap-2">
+                              @if (quantity > 0) {
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 36px; height: 36px; border-color: var(--surface-border);"
+                                        (click)="decrementProduct(product.id)">
+                                  <i class="fas fa-minus" style="font-size: 12px;"></i>
+                                </button>
+
+                                <div class="quantity-display d-flex align-items-center justify-content-center"
+                                     style="min-width: 40px; height: 36px; background-color: var(--background-accent); border-radius: 6px; font-weight: 600; color: var(--text-primary);">
+                                  {{ quantity }}
+                                </div>
+                              }
+
                               <button type="button"
-                                      class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                                      style="width: 36px; height: 36px; border-color: var(--surface-border);"
-                                      (click)="decrementProduct(product.id)">
-                                <i class="fas fa-minus" style="font-size: 12px;"></i>
+                                      class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                                      [class.btn-secondary]="quantity === 0"
+                                      [class.btn-olive]="quantity > 0"
+                                      style="width: 36px; height: 36px;"
+                                      (click)="incrementProduct(product.id)">
+                                <i class="fas fa-plus" style="font-size: 12px;"></i>
                               </button>
+                            </div>
+                          } @else {
+                            <div class="form-check">
+                              <input type="checkbox"
+                                     class="form-check-input"
+                                     id="quantityToggle"
+                                     (change)="onToggleChange($event, product.id)">
+                            </div>
+                          }
 
-                              <div class="quantity-display d-flex align-items-center justify-content-center"
-                                   style="min-width: 40px; height: 36px; background-color: var(--background-accent); border-radius: 6px; font-weight: 600; color: var(--text-primary);">
-                                {{ quantity }}
-                              </div>
-                            }
-
-                            <button type="button"
-                                    class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                                    [class.btn-secondary]="quantity === 0"
-                                    [class.btn-olive]="quantity > 0"
-                                    style="width: 36px; height: 36px;"
-                                    [disabled]="product.type === ProductType.OneTime && quantity === 1"
-                                    (click)="incrementProduct(product.id)">
-                              <i class="fas fa-plus" style="font-size: 12px;"></i>
-                            </button>
-                          </div>
                         </div>
                       }
                     }

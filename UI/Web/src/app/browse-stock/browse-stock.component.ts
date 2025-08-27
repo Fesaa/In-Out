@@ -11,6 +11,7 @@ import {UpdateStockModalComponent} from './_components/update-stock-modal/update
 import {AuthService, Role} from '../_services/auth.service';
 import {ProductCategory} from '../_models/product';
 import {ProductService} from '../_services/product.service';
+import {LoadingSpinnerComponent} from '../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-browse-stock',
@@ -18,6 +19,7 @@ import {ProductService} from '../_services/product.service';
     BadgeComponent,
     TableComponent,
     TranslocoDirective,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './browse-stock.component.html',
   styleUrl: './browse-stock.component.scss',
@@ -30,6 +32,7 @@ export class BrowseStockComponent implements OnInit {
   private readonly stockService = inject(StockService);
   private readonly modalService = inject(ModalService);
 
+  loading = signal(true);
   stock = signal<Stock[]>([]);
   categories = signal<ProductCategory[]>([])
 
@@ -57,6 +60,7 @@ export class BrowseStockComponent implements OnInit {
   private load() {
     this.stockService.getAll().subscribe(stocks => {
       this.stock.set(stocks);
+      this.loading.set(false);
     });
   }
 
