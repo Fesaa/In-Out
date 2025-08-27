@@ -15,8 +15,8 @@ public static class ValueConverterExtension
             FilterField.Recipient => ParseList(filterStatement.Value, int.Parse),
             FilterField.Lines => int.Parse(filterStatement.Value),
             FilterField.Products => ParseList(filterStatement.Value, int.Parse),
-            FilterField.Created => DateTime.Parse(filterStatement.Value, CultureInfo.InvariantCulture),
-            FilterField.LastModified => DateTime.Parse(filterStatement.Value, CultureInfo.InvariantCulture),
+            FilterField.Created => DateTime.Parse(filterStatement.Value, CultureInfo.InvariantCulture).ToUniversalTime(),
+            FilterField.LastModified => DateTime.Parse(filterStatement.Value, CultureInfo.InvariantCulture).ToUniversalTime(),
             
             _ => throw new ArgumentException($"Invalid field type: {filterStatement.Field}"),
         };

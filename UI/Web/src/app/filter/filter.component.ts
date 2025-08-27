@@ -23,6 +23,7 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {SortFieldPipe} from '../_pipes/sort-field-pipe';
 import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
 import {UserService} from '../_services/user.service';
+import {NgbDate, NgbInputDatepicker} from '@ng-bootstrap/ng-bootstrap';
 
 export type FilterStatementFormGroup = FormGroup<{
   comparison: FormControl<FilterComparison>,
@@ -40,6 +41,7 @@ export type FilterStatementFormGroup = FormGroup<{
     TranslocoDirective,
     SortFieldPipe,
     SettingsItemComponent,
+    NgbInputDatepicker,
   ],
   templateUrl: './filter.component.html',
   styleUrl: './filter.component.scss',
@@ -160,7 +162,12 @@ export class FilterComponent implements OnInit {
     const filter = this.filterForm.value as Filter;
 
     filter.statements.forEach(s => {
-      s.value = s.value+''; // force string
+      if (s.field === FilterField.Created || s.field === FilterField.LastModified) {
+        const date = s.value as unknown as NgbDate;
+        s.value = (new Date(date.year, date.month-1, date.day)).toISOString();
+      } else {
+        s.value = s.value+''; // force string
+      }
     });
 
     this.search.emit(filter);
