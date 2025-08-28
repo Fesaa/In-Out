@@ -1,24 +1,32 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, computed,
-  ContentChild, DestroyRef, effect, ElementRef,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  ContentChild,
+  DestroyRef,
+  effect,
+  ElementRef,
   EventEmitter,
   inject,
   input,
   OnInit,
-  Output, signal, TemplateRef,
+  Output,
+  signal,
+  TemplateRef,
   ViewChild
 } from '@angular/core';
 import {
   catchError,
   debounceTime,
-  distinctUntilChanged, filter,
+  distinctUntilChanged,
+  filter,
   Observable,
   of,
   startWith,
   Subject,
   switchMap,
-  take, tap
+  take,
+  tap
 } from 'rxjs';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';

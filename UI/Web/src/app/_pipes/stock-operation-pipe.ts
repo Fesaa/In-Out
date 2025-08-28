@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {StockOperation} from '../_models/stock';
 import {translate} from '@jsverse/transloco';
 

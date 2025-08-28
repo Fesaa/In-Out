@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {DeliveryState} from '../_models/delivery';
 import {translate} from '@jsverse/transloco';
 

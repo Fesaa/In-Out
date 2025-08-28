@@ -1,4 +1,5 @@
-﻿using System.IO.Compression;
+﻿using System.Buffers.Text;
+using System.IO.Compression;
 using System.Reflection;
 using API.Data;
 using API.Exceptions;
@@ -6,6 +7,7 @@ using API.Extensions;
 using API.Helpers;
 using API.ManualMigrations;
 using API.Middleware;
+using Flurl.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Primitives;
@@ -27,7 +29,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
 
         services.AddControllers();
         services.AddCors();
-        services.AddIdentityServices(cfg);
+        services.AddIdentityServices(cfg, env);
         services.AddSwaggerGen(opt =>
         {
             opt.SwaggerDoc("v1", new OpenApiInfo
@@ -198,13 +200,14 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             //endpoints.MapHub<MessageHub>("hubs/messages");
             //endpoints.MapHub<LogHub>("hubs/logs");
             endpoints.MapFallbackToController("Index", "Fallback");
-            endpoints.MapPrometheusScrapingEndpoint();
+            endpoints.MapPrometheusScrapingEndpoint().DisableHttpMetrics();
         });
         
         applicationLifetime.ApplicationStarted.Register(() =>
         {
             try
             {
+                OverrideFaviconIfSet(logger);
                 logger.LogInformation("{Name} - v{Version}", BuildInfo.AppName, BuildInfo.Version);
             }
             catch (Exception)
@@ -213,5 +216,27 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 Console.WriteLine($"{BuildInfo.AppName} - v{BuildInfo.Version}");
             }
         });
+    }
+
+    private void OverrideFaviconIfSet(ILogger<Program> logger)
+    {
+        try
+        {
+            var favicon = cfg.GetValue<string>("Favicon");
+            if (string.IsNullOrWhiteSpace(favicon)) return;
+
+            if (!Directory.Exists("wwwroot")) return;
+
+            var filePath = Path.Join("wwwroot", "favicon.ico");
+
+            var data = Convert.FromBase64String(favicon);;
+            
+            File.WriteAllBytes(filePath, data);
+            logger.LogDebug("Overwriting favicon from configuration: {Data}", favicon);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred during overwrite of favicon");
+        }
     }
 }

@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { translate } from '@jsverse/transloco';
+import {Pipe, PipeTransform} from '@angular/core';
+import {translate} from '@jsverse/transloco';
 import {FilterField} from '../_models/filter';
 
 @Pipe({

@@ -9,5 +9,15 @@ public sealed record OidcConfigurationDto
     
     [Required]
     public string ClientId { get; init; }
+    
+    [Required]
+    public string ClientSecret { get; init; }
+
+    public bool ValidConfig()
+    {
+        return !string.IsNullOrWhiteSpace(Authority)
+               && !string.IsNullOrWhiteSpace(ClientId)
+               && !string.IsNullOrWhiteSpace(ClientSecret);
+    }
 
 }

@@ -4,10 +4,8 @@ import {ModalService} from '../../_services/modal.service';
 import {Client} from '../../_models/client';
 import {ClientService} from '../../_services/client.service';
 import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/loading-spinner.component';
-import {TableComponent} from '../../shared/components/table/table.component';
 import {ClientModalComponent} from './_components/client-modal/client-modal.component';
 import {DefaultModalOptions} from '../../_models/default-modal-options';
-import {DefaultValuePipe} from '../../_pipes/default-value.pipe';
 import {ImportClientModalComponent} from './_components/import-client-modal/import-client-modal.component';
 import {ClientsTableComponent} from './_components/clients-table/clients-table.component';
 
@@ -16,8 +14,6 @@ import {ClientsTableComponent} from './_components/clients-table/clients-table.c
   imports: [
     TranslocoDirective,
     LoadingSpinnerComponent,
-    TableComponent,
-    DefaultValuePipe,
     ClientsTableComponent,
   ],
   templateUrl: './management-clients.component.html',

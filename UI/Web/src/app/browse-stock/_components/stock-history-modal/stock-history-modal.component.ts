@@ -3,10 +3,8 @@ import {Stock, StockHistory} from '../../../_models/stock';
 import {StockService} from '../../../_services/stock.service';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoadingSpinnerComponent} from '../../../shared/components/loading-spinner/loading-spinner.component';
-import {SettingsItemComponent} from '../../../shared/components/settings-item/settings-item.component';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
-import {BadgeComponent} from '../../../shared/components/badge/badge.component';
 import {TableComponent} from '../../../shared/components/table/table.component';
 import {UtcToLocalTimePipe} from '../../../_pipes/utc-to-local-time.pipe';
 import {DefaultValuePipe} from '../../../_pipes/default-value.pipe';
@@ -19,7 +17,6 @@ import {StockOperationPipe} from '../../../_pipes/stock-operation-pipe';
     ReactiveFormsModule,
     TranslocoDirective,
     LoadingSpinnerComponent,
-    BadgeComponent,
     TableComponent,
     UtcToLocalTimePipe,
     DefaultValuePipe,

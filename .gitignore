@@ -5,6 +5,7 @@ API/obj
 API.Tests/bin
 API.Tests/obj
 API/config/logs/*
+API/wwwroot
 .vscode
 appsettings.Development.json
 *.ai

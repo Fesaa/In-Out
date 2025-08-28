@@ -2,7 +2,6 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {inject, Injectable} from '@angular/core';
 import {catchError, Observable} from 'rxjs';
 import {TranslocoService} from '@jsverse/transloco';
-import {AuthService} from '../_services/auth.service';
 import {ToastrService} from 'ngx-toastr';
 
 @Injectable()
@@ -129,7 +128,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   private handleAuthError(error: any) {
-    // TODO: Re-direct to logout
+    window.location.href = "/Auth/logout"
   }
 
   private toast(message: string, title?: string) {

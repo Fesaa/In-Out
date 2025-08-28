@@ -1,13 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  input,
-  model,
-  OnInit,
-  signal
-} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, model, OnInit, signal} from '@angular/core';
 import {AllProductTypes, Product, ProductCategory, ProductType} from '../../../../_models/product';
 import {ProductService} from '../../../../_services/product.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';

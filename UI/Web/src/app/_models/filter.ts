@@ -69,9 +69,16 @@ export enum FilterInputType {
   Date = 3,
 }
 
+function isDate(field: FilterField) {
+  return field === FilterField.Created || field === FilterField.LastModified;
+}
+
 export function serializeFilterToQuery(filter: Filter): string {
   const statements = filter.statements
-    .map(s => `${s.field},${s.comparison},${encodeURIComponent(s.value)}`)
+    .map(s => {
+      const value = isDate(s.field) ? JSON.stringify(s.value) : s.value;
+      return `${s.field},${s.comparison},${encodeURIComponent(value)}`;
+    })
     .join(';');
 
   const combination = FilterCombination[filter.combination];
@@ -103,10 +110,12 @@ export function deserializeFilterFromQuery(query: string): Filter {
     .filter(Boolean)
     .map(statement => {
       const [fieldStr, comparisonStr, valueEncoded] = statement.split(',');
+      const value = decodeURIComponent(valueEncoded);
+
       return {
         field: Number(fieldStr) as FilterField,
         comparison: Number(comparisonStr) as FilterComparison,
-        value: decodeURIComponent(valueEncoded),
+        value: isDate(Number(fieldStr)) ? JSON.parse(value) : value,
       };
     });
 

@@ -17,7 +17,7 @@
       <div class="dropdown">
         @if (authService.userInfo(); as userInfo) {
           <button class="account-toggle btn btn-secondary" (click)="toggleAccountDropdown()">
-            {{ userInfo.UserName | titlecase }}
+            {{ userInfo.name | titlecase }}
           </button>
 
           @if (navService.isAccountDropdownOpen()) {

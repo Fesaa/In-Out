@@ -15,7 +15,7 @@ public interface IDeliveryService
 {
     Task<Delivery> CreateDelivery(int userId, DeliveryDto  dto);
     Task<Delivery> UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto);
-    Task DeleteDelivery(int id);
+    Task DeleteDelivery(ClaimsPrincipal actor, int id);
     Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState);
 }
 
@@ -193,21 +193,25 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         return delivery;
     }
 
-    public async Task DeleteDelivery(int id)
+    public async Task DeleteDelivery(ClaimsPrincipal actor, int id)
     {
-        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(id);
+        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(id, DeliveryIncludes.Complete);
         if (delivery == null)
             throw new InOutException("errors.delivery-not-found");
-        
+
+        await RefundDelivery(await userService.GetUser(actor), delivery);
+
         unitOfWork.DeliveryRepository.Remove(delivery);
         await unitOfWork.CommitAsync();
     }
 
     public async Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState)
     {
+        var user = await userService.GetUser(actor);
+        
         var canHandleDeliveries = actor.IsInRole(PolicyConstants.HandleDeliveries);
         
-        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(deliveryId);
+        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(deliveryId, DeliveryIncludes.Complete);
         if (delivery == null)
             throw new InOutException("errors.delivery-not-found");
 
@@ -219,10 +223,30 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
 
         if (delivery.State == DeliveryState.Cancelled)
         {
-            // TODO: Refund stock
+            await RefundDelivery(user, delivery);
         }
         
         await unitOfWork.CommitAsync();
+    }
+
+    /// <summary>
+    /// Return all items to stock
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="delivery">Load <see cref="DeliveryIncludes.Complete"/></param>
+    private async Task RefundDelivery(User user, Delivery delivery)
+    {
+        var reference = $"Automatic refund after delivery cancellation by {user.Name} ";
+        var note = $"Original delivery by {delivery.From.Name} to {delivery.Recipient.Name}";
+        
+        await stockService.UpdateStockBulkAsync(user, delivery.Lines.Select(l => new UpdateStockDto
+        {
+            ProductId = l.ProductId,
+            Value = l.Quantity,
+            Operation = StockOperation.Add,
+            Reference = reference,
+            Notes = note,
+        }).ToList());
     }
     
     private static List<DeliveryState> GetStateOptions(DeliveryState currentState, bool canHandleDeliveries)
@@ -230,17 +254,17 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         switch (currentState)
         {
             case DeliveryState.InProgress:
-                return [DeliveryState.Completed, DeliveryState.Cancelled,];
+                return [DeliveryState.Completed, DeliveryState.Cancelled];
 
             case DeliveryState.Completed:
                 var states = new List<DeliveryState>
                 {
-                    DeliveryState.InProgress,
                     DeliveryState.Cancelled,
                 };
 
                 if (canHandleDeliveries)
                 {
+                    states.Add(DeliveryState.InProgress);
                     states.Add(DeliveryState.Handled);
                 }
 

@@ -31,4 +31,6 @@ public static class PolicyConstants
     /// Grants user permission to change application settings
     /// </summary>
     public const string ManageApplication =  nameof(ManageApplication);
+
+    public static readonly IList<string> Roles = [CreateForOthers, HandleDeliveries, ViewAllDeliveries, ManageStock, ManageProducts, ManageClients, ManageApplication];
 }
