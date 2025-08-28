@@ -7,7 +7,7 @@ import {UserService} from '../_services/user.service';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {DeliveryService} from '../_services/delivery.service';
-import {CommonModule} from '@angular/common';
+import {CommonModule, Location} from '@angular/common';
 import {translate, TranslocoDirective} from '@jsverse/transloco';
 import {TypeaheadComponent, TypeaheadSettings} from '../type-ahead/typeahead.component';
 import {Client} from '../_models/client';
@@ -43,6 +43,7 @@ export class ManageDeliveryComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toastr = inject(ToastrService);
+  private readonly location = inject(Location);
 
   loading = signal(true);
   submitting = signal(false);
@@ -122,7 +123,9 @@ export class ManageDeliveryComponent implements OnInit {
     effect(() => {
       const delivery = this.delivery();
       if (delivery && delivery.id !== -1) {
-        this.router.navigateByUrl(`${this.router.url.split('?')[0]}?deliveryId=${delivery.id}`, { replaceUrl: true });
+        const baseUrl = this.router.url.split('?')[0];
+        const newUrl = `${baseUrl}?deliveryId=${delivery.id}`;
+        this.location.replaceState(newUrl);
       }
     });
   }
