@@ -1,4 +1,5 @@
 ﻿using System.IO.Abstractions;
+using System.Reflection;
 using API.Data;
 using API.Data.Repositories;
 using API.Helpers;
@@ -40,11 +41,22 @@ public static class ApplicationServiceExtensions
         services.AddSwaggerGen(g =>
         {
             g.UseInlineDefinitionsForEnums();
+            g.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
+                $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
         });
     }
 
     private static void AddRedis(this IServiceCollection services, IConfiguration configuration)
     {
+        var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING")
+                                    ?? configuration.GetConnectionString("Redis");
+
+        if (string.IsNullOrWhiteSpace(redisConnectionString))
+        {
+            services.AddDistributedMemoryCache();
+            return;
+        }
+        
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = configuration.GetConnectionString("Redis");
@@ -64,7 +76,6 @@ public static class ApplicationServiceExtensions
                 builder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
             });
             options.EnableDetailedErrors();
-            options.EnableSensitiveDataLogging();
             options.ConfigureWarnings(warnings =>
                 warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
         });
