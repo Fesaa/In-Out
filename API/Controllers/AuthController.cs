@@ -29,10 +29,17 @@ public class AuthController: ControllerBase
     /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("logout")]
-    public IActionResult Logout()
+    public async Task<IActionResult> Logout()
     {
         if (!Request.Cookies.ContainsKey(OidcService.CookieName))
         {
+            return Redirect("/");
+        }
+
+        var res = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        if (!res.Succeeded || res.Properties == null || string.IsNullOrEmpty(res.Properties.GetString(OidcService.IdToken)))
+        {
+            HttpContext.Response.Cookies.Delete(OidcService.CookieName);
             return Redirect("/");
         }
         
