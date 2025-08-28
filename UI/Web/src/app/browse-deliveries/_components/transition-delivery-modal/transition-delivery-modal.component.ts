@@ -42,11 +42,11 @@ export class TransitionDeliveryModalComponent {
       case DeliveryState.InProgress:
         return [DeliveryState.Completed, DeliveryState.Cancelled];
       case DeliveryState.Completed:
-        const states = [DeliveryState.InProgress, DeliveryState.Cancelled];
+        const states = [DeliveryState.Cancelled];
         if (canHandleDeliveries) {
           states.push(DeliveryState.Handled);
+          states.push(DeliveryState.InProgress)
         }
-
         return states;
       case DeliveryState.Handled:
         return canHandleDeliveries ? [DeliveryState.Completed] : [];

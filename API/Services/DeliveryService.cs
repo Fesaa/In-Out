@@ -235,12 +235,12 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
             case DeliveryState.Completed:
                 var states = new List<DeliveryState>
                 {
-                    DeliveryState.InProgress,
                     DeliveryState.Cancelled,
                 };
 
                 if (canHandleDeliveries)
                 {
+                    states.Add(DeliveryState.InProgress);
                     states.Add(DeliveryState.Handled);
                 }
 
