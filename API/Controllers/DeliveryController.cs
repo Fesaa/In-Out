@@ -8,6 +8,7 @@ using API.Extensions;
 using API.Helpers;
 using API.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -17,6 +18,11 @@ public class DeliveryController(ILogger<DeliveryController> logger,
     IUserService userService, IMapper mapper): BaseApiController
 {
 
+    /// <summary>
+    /// Get delivery by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<DeliveryDto?>> Get(int id)
     {
@@ -25,13 +31,20 @@ public class DeliveryController(ILogger<DeliveryController> logger,
         return Ok(delivery);
     }
 
+    /// <summary>
+    /// Filter deliveries
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="pagination"></param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedAccessException"></exception>
     [HttpPost("filter")]
     public async Task<IList<DeliveryDto>> GetDeliveries([FromBody] FilterDto filter, [FromQuery] PaginationParams pagination)
     {
         var user = await unitOfWork.UsersRepository.GetByUserIdAsync(User.GetUserId());
         if (user == null)
         {
-            logger.LogError($"User {User.GetUserId()} not found");
+            logger.LogError("User {UserId} not found", User.GetUserId());
             throw new UnauthorizedAccessException();
         }
         
@@ -56,6 +69,11 @@ public class DeliveryController(ILogger<DeliveryController> logger,
         return await unitOfWork.DeliveryRepository.GetDeliveries(filter, pagination);
     }
 
+    /// <summary>
+    /// Create a new delivery
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<DeliveryDto>> Create(DeliveryDto dto)
     {
@@ -65,6 +83,11 @@ public class DeliveryController(ILogger<DeliveryController> logger,
         return Ok(mapper.Map<DeliveryDto>(delivery));
     }
 
+    /// <summary>
+    /// Update an existing delivery
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPut]
     public async Task<IActionResult> Update(DeliveryDto dto)
     {
@@ -72,6 +95,12 @@ public class DeliveryController(ILogger<DeliveryController> logger,
         return Ok(mapper.Map<DeliveryDto>(delivery));
     }
 
+    /// <summary>
+    /// Change the state of a delivery
+    /// </summary>
+    /// <param name="deliveryId"></param>
+    /// <param name="nextState"></param>
+    /// <returns></returns>
     [HttpPost("transition")]
     public async Task<IActionResult> UpdateState([FromQuery] int deliveryId, [FromQuery] DeliveryState nextState)
     {
@@ -79,7 +108,13 @@ public class DeliveryController(ILogger<DeliveryController> logger,
         return Ok();
     }
 
+    /// <summary>
+    /// Fully delete a delivery, this is destructive. Consider transition to <see cref="DeliveryState.Cancelled"/>
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
+    [Authorize(PolicyConstants.HandleDeliveries)]
     public async Task<IActionResult> Delete(int id)
     {
         await deliveryService.DeleteDelivery(id);

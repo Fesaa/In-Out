@@ -11,6 +11,11 @@ namespace API.Controllers;
 public class ProductsController(IUnitOfWork unitOfWork, IProductService productService): BaseApiController
 {
 
+    /// <summary>
+    /// Get products by ids
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
     [HttpPost("by-ids")]
     public async Task<ActionResult<IList<ProductDto>>> GetProductsByIds(IList<int> ids)
     {
@@ -28,6 +33,11 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
         return Ok(await unitOfWork.ProductRepository.GetAllDto(onlyEnabled));
     }
 
+    /// <summary>
+    /// Returns all product categories
+    /// </summary>
+    /// <param name="onlyEnabled"></param>
+    /// <returns></returns>
     [HttpGet("category")]
     public async Task<ActionResult<IList<ProductCategoryDto>>> GetProductCategories([FromQuery] bool onlyEnabled = false)
     {
@@ -134,6 +144,11 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
         return Ok();
     }
     
+    /// <summary>
+    /// Re-order categories
+    /// </summary>
+    /// <param name="ids">Ids of the categories in the wanted order</param>
+    /// <returns></returns>
     [HttpPost("category/order")]
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> OrderCategories(IList<int> ids)

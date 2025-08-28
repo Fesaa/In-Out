@@ -12,18 +12,33 @@ namespace API.Controllers;
 public class StockController(ILogger<StockController> logger, IUnitOfWork unitOfWork, IStockService stockService): BaseApiController
 {
 
+    /// <summary>
+    /// Retrieve change history 
+    /// </summary>
+    /// <param name="stockId"></param>
+    /// <returns></returns>
     [HttpGet("history/{stockId}")]
     public async Task<ActionResult<IList<StockHistoryDto>>> GetHistory(int stockId)
     {
         return Ok(await unitOfWork.StockRepository.GetHistoryDto(stockId));
     }
 
+    /// <summary>
+    /// Returns all stock
+    /// </summary>
+    /// <returns></returns>
     [HttpGet]
     public async Task<ActionResult<IList<StockDto>>> GetStock()
     {
         return Ok(await unitOfWork.StockRepository.GetAllDtoAsync(StockIncludes.Product));
     }
 
+    /// <summary>
+    /// Update stock
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedAccessException"></exception>
     [HttpPost]
     [Authorize(Policy = PolicyConstants.ManageStock)]
     public async Task<IActionResult> UpdateStock(UpdateStockDto dto)

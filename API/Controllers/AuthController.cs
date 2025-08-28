@@ -10,7 +10,11 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class AuthController: ControllerBase
 {
-    
+    /// <summary>
+    /// Trigger OIDC login flow
+    /// </summary>
+    /// <param name="returnUrl"></param>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("login")]
     public IActionResult Login(string returnUrl = "/")
@@ -19,6 +23,10 @@ public class AuthController: ControllerBase
         return Challenge(properties, IdentityServiceExtensions.OpenIdConnect);
     }
 
+    /// <summary>
+    /// Trigger OIDC logout flow, if no auth cookie is found. Redirects to root
+    /// </summary>
+    /// <returns></returns>
     [AllowAnonymous]
     [HttpGet("logout")]
     public IActionResult Logout()

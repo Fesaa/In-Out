@@ -11,6 +11,11 @@ namespace API.Controllers;
 public class ClientController(IUnitOfWork unitOfWork, IClientService clientService, IMapper mapper) : BaseApiController
 {
     
+    /// <summary>
+    /// Get clients by ids
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
     [HttpPost("by-id")]
     public async Task<ActionResult<IList<ClientDto>>> GetClientDtosByIds(IList<int> ids)
     {
@@ -26,6 +31,11 @@ public class ClientController(IUnitOfWork unitOfWork, IClientService clientServi
         return Ok(await unitOfWork.ClientRepository.GetClientDtos());
     }
 
+    /// <summary>
+    /// Search clients on name, contact name, and contact email
+    /// </summary>
+    /// <param name="query"></param>
+    /// <returns></returns>
     [HttpGet("search")]
     public async Task<ActionResult<IList<ClientDto>>> Search([FromQuery] string query)
     {
