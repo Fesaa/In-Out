@@ -32,5 +32,5 @@ public static class PolicyConstants
     /// </summary>
     public const string ManageApplication =  nameof(ManageApplication);
 
-    public static IList<string> Roles = [CreateForOthers, HandleDeliveries, ViewAllDeliveries, ManageStock, ManageProducts, ManageClients, ManageApplication];
+    public static readonly IList<string> Roles = [CreateForOthers, HandleDeliveries, ViewAllDeliveries, ManageStock, ManageProducts, ManageClients, ManageApplication];
 }
