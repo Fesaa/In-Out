@@ -117,7 +117,7 @@ public class DeliveryController(ILogger<DeliveryController> logger,
     [Authorize(PolicyConstants.HandleDeliveries)]
     public async Task<IActionResult> Delete(int id)
     {
-        await deliveryService.DeleteDelivery(id);
+        await deliveryService.DeleteDelivery(User, id);
         return Ok();
     }
     
