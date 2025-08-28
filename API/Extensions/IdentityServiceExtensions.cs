@@ -19,8 +19,8 @@ public static class IdentityServiceExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         var openIdConnectConfig = configuration.GetSection(OpenIdConnect).Get<OidcConfigurationDto>();
-        if (openIdConnectConfig == null)
-            throw new Exception("OpenIdConnect configuration is missing");
+        if (openIdConnectConfig == null || !openIdConnectConfig.ValidConfig())
+            throw new Exception("OpenIdConnect configuration is missing or invalid");
 
         services.AddSingleton<ConfigurationManager<OpenIdConnectConfiguration>>(_ =>
         {

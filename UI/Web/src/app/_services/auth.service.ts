@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   logout() {
-    window.location.href = "/auth/logout";
+    window.location.href = "/Auth/logout";
   }
 
   private decodeJwt(token: string) {
