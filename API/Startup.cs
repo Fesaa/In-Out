@@ -200,7 +200,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             //endpoints.MapHub<MessageHub>("hubs/messages");
             //endpoints.MapHub<LogHub>("hubs/logs");
             endpoints.MapFallbackToController("Index", "Fallback");
-            endpoints.MapPrometheusScrapingEndpoint();
+            endpoints.MapPrometheusScrapingEndpoint().DisableHttpMetrics();
         });
         
         applicationLifetime.ApplicationStarted.Register(() =>
