@@ -30,6 +30,7 @@ public static class LogLevelOptions
             .Enrich.WithCaller()
             .WriteTo.Console(new ExpressionTemplate(outputTemplate))
             .WriteTo.File(LogFile, shared: true, rollingInterval: RollingInterval.Day, outputTemplate: outputTemplate)
+            .Filter.ByExcluding("RequestPath like '/metric%'")
             .Filter.ByIncludingOnly(ShouldIncludeLogStatement);
     }
     
