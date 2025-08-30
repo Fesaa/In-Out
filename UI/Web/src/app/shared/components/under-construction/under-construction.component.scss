@@ -1,0 +1,36 @@
+.construction-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px var(--shadow-light);
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Icon */
+.construction-icon {
+  font-size: 4rem;
+  color: var(--secondary-color);
+}
+
+/* Title */
+.construction-title {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Text */
+.construction-text {
+  color: var(--text-secondary);
+}
+
+/* Branded button overrides */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color-light);
+  border-color: var(--primary-color-light);
+}

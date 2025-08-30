@@ -1,0 +1,16 @@
+<ng-container *transloco="let t; prefix: 'under-construction'">
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="construction-card text-center p-4">
+      <div class="construction-icon mb-3">🚧</div>
+      <h1 class="construction-title mb-3">
+        {{ t('title') }}
+      </h1>
+      <p class="construction-text mb-4">
+        {{ t('message') }}
+      </p>
+      <a routerLink="/" class="btn btn-primary">
+        {{ t('back') }}
+      </a>
+    </div>
+  </div>
+</ng-container>

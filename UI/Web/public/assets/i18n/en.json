@@ -155,6 +155,12 @@
     }
   },
 
+  "under-construction": {
+    "title": "Under Construction",
+    "message": "We’re working hard to bring you something amazing. Please check back soon!",
+    "back": "Go Back Home"
+  },
+
   "delivery-state-tooltips": {
     "in-progress": "The delivery is still being worked on and should not be processed",
     "completed": "The delivery is ready to be processed",
