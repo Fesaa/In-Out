@@ -128,6 +128,33 @@
     "no-transition-possible": "You cannot change the state of this delivery"
   },
 
+  "view-delivery-modal": {
+    "title": "Delivery {{number}} to {{to}}",
+    "close": "{{common.close}}",
+    "participants": {
+      "label": "Participants",
+      "from": "From",
+      "to": "To"
+    },
+    "message": {
+      "label": "Message"
+    },
+    "systemMessages": {
+      "label": "System Messages"
+    },
+    "lines": {
+      "category": "Category",
+      "label": "Items",
+      "product": "Product",
+      "quantity": "Quantity"
+    },
+    "dates": {
+      "label": "Timestamps",
+      "created": "Created",
+      "modified": "Last Modified"
+    }
+  },
+
   "delivery-state-tooltips": {
     "in-progress": "The delivery is still being worked on and should not be processed",
     "completed": "The delivery is ready to be processed",

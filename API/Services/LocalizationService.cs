@@ -38,7 +38,7 @@ public interface ILocalizationService
     /// <param name="key">Key to translate</param>
     /// <param name="args">Argument to format the translation with</param>
     /// <returns>Formated translated string</returns>
-    Task<string> Translate(string key, params object[] args);
+    Task<string> DefaultTranslate(string key, params object[] args);
     IEnumerable<string> GetLocales();
     
     string DefaultLocale { get; }
@@ -157,7 +157,7 @@ public class LocalizationService: ILocalizationService
         return await Get(userLocale ?? DefaultLocale, key, args);
     }
 
-    public Task<string> Translate(string key, params object[] args)
+    public Task<string> DefaultTranslate(string key, params object[] args)
     {
         return Get(DefaultLocale, key, args);
     }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, input, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, OnInit, signal} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {Filter,} from '../_models/filter';
 import {Delivery, DeliveryState} from '../_models/delivery';
@@ -16,7 +16,12 @@ import {
   TransitionDeliveryModalComponent
 } from './_components/transition-delivery-modal/transition-delivery-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
-import {tap} from 'rxjs';
+import {filter, tap} from 'rxjs';
+import {ViewDeliveryModalComponent} from './_components/view-delivery-modal/view-delivery-modal.component';
+import {Product, ProductCategory} from '../_models/product';
+import * as console from 'node:console';
+import {state} from '@angular/animations';
+import {ProductService} from '../_services/product.service';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -34,15 +39,27 @@ import {tap} from 'rxjs';
   styleUrl: './browse-deliveries.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BrowseDeliveriesComponent {
+export class BrowseDeliveriesComponent implements OnInit {
 
   private readonly deliveryService = inject(DeliveryService);
+  private readonly productService = inject(ProductService);
   private readonly toastr = inject(ToastrService);
   private readonly modalService = inject(ModalService);
 
   showNavbar = input(true);
 
   deliveries = signal<Delivery[]>([]);
+  products = signal<Product[]>([]);
+  categories = signal<ProductCategory[]>([]);
+
+  ngOnInit() {
+    this.productService.allProducts().subscribe(products => {
+      this.products.set(products);
+    });
+    this.productService.getCategories().subscribe(categories => {
+      this.categories.set(categories);
+    });
+  }
 
   loadFilter(filter: Filter) {
     this.deliveryService.filter(filter).subscribe({
@@ -92,4 +109,10 @@ export class BrowseDeliveriesComponent {
   }
 
 
+  showInfo(delivery: Delivery) {
+    const [_, component] = this.modalService.open(ViewDeliveryModalComponent, DefaultModalOptions);
+    component.delivery.set(delivery);
+    component.products.set(this.products());
+    component.categories.set(this.categories());
+  }
 }

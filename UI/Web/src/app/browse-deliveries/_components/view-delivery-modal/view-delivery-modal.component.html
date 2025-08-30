@@ -1,0 +1,113 @@
+<ng-container *transloco="let t; prefix: 'view-delivery-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title', {number: delivery().id, to: delivery().recipient?.name})}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+      <div class="modal-body scrollable-modal">
+        <div class="container-fluid">
+
+
+          <div class="row mb-3">
+            <div class="col-md-6 col-sm-12">
+              <div class="row">
+                <div class="col">
+                  <p class="mb-1">
+                    <strong>{{ t('participants.from') }}:</strong> {{ delivery().from?.name }}
+                  </p>
+                  <p class="mb-0">
+                    <strong>{{ t('participants.to') }}:</strong> {{ delivery().recipient?.name }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-12">
+              <div class="row">
+                <div class="col">
+                  <h6 class="fw-bold">{{ t('dates.label') }}</h6>
+                  <p class="mb-1">
+                    {{ t('dates.created') }}: {{ delivery().createdUtc | date:'short' }}
+                  </p>
+                  <p class="mb-0">
+                    {{ t('dates.modified') }}: {{ delivery().lastModifiedUtc | date:'short' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+          @if (delivery().message) {
+            <div class="row mb-3">
+              <div class="col">
+                <h6 class="fw-bold">{{ t('message.label') }}</h6>
+                <p class="mb-0">{{ delivery().message }}</p>
+              </div>
+            </div>
+          }
+
+          @if (delivery().systemMessages.length > 0) {
+            <div class="row mb-3">
+              <div class="col">
+                <h6 class="fw-bold">{{ t('systemMessages.label') }}</h6>
+                <ul class="mb-0 ps-3">
+                  @for (msg of delivery().systemMessages; track $index) {
+                    <li>{{ msg.message }}</li>
+                  }
+                </ul>
+              </div>
+            </div>
+          }
+
+          <div class="row mb-3">
+            <div class="col">
+              <h6 class="fw-bold">{{ t('lines.label') }}</h6>
+              <table class="table table-sm table-striped align-middle">
+                <thead class="table-light">
+                <tr>
+                  <th scope="col">{{ t('lines.category') }}</th>
+                  <th scope="col">{{ t('lines.product') }}</th>
+                  <th scope="col">{{ t('lines.quantity') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (line of delivery().lines; track line.productId) {
+                    @let product = productLookup().get(line.productId);
+                    @let category = categoryLookup().get(product?.categoryId || 0);
+                    @if (product && category) {
+                      <tr>
+                        <td>{{category.name | defaultValue}}</td>
+                        <td>{{ product.name | defaultValue }}</td>
+
+                        @if (product.type === ProductType.Consumable) {
+                          <td>{{ line.quantity }}</td>
+                        } @else {
+                          <td> <i class="fas fa-check-circle"></i> </td>
+                        }
+                      </tr>
+                    }
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('close')}}
+      </button>
+    </div>
+  </div>
+</ng-container>

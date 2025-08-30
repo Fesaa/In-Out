@@ -82,7 +82,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
             }
             
             logger.LogDebug("Updating CompanyNumber for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            AddSystemNote(await localizationService.Translate("client-update-company-number-note", client.CompanyNumber, dto.CompanyNumber.Trim()));
+            AddSystemNote(await localizationService.DefaultTranslate("client-update-company-number-note", client.CompanyNumber, dto.CompanyNumber.Trim()));
 
             client.CompanyNumber = dto.CompanyNumber;
         }
@@ -90,7 +90,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         if (client.Address != dto.Address.Trim())
         {
             logger.LogDebug("Updating Address for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            AddSystemNote(await localizationService.Translate("client-update-address-note", client.Address, dto.Address.Trim()));
+            AddSystemNote(await localizationService.DefaultTranslate("client-update-address-note", client.Address, dto.Address.Trim()));
 
             client.Address = dto.Address.Trim();
         }
@@ -98,7 +98,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         if (client.InvoiceEmail != dto.InvoiceEmail.Trim())
         {
             logger.LogDebug("Updating invoice email for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
-            AddSystemNote(await localizationService.Translate("client-update-invoice-email",  client.InvoiceEmail, dto.InvoiceEmail.Trim()));
+            AddSystemNote(await localizationService.DefaultTranslate("client-update-invoice-email",  client.InvoiceEmail, dto.InvoiceEmail.Trim()));
 
             client.InvoiceEmail = dto.InvoiceEmail.Trim();
         }

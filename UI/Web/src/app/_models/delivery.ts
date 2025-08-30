@@ -12,11 +12,16 @@ export type Delivery = {
   recipient?: Client,
 
   message: string,
-  systemMessages: string[],
+  systemMessages: SystemMessage[],
   lines: DeliveryLine[],
 
   createdUtc?: Date,
   lastModifiedUtc?: Date,
+}
+
+export type SystemMessage = {
+  message: string,
+  createdUtc: Date,
 }
 
 export type DeliveryLine = {
