@@ -1,8 +1,11 @@
 using API.Data;
+using API.Entities.Enums;
 using API.Logging;
+using API.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Events;
 
 namespace API;
 
@@ -29,12 +32,15 @@ public class Program
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 var context = services.GetRequiredService<DataContext>();
 
-                logger.LogDebug("Migrating database");
+                logger.LogInformation("Migrating database");
                 await context.Database.MigrateAsync();
 
-                logger.LogDebug("Seeding database");
-
-
+                logger.LogInformation("Seeding database");
+                await Seed.Run(context);
+                
+                var service = services.GetRequiredService<IServerSettingsService>();
+                var logLevel = await service.GetSettingsAsync<LogEventLevel>(ServerSettingKey.LogLevel);
+                LogLevelOptions.SwitchLogLevel(logLevel);
 
             }
             catch (Exception ex)

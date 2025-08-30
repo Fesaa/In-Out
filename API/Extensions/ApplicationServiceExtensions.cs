@@ -31,6 +31,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IStockService, StockService>();
         services.AddScoped<IOidcService, OidcService>();
+        services.AddScoped<IServerSettingsService, ServerSettingsService>();
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         
