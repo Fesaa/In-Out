@@ -26,6 +26,7 @@ public interface IDeliveryRepository
 {
     public Task<IList<DeliveryDto>> GetDeliveries(FilterDto filter, PaginationParams pagination, DeliveryIncludes includes = DeliveryIncludes.None);
     public Task<Delivery?> GetDeliveryById(int deliveryId, DeliveryIncludes includes = DeliveryIncludes.None);
+    public Task<IList<Delivery>> GetDeliveryByIds(IEnumerable<int> deliveryIds, DeliveryIncludes includes = DeliveryIncludes.None);
     public Task<DeliveryDto?> GetDelivery(int deliveryId, DeliveryIncludes includes = DeliveryIncludes.From);
     public Task<IList<Delivery>> GetDeliveriesForClient(int clientId, IList<DeliveryState> states, DeliveryIncludes includes = DeliveryIncludes.None);
 
@@ -63,6 +64,14 @@ public class DeliveryRepository(DataContext ctx, IMapper mapper): IDeliveryRepos
             .Where(d => d.Id == deliveryId)
             .Includes(includes)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<IList<Delivery>> GetDeliveryByIds(IEnumerable<int> deliveryIds, DeliveryIncludes includes = DeliveryIncludes.None)
+    {
+        return await ctx.Deliveries
+            .Where(d => deliveryIds.Contains(d.Id))
+            .Includes(includes)
+            .ToListAsync();
     }
 
     public async Task<DeliveryDto?> GetDelivery(int deliveryId, DeliveryIncludes includes = DeliveryIncludes.From)
