@@ -16,12 +16,13 @@ import {
   TransitionDeliveryModalComponent
 } from './_components/transition-delivery-modal/transition-delivery-modal.component';
 import {DefaultModalOptions} from '../_models/default-modal-options';
-import {filter, tap} from 'rxjs';
+import {tap} from 'rxjs';
 import {ViewDeliveryModalComponent} from './_components/view-delivery-modal/view-delivery-modal.component';
 import {Product, ProductCategory} from '../_models/product';
-import * as console from 'node:console';
-import {state} from '@angular/animations';
 import {ProductService} from '../_services/product.service';
+import {Tracker} from '../shared/tracker';
+import {ExportService} from '../_services/export.service';
+import {ExportKind} from '../_models/export';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -45,12 +46,14 @@ export class BrowseDeliveriesComponent implements OnInit {
   private readonly productService = inject(ProductService);
   private readonly toastr = inject(ToastrService);
   private readonly modalService = inject(ModalService);
+  private readonly exportService = inject(ExportService);
 
   showNavbar = input(true);
 
   deliveries = signal<Delivery[]>([]);
   products = signal<Product[]>([]);
   categories = signal<ProductCategory[]>([]);
+  tracker = new Tracker<Delivery, number>((d) => d.id)
 
   ngOnInit() {
     this.productService.allProducts().subscribe(products => {
@@ -65,6 +68,7 @@ export class BrowseDeliveriesComponent implements OnInit {
     this.deliveryService.filter(filter).subscribe({
       next: (data: Delivery[]) => {
         this.deliveries.set(data);
+        this.tracker.reset();
       },
       error: (err) => {
         console.log(err);
@@ -108,11 +112,20 @@ export class BrowseDeliveriesComponent implements OnInit {
     }
   }
 
-
   showInfo(delivery: Delivery) {
     const [_, component] = this.modalService.open(ViewDeliveryModalComponent, DefaultModalOptions);
     component.delivery.set(delivery);
     component.products.set(this.products());
     component.categories.set(this.categories());
+  }
+
+  export() {
+    this.exportService.export({
+      kind: ExportKind.Csv,
+      deliveryIds: this.tracker.ids(),
+    }).subscribe((id) => {
+      window.open(`/api/export/${id}`, '_blank');
+      this.tracker.reset();
+    });
   }
 }

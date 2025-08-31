@@ -36,7 +36,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IServerSettingsService, ServerSettingsService>();
         
         // Exporters
-        services.AddScoped<IExporter, ExportService>();
+        services.AddScoped<IExportService, ExportService>();
         services.AddKeyedScoped<IExporter, CsvExporter>(nameof(ExportKind.Csv));
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);

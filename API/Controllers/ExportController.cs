@@ -3,18 +3,18 @@ using API.Data;
 using API.Data.Repositories;
 using API.DTOs;
 using API.Extensions;
-using API.Services.Exporters;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class ExportController(ILogger<ExportController> logger, IExporter exporter, IUnitOfWork unitOfWork): BaseApiController
+public class ExportController(ILogger<ExportController> logger, IExportService exportService, IUnitOfWork unitOfWork): BaseApiController
 {
 
     [HttpPost]
     [Authorize(PolicyConstants.HandleDeliveries)]
-    public async Task<ActionResult<FileResult>> Export(ExportRequestDto dto)
+    public async Task<ActionResult<string>> Export(ExportRequestDto dto)
     {
         logger.LogInformation("Creating export on behalf of {UserId}", User.GetUserId());
         
@@ -22,12 +22,22 @@ public class ExportController(ILogger<ExportController> logger, IExporter export
             await unitOfWork.DeliveryRepository.GetDeliveryByIds(dto.DeliveryIds, DeliveryIncludes.Complete);
         if (deliveries.Count == 0)
         {
-            return NotFound();
+            return BadRequest();
         }
 
 
-        var result = await exporter.Export(deliveries, dto);
-        return Ok(result);
+        var uuid = await exportService.Export(deliveries, dto);
+        return Ok(uuid);
+    }
+
+    [HttpGet("{uuid}")]
+    [Authorize(PolicyConstants.HandleDeliveries)]
+    public async Task<ActionResult> GetExport(string uuid)
+    {
+        var export = await exportService.GetExport(uuid);
+        if (export == null) return NotFound();
+        
+        return export;
     }
     
 }

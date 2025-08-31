@@ -9,6 +9,4 @@ public class ExportRequestDto
     
     public IList<int> DeliveryIds { get; set; }
     
-    public CsvExportConfigurationDto? CsvExportConfigurationDto { get; set; }
-    
 }

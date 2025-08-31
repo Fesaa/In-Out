@@ -3,13 +3,18 @@ using API.Data;
 using API.DTOs;
 using API.DTOs.Enum;
 using API.Entities;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Services.Exporters;
 
 public interface IExporter
 {
-    Task<FileResult?> Export(IList<Delivery> deliveries, ExportRequestDto request);
+    Task<(ExportMetadata, byte[])> Export(IList<Delivery> deliveries, ExportRequestDto request);
+}
+
+public class ExportMetadata
+{
+    public string FileName { get; set; }
+    public string FileContentType  { get; set; }
 }
 
 public class ExportContext
@@ -25,7 +30,7 @@ public class ExportContext
 
 public abstract class BaseExporter<T>(IUnitOfWork unitOfWork) : IExporter where T : ExportContext
 {
-    public async Task<FileResult?> Export(IList<Delivery> deliveries, ExportRequestDto request)
+    public async Task<(ExportMetadata, byte[])> Export(IList<Delivery> deliveries, ExportRequestDto request)
     {
         var products = await unitOfWork.ProductRepository.GetAll();
         var categories = await unitOfWork.ProductRepository.GetAllCategories();
@@ -43,7 +48,7 @@ public abstract class BaseExporter<T>(IUnitOfWork unitOfWork) : IExporter where 
     }
     
     protected abstract Task<T> ConstructContext(ExportContext ctx);
-    protected abstract Task<FileResult?> ConstructExportFile(T ctx);
+    protected abstract Task<(ExportMetadata, byte[])> ConstructExportFile(T ctx);
     protected abstract string ExportLines(T ctx, IList<DeliveryLine> lines);
 
     protected object GetDeliveryField(T ctx, Delivery delivery, DeliveryExportField field)
