@@ -38,7 +38,7 @@ public class Program
                 logger.LogInformation("Seeding database");
                 await Seed.Run(context);
                 
-                var service = services.GetRequiredService<IServerSettingsService>();
+                var service = services.GetRequiredService<ISettingsService>();
                 var logLevel = await service.GetSettingsAsync<LogEventLevel>(ServerSettingKey.LogLevel);
                 LogLevelOptions.SwitchLogLevel(logLevel);
 

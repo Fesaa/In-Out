@@ -19,7 +19,7 @@ public class CsvExportContext : ExportContext
     public CsvWriter Writer { get; set; }
 }
 
-public class CsvExporter(IUnitOfWork unitOfWork, IServerSettingsService settingsService) : BaseExporter<CsvExportContext>(unitOfWork)
+public class CsvExporter(IUnitOfWork unitOfWork, ISettingsService settingsService) : BaseExporter<CsvExportContext>(unitOfWork)
 {
 
     private static readonly IList<string> DefaultHeaderNames = Enum.GetNames<DeliveryExportField>();

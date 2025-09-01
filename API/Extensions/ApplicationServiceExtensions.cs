@@ -33,7 +33,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IStockService, StockService>();
         services.AddScoped<IOidcService, OidcService>();
-        services.AddScoped<IServerSettingsService, ServerSettingsService>();
+        services.AddScoped<ISettingsService, SettingsService>();
         
         // Exporters
         services.AddScoped<IExportService, ExportService>();

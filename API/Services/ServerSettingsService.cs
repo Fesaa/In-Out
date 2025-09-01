@@ -7,7 +7,7 @@ using Serilog.Events;
 
 namespace API.Services;
 
-public interface IServerSettingsService
+public interface ISettingsService
 {
     /// <summary>
     /// You will be required to specify the correct type, there is no compile time checks. Only run time!
@@ -16,10 +16,11 @@ public interface IServerSettingsService
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     Task<T> GetSettingsAsync<T>(ServerSettingKey key);
-    Task<ServerSettingDto> GetSettingsAsync();
+    Task<ServerSettingsDto> GetSettingsAsync();
+    Task SaveSettingsAsync(ServerSettingsDto settings);
 }
 
-public class ServerSettingsService(ILogger<ServerSettingsService> logger, IUnitOfWork unitOfWork): IServerSettingsService
+public class SettingsService(ILogger<SettingsService> logger, IUnitOfWork unitOfWork): ISettingsService
 {
     public async Task<T> GetSettingsAsync<T>(ServerSettingKey key)
     {
@@ -29,10 +30,10 @@ public class ServerSettingsService(ILogger<ServerSettingsService> logger, IUnitO
         }
         
         var setting = await unitOfWork.SettingsRepository.GetSettingsAsync(key);
-        return ConvertSetting<T>(setting);
+        return DeserializeSetting<T>(setting);
     }
 
-    private static T ConvertSetting<T>(ServerSetting setting)
+    private static T DeserializeSetting<T>(ServerSetting setting)
     {
         object? result = setting.Key switch
         {
@@ -48,21 +49,31 @@ public class ServerSettingsService(ILogger<ServerSettingsService> logger, IUnitO
             _ => throw new ArgumentException($"Failed to convert {setting.Key} - {setting.Value} to type {typeof(T).Name}")
         };
     }
+    
+    private static async Task<string> SerializeSetting(ServerSettingKey key, object setting)
+    {
+        return key switch
+        {
+            ServerSettingKey.CsvExportConfiguration => JsonSerializer.Serialize(setting),
+            ServerSettingKey.LogLevel => setting.ToString(),
+            _ => throw new ArgumentException($"No converter found for key {key}"),
+        } ?? string.Empty;
+    }
 
-    public async Task<ServerSettingDto> GetSettingsAsync()
+    public async Task<ServerSettingsDto> GetSettingsAsync()
     {
         var settings = await unitOfWork.SettingsRepository.GetSettingsAsync();
-        var dto = new ServerSettingDto();
+        var dto = new ServerSettingsDto();
         
         foreach (var serverSetting in settings)
         {
             switch (serverSetting.Key)
             {
                 case ServerSettingKey.CsvExportConfiguration:
-                    dto.CsvExportConfiguration = ConvertSetting<CsvExportConfigurationDto>(serverSetting);
+                    dto.CsvExportConfiguration = DeserializeSetting<CsvExportConfigurationDto>(serverSetting);
                     break;
                 case ServerSettingKey.LogLevel:
-                    dto.LogLevel = ConvertSetting<LogEventLevel>(serverSetting);
+                    dto.LogLevel = DeserializeSetting<LogEventLevel>(serverSetting);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(serverSetting.Key), serverSetting.Key, "Unknown server settings key");
@@ -71,7 +82,39 @@ public class ServerSettingsService(ILogger<ServerSettingsService> logger, IUnitO
         
         return dto;
     }
-    
+
+    private async Task UpdateIfDifferent(ServerSetting setting, object value)
+    {
+        var serialized = await SerializeSetting(setting.Key, value);
+        if (setting.Value != serialized)
+        {
+            setting.Value = serialized;
+            unitOfWork.SettingsRepository.Update(setting);
+        }
+    }
+
+    public async Task SaveSettingsAsync(ServerSettingsDto dto)
+    {
+        var settings = await unitOfWork.SettingsRepository.GetSettingsAsync();
+
+        foreach (var serverSetting in settings)
+        {
+            object value = serverSetting.Key switch
+            {
+                ServerSettingKey.CsvExportConfiguration => dto.CsvExportConfiguration,
+                ServerSettingKey.LogLevel => dto.LogLevel,
+                _ => throw new ArgumentOutOfRangeException(nameof(serverSetting.Key), serverSetting.Key, "Unknown server settings key"),
+            };
+            
+            await UpdateIfDifferent(serverSetting, value);
+        }
+
+        if (unitOfWork.HasChanges())
+        {
+            await unitOfWork.CommitAsync();
+        }
+    }
+
     private static class ServerSettingTypeMap
     {
         public static readonly Dictionary<ServerSettingKey, Type> KeyToType = new()

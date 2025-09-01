@@ -2,7 +2,7 @@ using Serilog.Events;
 
 namespace API.DTOs;
 
-public sealed record ServerSettingDto
+public sealed record ServerSettingsDto
 {
     public CsvExportConfigurationDto  CsvExportConfiguration { get; set; }
     
