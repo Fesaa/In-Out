@@ -23,6 +23,7 @@ import {ProductService} from '../_services/product.service';
 import {Tracker} from '../shared/tracker';
 import {ExportService} from '../_services/export.service';
 import {ExportKind} from '../_models/export';
+import {AuthService, Role} from '../_services/auth.service';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -47,6 +48,7 @@ export class BrowseDeliveriesComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly modalService = inject(ModalService);
   private readonly exportService = inject(ExportService);
+  protected readonly authService = inject(AuthService);
 
   showNavbar = input(true);
 
@@ -120,6 +122,9 @@ export class BrowseDeliveriesComponent implements OnInit {
   }
 
   export() {
+    if (!this.authService.roles().includes(Role.HandleDeliveries)) return;
+
+
     this.exportService.export({
       kind: ExportKind.Csv,
       deliveryIds: this.tracker.ids(),
@@ -128,4 +133,6 @@ export class BrowseDeliveriesComponent implements OnInit {
       this.tracker.reset();
     });
   }
+
+  protected readonly Role = Role;
 }

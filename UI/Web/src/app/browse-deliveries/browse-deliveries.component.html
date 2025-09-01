@@ -17,9 +17,12 @@
         <th class="table-header-cell">
           <div class="d-flex justify-content-between align-items-center">
             <span>{{t('actions')}}</span>
-            <button class="btn btn-olive" (click)="export()">
-              <i class="fas fa-download"></i>
-            </button>
+
+            @if (authService.roles().includes(Role.HandleDeliveries)) {
+              <button class="btn btn-olive" (click)="export()">
+                <i class="fas fa-download"></i>
+              </button>
+            }
           </div>
         </th>
       </tr>
@@ -50,10 +53,12 @@
             <i class="fas fa-info"></i>
           </button>
 
-          @if (tracker.lookup().has(delivery.id)) {
-            <input type="checkbox" checked (click)="tracker.remove(delivery)">
-          } @else {
-            <input type="checkbox" (click)="tracker.add(delivery)">
+          @if (authService.roles().includes(Role.HandleDeliveries)) {
+            @if (tracker.lookup().has(delivery.id)) {
+              <input type="checkbox" checked (click)="tracker.remove(delivery)">
+            } @else {
+              <input type="checkbox" (click)="tracker.add(delivery)">
+            }
           }
 
         </div>
