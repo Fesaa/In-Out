@@ -115,7 +115,8 @@
     "size": "Size",
     "created": "Created on",
     "actions": "Actions",
-    "transition": "Transition"
+    "transition": "Transition",
+    "no-deliveries": "No deliveries where found for your filter"
   },
 
   "transition-delivery-modal": {
