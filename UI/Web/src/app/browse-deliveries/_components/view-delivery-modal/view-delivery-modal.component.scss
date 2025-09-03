@@ -1,0 +1,42 @@
+.modal-body {
+  background-color: var(--background-color);
+  color: var(--text-secondary);
+}
+
+.modal-body h6 {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: 'Spectral', serif;
+}
+
+.table {
+  border: 1px solid var(--surface-border);
+  background-color: var(--surface-card);
+  color: var(--text-secondary);
+}
+
+.table thead {
+  background-color: var(--primary-color-light);
+  color: var(--text-light);
+}
+
+.table tbody tr:hover {
+  background-color: var(--surface-hover);
+}
+
+.table td,
+.table th {
+  border-color: var(--surface-border);
+}
+
+.modal-body strong {
+  color: var(--text-primary);
+}
+
+.modal-body ul {
+  color: var(--text-secondary);
+}
+
+.modal-body li::marker {
+  color: var(--secondary-color);
+}

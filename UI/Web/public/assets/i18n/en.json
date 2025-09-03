@@ -115,7 +115,8 @@
     "size": "Size",
     "created": "Created on",
     "actions": "Actions",
-    "transition": "Transition"
+    "transition": "Transition",
+    "no-deliveries": "No deliveries where found for your filter"
   },
 
   "transition-delivery-modal": {
@@ -126,6 +127,39 @@
     "saving": "{{common.saving}}",
     "cur-label": "Current state: {{state}}",
     "no-transition-possible": "You cannot change the state of this delivery"
+  },
+
+  "view-delivery-modal": {
+    "title": "Delivery {{number}} to {{to}}",
+    "close": "{{common.close}}",
+    "participants": {
+      "label": "Participants",
+      "from": "From",
+      "to": "To"
+    },
+    "message": {
+      "label": "Message"
+    },
+    "systemMessages": {
+      "label": "System Messages"
+    },
+    "lines": {
+      "category": "Category",
+      "label": "Items",
+      "product": "Product",
+      "quantity": "Quantity"
+    },
+    "dates": {
+      "label": "Timestamps",
+      "created": "Created",
+      "modified": "Last Modified"
+    }
+  },
+
+  "under-construction": {
+    "title": "Under Construction",
+    "message": "We’re working hard to bring you something amazing. Please check back soon!",
+    "back": "Go Back Home"
   },
 
   "delivery-state-tooltips": {
@@ -264,13 +298,6 @@
   },
 
   "management": {
-    "dashboard": {
-      "title": "Management dashboard",
-      "sub-title": "Contact your idp manager if you're missing perms"
-    },
-    "overview": {
-      "title": "Overview"
-    },
     "products": {
       "title": "Product Management",
       "products-table-label": "Products",
@@ -334,12 +361,50 @@
           "contactName": "Contact Name"
         }
       }
+    },
+    "server": {
+      "title": "Server Management",
+      "general": "General",
+      "export": "Export",
+      "general-title": "General server settings",
+      "log-level-label": "Log level",
+      "log-level-tooltip": "Enable debug when issues arise, otherwise keep higher to ensure disk space is saved",
+      "export-settings": {
+        "csv-export-title": "Csv Export configuration",
+        "available-fields": "All available (unused) fields",
+        "selected-fields": "Selected fields",
+        "drag-fields-here": "Drag fields here to customise your export"
+      }
     }
   },
 
   "product-type-pipe": {
     "one-time": "One time",
     "consumable": "Multiple times"
+  },
+
+  "delivery-export-field-pipe": {
+    "id": "ID",
+    "state": "State",
+    "from-id": "Sender ID",
+    "from": "Sender Name",
+    "recipient-id": "Recipient ID",
+    "recipient-name": "Recipient Name",
+    "recipient-email": "Recipient Email",
+    "company-number": "Company Number",
+    "message": "Message",
+    "products": "Products",
+    "created-utc": "Created Date (UTC)",
+    "last-modified-utc": "Last Modified Date (UTC)"
+  },
+
+  "log-level-pipe": {
+    "verbose": "Verbose",
+    "debug": "Debug",
+    "information": "Information",
+    "warning": "Warning",
+    "error": "Error",
+    "fatal": "Fatal"
   },
 
   "product-modal": {

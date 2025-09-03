@@ -2,8 +2,10 @@
 using System.Reflection;
 using API.Data;
 using API.Data.Repositories;
+using API.DTOs.Enum;
 using API.Helpers;
 using API.Services;
+using API.Services.Exporters;
 using API.Services.Store;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,11 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IStockService, StockService>();
         services.AddScoped<IOidcService, OidcService>();
+        services.AddScoped<ISettingsService, SettingsService>();
+        
+        // Exporters
+        services.AddScoped<IExportService, ExportService>();
+        services.AddKeyedScoped<IExporter, CsvExporter>(nameof(ExportKind.Csv));
 
         services.AddSignalR(opt => opt.EnableDetailedErrors = true);
         

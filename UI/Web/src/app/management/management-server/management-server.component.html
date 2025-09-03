@@ -1,1 +1,55 @@
-<p>management-server works!</p>
+
+<div class="manager-container" *transloco="let t; prefix: 'management.server'">
+  <div class="manager-header">
+    <div class="header-content">
+      <h2 class="manager-title">{{t('title')}}</h2>
+    </div>
+  </div>
+
+  <ul ngbNav #nav="ngbNav" [(activeId)]="activeId" class="nav nav-tabs">
+
+    <li [ngbNavItem]="NavId.General">
+      <a ngbNavLink>{{t(NavId.General)}}</a>
+      <ng-template ngbNavContent>
+        <form [formGroup]="settingsForm" class="row mt-2">
+
+          <h5>{{t('general-title')}}</h5>
+
+          <div class="col-md-6 col-sm-12">
+            @if (settingsForm.get('logLevel'); as control) {
+              <app-settings-item [title]="t('log-level-label')" [subtitle]="t('log-level-tooltip')" [control]="control">
+                <ng-template #view>{{ control.value | logLevel }}</ng-template>
+                <ng-template #edit>
+                  <select formControlName="logLevel" class="form-select form-control">
+                    @for (logLevel of LogLevelValues; track logLevel) {
+                      <option [ngValue]="logLevel">{{logLevel | logLevel}}</option>
+                    }
+                  </select>
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
+        </form>
+      </ng-template>
+    </li>
+
+    <li [ngbNavItem]="NavId.Export">
+      <a ngbNavLink>{{t(NavId.Export)}}</a>
+      <ng-template ngbNavContent>
+        @defer (when activeId === NavId.Export; prefetch on idle) {
+          @let cfg = settings();
+          @if (cfg) {
+            <app-export-settings [settings]="cfg"></app-export-settings>
+          }
+        }
+      </ng-template>
+    </li>
+
+  </ul>
+
+  @if (settings()) {
+    <div [ngbNavOutlet]="nav"></div>
+  }
+</div>
+

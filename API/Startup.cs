@@ -232,7 +232,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             var data = Convert.FromBase64String(favicon);;
             
             File.WriteAllBytes(filePath, data);
-            logger.LogDebug("Overwriting favicon from configuration: {Data}", favicon);
+            logger.LogDebug("Overwritten favicon from configuration");
         }
         catch (Exception ex)
         {

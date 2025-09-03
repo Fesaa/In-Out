@@ -21,7 +21,7 @@ public static class TelemetryHelper
         Meter = new Meter(serviceName);
 
         MethodTiming = Meter.CreateHistogram<double>(
-            "method_timing_duration_ms",
+            "method_timing_duration",
             "ms",
             "Duration of specific method, see method tag"
             );

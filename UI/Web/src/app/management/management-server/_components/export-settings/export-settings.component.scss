@@ -1,0 +1,137 @@
+.export-settings-container {
+  font-family: 'Spectral', serif;
+  padding: 2rem;
+  background-color: var(--background-color);
+  min-height: 100vh;
+
+  .section-title {
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .options-section,
+  .selections-section {
+    margin-bottom: 3rem;
+
+    .row-title {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+      padding-left: 0.5rem;
+      border-left: 4px solid var(--secondary-color);
+    }
+  }
+
+  .options-row,
+  .selections-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: var(--surface-card);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    border: 2px solid var(--surface-border);
+    min-height: 120px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 6px 20px var(--shadow-medium);
+    }
+
+    &.cdk-drop-list-receiving {
+      background-color: var(--surface-hover);
+      border-color: var(--secondary-color);
+      transform: scale(1.02);
+    }
+  }
+
+  .field-item {
+    background-color: var(--background-color);
+    border: 2px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: move;
+    transition: all 0.3s ease;
+    width: 200px;
+    box-shadow: 0 2px 8px var(--shadow-light);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px var(--shadow-medium);
+      border-color: var(--secondary-color-light);
+    }
+
+    &.cdk-drag-preview {
+      box-shadow: 0 8px 24px var(--shadow-dark);
+      transform: rotate(5deg);
+      border-color: var(--secondary-color);
+      background-color: var(--surface-hover);
+    }
+
+    &.cdk-drag-placeholder {
+      opacity: 0.5;
+      border: 2px dashed var(--secondary-color);
+      background-color: transparent;
+    }
+
+    &.selected-item {
+      cursor: pointer;
+
+      .field-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .field-name {
+          font-weight: 600;
+          color: var(--text-primary);
+          font-size: 1rem;
+        }
+
+        .field-type {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+          font-style: italic;
+        }
+      }
+    }
+  }
+
+  .empty-placeholder {
+    width: 100%;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 2rem;
+    border: 2px dashed var(--surface-border);
+    border-radius: 8px;
+    background-color: var(--background-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: var(--secondary-color-light);
+      background-color: var(--surface-hover);
+    }
+  }
+
+  .cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  }
+
+  .cdk-drop-list {
+    &.cdk-drop-list-dragging .field-item:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+}

@@ -65,7 +65,7 @@ public class OidcService(ConfigurationManager<OpenIdConnectConfiguration> oidcCo
             ctx.Properties.UpdateTokenValue(IdToken, tokenResponse.IdToken);
             ctx.ShouldRenew = true;
             
-            logger.LogTrace("Automatically refreshed token for user {UserId}", ctx.Principal.GetUserId());
+            logger.LogDebug("Automatically refreshed token for user {UserId}", ctx.Principal.GetUserId());
         }
         finally
         {

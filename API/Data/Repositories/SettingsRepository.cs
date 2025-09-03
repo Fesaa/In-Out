@@ -1,4 +1,6 @@
+using API.DTOs;
 using API.Entities;
+using API.Entities.Enums;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +11,7 @@ public interface ISettingsRepository
     void Update(ServerSetting settings);
     void Remove(ServerSetting setting);
 
+    Task<ServerSetting> GetSettingsAsync(ServerSettingKey key);
     Task<IList<ServerSetting>> GetSettingsAsync();
 }
 
@@ -23,6 +26,13 @@ public class SettingsRepository(DataContext ctx, IMapper mapper): ISettingsRepos
     public void Remove(ServerSetting setting)
     {
         ctx.Remove(setting);
+    }
+
+    public async Task<ServerSetting> GetSettingsAsync(ServerSettingKey key)
+    {
+        return await ctx.ServerSettings
+            .Where(x => x.Key == key)
+            .FirstAsync();
     }
 
     public async Task<IList<ServerSetting>> GetSettingsAsync()

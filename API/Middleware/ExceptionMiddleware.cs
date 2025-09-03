@@ -26,6 +26,10 @@ public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddlewa
             {
                 statusCode = (int)HttpStatusCode.BadRequest;
             }
+            else if (ex is UnauthorizedAccessException)
+            {
+                statusCode = (int)HttpStatusCode.Unauthorized;
+            }
             else
             {
                 logger.LogError(ex, "An exception occurred while handling an http request.");
