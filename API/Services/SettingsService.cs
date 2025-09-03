@@ -3,6 +3,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Entities.Enums;
+using API.Logging;
 using Serilog.Events;
 
 namespace API.Services;
@@ -83,14 +84,17 @@ public class SettingsService(ILogger<SettingsService> logger, IUnitOfWork unitOf
         return dto;
     }
 
-    private async Task UpdateIfDifferent(ServerSetting setting, object value)
+    private async Task<bool> UpdateIfDifferent(ServerSetting setting, object value)
     {
         var serialized = await SerializeSetting(setting.Key, value);
         if (setting.Value != serialized)
         {
             setting.Value = serialized;
             unitOfWork.SettingsRepository.Update(setting);
+            return true;
         }
+        
+        return false;
     }
 
     public async Task SaveSettingsAsync(ServerSettingsDto dto)
@@ -106,7 +110,12 @@ public class SettingsService(ILogger<SettingsService> logger, IUnitOfWork unitOf
                 _ => throw new ArgumentOutOfRangeException(nameof(serverSetting.Key), serverSetting.Key, "Unknown server settings key"),
             };
             
-            await UpdateIfDifferent(serverSetting, value);
+            var updated = await UpdateIfDifferent(serverSetting, value);
+
+            if (updated && serverSetting.Key == ServerSettingKey.LogLevel)
+            {
+                LogLevelOptions.SwitchLogLevel(dto.LogLevel);
+            }
         }
 
         if (unitOfWork.HasChanges())

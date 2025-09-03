@@ -1,0 +1,47 @@
+<ng-container *transloco="let t; prefix: 'management.server.export-settings'">
+  <div class="export-settings-container container-fluid py-4">
+    <h3 class="section-title h2 fw-semibold text-center mb-4">{{ t('csv-export-title') }}</h3>
+
+    <div class="options-section mb-5">
+      <h4 class="row-title h4 fw-medium mb-3 ps-2">{{ t('available-fields') }}</h4>
+      <div
+        class="options-row d-flex flex-wrap gap-3 p-3 rounded-3 min-vh-15"
+        cdkDropList
+        #availableList="cdkDropList"
+        [cdkDropListData]="availableFields()"
+        [cdkDropListConnectedTo]="[selectedList]"
+        (cdkDropListDropped)="drop($event)"
+        cdkDropListOrientation="horizontal">
+
+        @for (field of availableFields(); track field) {
+          <div class="field-item available-item rounded-2 p-3 flex-shrink-0" cdkDrag [cdkDragData]="field">
+            {{ field | deliveryExportField }}
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="selections-section mb-5">
+      <h4 class="row-title h4 fw-medium mb-3 ps-2">{{ t('selected-fields') }}</h4>
+      <div
+        class="selections-row d-flex flex-wrap gap-3 p-3 rounded-3 min-vh-15"
+        cdkDropList
+        #selectedList="cdkDropList"
+        [cdkDropListData]="selectedFields()"
+        [cdkDropListConnectedTo]="[availableList]"
+        (cdkDropListDropped)="drop($event)"
+        cdkDropListOrientation="horizontal">
+
+        @for (field of selectedFields(); track field; let i = $index) {
+          <div class="field-item selected-item rounded-2 p-3 flex-shrink-0" cdkDrag [cdkDragData]="field">
+            {{ field | deliveryExportField }}
+          </div>
+        } @empty {
+          <div class="empty-placeholder w-100 text-center fst-italic fs-5 p-4 rounded-2 d-flex align-items-center justify-content-center" style="min-height: 80px;">
+            {{ t('drag-fields-here') }}
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</ng-container>
