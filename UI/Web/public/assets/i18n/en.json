@@ -24,7 +24,9 @@
     "product-not-found": "Product not found",
     "product-in-use": "Product is tracked in stock",
     "name-in-use": "This name is already being used",
-    "not-enough-categories": "Not enough categories referenced in your request"
+    "not-enough-categories": "Not enough categories referenced in your request",
+    "not-enough-products": "Not enough products to sort",
+    "no-sorting-between-categories": "Cannot sort products of different categories"
   },
 
   "confirm-modal": {

@@ -59,6 +59,7 @@ export class ManageDeliveryComponent implements OnInit {
     products.forEach(p => {
       let slice = map.get(p.categoryId) || [];
       slice.push(p);
+      slice.sort((a, b) => a.sortValue - b.sortValue);
       map.set(p.categoryId, slice);
     });
     return map;

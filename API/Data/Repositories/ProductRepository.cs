@@ -20,6 +20,7 @@ public interface IProductRepository
     Task<IList<ProductCategory>> GetAllCategories(bool onlyEnabled = false);
     Task<IList<ProductCategoryDto>> GetAllCategoriesDtos(bool onlyEnabled = false);
     Task<IList<Product>> GetByCategory(ProductCategory category);
+    Task<int> GetHighestSortValue(ProductCategory category);
     void Add(Product product);
     void Add(ProductCategory category);
     void Update(Product product);
@@ -105,6 +106,13 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
         return await ctx.Products
             .Where(p => p.Category == category)
             .ToListAsync();
+    }
+
+    public async Task<int> GetHighestSortValue(ProductCategory category)
+    {
+        return await ctx.Products
+            .Where(p => p.CategoryId == category.Id)
+            .MaxAsync(p => p.SortValue);
     }
 
     public void Add(Product product)

@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities.Enums;
 using API.Logging;
+using API.ManualMigrations;
 using API.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -32,8 +33,11 @@ public class Program
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 var context = services.GetRequiredService<DataContext>();
 
-                logger.LogInformation("Migrating database");
-                await context.Database.MigrateAsync();
+                if ((await context.Database.GetPendingMigrationsAsync()).Any())
+                {
+                    logger.LogInformation("Migrating database");
+                    await context.Database.MigrateAsync();   
+                }
 
                 logger.LogInformation("Seeding database");
                 await Seed.Run(context);
