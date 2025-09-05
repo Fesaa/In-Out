@@ -312,30 +312,3 @@ textarea.form-control {
   outline: 2px solid var(--secondary-color);
   outline-offset: 2px;
 }
-
-@media (prefers-color-scheme: dark) {
-  .form-control,
-  .form-select {
-    background-color: var(--primary-color-light);
-    border-color: var(--primary-color-lighter);
-    color: var(--text-light);
-
-    &::placeholder {
-      color: rgba(248, 246, 243, 0.7);
-    }
-
-    &:focus {
-      background-color: var(--primary-color-light);
-      border-color: var(--secondary-color);
-    }
-  }
-
-  .view-value {
-    background-color: var(--primary-color-light);
-    color: var(--text-light);
-
-    &:hover:not(.non-selectable) {
-      background-color: var(--primary-color-lighter);
-    }
-  }
-}
