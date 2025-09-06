@@ -162,7 +162,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     /// </summary>
     /// <param name="ids"></param>
     /// <returns></returns>
-    [HttpPost("products/order")]
+    [HttpPost("order")]
     [Authorize(Policy = PolicyConstants.ManageProducts)]
     public async Task<IActionResult> OrderProducts(IList<int> ids)
     {

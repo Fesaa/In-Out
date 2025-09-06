@@ -58,4 +58,8 @@ export class ProductService {
   orderCategories(ids: number[]) {
     return this.http.post(`${this.baseUrl}category/order`, ids);
   }
+
+  orderProducts(ids: number[]) {
+    return this.http.post(`${this.baseUrl}order`, ids);
+  }
 }
