@@ -1,6 +1,6 @@
 <div class="table-container">
   <div class="table-wrapper">
-    <table class="custom-table">
+    <table class="custom-table {{tableTheme()}}" [class.fixed-table]="fixedTable()">
       <thead class="table-header">
         <ng-container [ngTemplateOutlet]="headerTemplate"></ng-container>
       </thead>

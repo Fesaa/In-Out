@@ -13,6 +13,10 @@ public class Product
     
     public int CategoryId { get; set; }
     public ProductCategory Category { get; set; }
+    /// <summary>
+    /// This value is valid inside a category, not between
+    /// </summary>
+    public int SortValue { get; set; }
     public ProductType  Type { get; set; }
     
     public bool IsTracked { get; set; }

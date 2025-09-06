@@ -1,5 +1,5 @@
 <div class="navigation-grid" *transloco="let t">
-  <h2 class="navigation-title">Dashboard</h2>
+  <h2 class="navigation-title">{{t('dashboard.title')}}</h2>
   <div class="grid-container">
     @for (item of navigationService.items(); track item.translationKey) {
       <button

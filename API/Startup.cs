@@ -115,6 +115,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 logger.LogInformation("Running Migrations");
                 
                 await ManualMigrationAddStockForExistingProducts.Migrate(ctx, logger);
+                await ManualMigrationAddProductSortValues.Migrate(ctx, logger);
                 
                 logger.LogInformation("Running Migrations - complete");
             }).GetAwaiter().GetResult();

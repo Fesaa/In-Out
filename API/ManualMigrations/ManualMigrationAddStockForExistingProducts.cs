@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.ManualMigrations;
 
-public class ManualMigrationAddStockForExistingProducts
+public static class ManualMigrationAddStockForExistingProducts
 {
     public static async Task Migrate(DataContext ctx, ILogger<Program> logger)
     {

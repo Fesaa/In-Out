@@ -1,0 +1,50 @@
+<ng-container *transloco="let t; prefix: 'sort-product-category-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{t('title', {category: category().name})}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body scrollable-modal">
+      <app-table
+        [items]="products()"
+        [dragAble]="true"
+        [trackByIdFunc]="trackById"
+        dragTableId="sort-products-table"
+        [fixedTable]="true"
+        (onDrop)="onProductDrop($event)"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell drag-column">
+            </th>
+            <th class="table-header-cell name-column">
+              {{t('header-name')}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template #cell let-item>
+          <td class="table-cell">
+            <span class="fas fa-grip-lines drag-handle" cdkDragHandle></span>
+          </td>
+          <td class="table-cell">
+            {{item.name}}
+          </td>
+        </ng-template>
+      </app-table>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('cancel')}}
+      </button>
+      <button type="button" class="btn btn-olive" (click)="save()" [disabled]="isSaving()">
+        @if (isSaving()) {
+          <app-loading-spinner />
+        }
+        <span>{{isSaving() ? t('saving') : t('update')}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

@@ -19,6 +19,7 @@ import {LoadingSpinnerComponent} from '../../shared/components/loading-spinner/l
 import {ProductModalComponent} from './_components/product-modal/product-modal.component';
 import {ModalService} from '../../_services/modal.service';
 import {CdkDragDrop, CdkDragHandle, moveItemInArray} from '@angular/cdk/drag-drop';
+import {SortProductsModalComponent} from './_components/sort-products-modal/sort-products-modal.component';
 
 @Component({
   selector: 'app-management-products',
@@ -114,6 +115,17 @@ export class ManagementProductsComponent implements OnInit {
     if (product) {
       component.product.set(product);
     }
+
+    modal.closed.subscribe(() => this.loadProducts());
+  }
+
+  sortProducts(category: ProductCategory) {
+    const [modal, component] = this.modalService.open(SortProductsModalComponent, DefaultModalOptions);
+    component.category.set(category);
+    component.products.set(this.products()
+      .filter(c => c.categoryId === category.id)
+      .sort((p1, p2) => p1.sortValue - p2.sortValue)
+    );
 
     modal.closed.subscribe(() => this.loadProducts());
   }

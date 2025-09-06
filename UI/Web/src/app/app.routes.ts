@@ -9,6 +9,7 @@ import {BrowseStockComponent} from './browse-stock/browse-stock.component';
 import {ManagementProductsComponent} from './management/management-products/management-products.component';
 import {ManagementClientsComponent} from './management/management-clients/management-clients.component';
 import {ManagementServerComponent} from './management/management-server/management-server.component';
+import {ManageUserComponent} from './management/manage-user/manage-user.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +66,10 @@ export const routes: Routes = [
         path: 'server',
         component: ManagementServerComponent,
         canActivate: [roleGuard(Role.ManageApplication)],
+      },
+      {
+        path: 'user',
+        component: ManageUserComponent,
       }
     ],
   },

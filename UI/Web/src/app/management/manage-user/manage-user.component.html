@@ -1,0 +1,29 @@
+
+
+<div class="m-md-5" *transloco="let t; prefix: 'management.user'">
+
+  <div class="manager-header">
+    <div class="header-content">
+      <h2 class="manager-title">{{t('title')}}</h2>
+    </div>
+  </div>
+
+  <form [formGroup]="userForm" class="row p-md-4 p-sm-2 rounded" id="user-form">
+
+    @if (userForm.get('language'); as control) {
+      <div class="col-md-6 col-sm-12">
+        <app-settings-item [control]="control" [title]="t('language-title')" [subtitle]="t('language-subtitle')">
+          <ng-template #view>{{control.value | language}}</ng-template>
+          <ng-template #edit>
+            <select formControlName="language" class="form-select">
+              @for (lang of AllLanguages; track lang) {
+                <option [value]="lang">{{lang | language}}</option>
+              }
+            </select>
+          </ng-template>
+        </app-settings-item>
+      </div>
+    }
+
+  </form>
+</div>

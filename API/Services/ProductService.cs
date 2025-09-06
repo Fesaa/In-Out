@@ -16,16 +16,29 @@ public interface IProductService
     Task DeleteProduct(int id);
     Task DeleteProductCategory(int id);
     
-    /**
-     * Sets the sort value of all categories to the index in the list
-     */
+    /// <summary>
+    /// Sets the sort value of all categories to the index in the list
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
     Task OrderCategories(IList<int> ids);
+    /// <summary>
+    /// Orders produtcs inside a category
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
+    Task OrderProducts(IList<int> ids);
 }
 
 public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductService
 {
     public async Task<ProductDto> CreateProduct(ProductDto dto)
     {
+        var category = await unitOfWork.ProductRepository.GetCategoryById(dto.CategoryId);
+        if (category == null) throw new InOutException("errors.category-not-found");
+        
+        var maxSortValue = await unitOfWork.ProductRepository.GetHighestSortValue(category);
+        
         var product = new Product
         {
             Name = dto.Name,
@@ -35,6 +48,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
             Type = dto.Type,
             IsTracked = dto.IsTracked,
             Enabled = dto.Enabled,
+            SortValue = maxSortValue+1,
         };
 
         unitOfWork.ProductRepository.Add(product);
@@ -82,9 +96,18 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
             extProduct.Name = dto.Name;
             extProduct.NormalizedName = dto.Name.ToNormalized();
         }
+        
+        if (extProduct.CategoryId != dto.CategoryId)
+        {
+            var category = await unitOfWork.ProductRepository.GetCategoryById(dto.CategoryId);
+            if (category == null) throw new InOutException("errors.category-not-found");
+            
+            var maxSortValue = await unitOfWork.ProductRepository.GetHighestSortValue(category);
+            extProduct.CategoryId = dto.CategoryId;
+            extProduct.SortValue = maxSortValue + 1;
+        }
 
         extProduct.Description = dto.Description;
-        extProduct.CategoryId = dto.CategoryId;
         extProduct.Type = dto.Type;
         extProduct.IsTracked = dto.IsTracked;
         extProduct.Enabled  = dto.Enabled;
@@ -161,6 +184,32 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
         {
             category.SortValue = ids.IndexOf(category.Id);
             unitOfWork.ProductRepository.Update(category);
+        }
+        
+        await unitOfWork.CommitAsync();
+    }
+
+    public async Task OrderProducts(IList<int> ids)
+    {
+        ids = ids.Distinct().ToList();
+        var products = await unitOfWork.ProductRepository.GetByIds(ids);
+        if (ids.Count != products.Count) throw new InOutException("errors.not-enough-products");
+
+        if (products.Select(p => p.CategoryId).Distinct().Count() != 1)
+        {
+            throw new InOutException("errors.no-sorting-between-categories");
+        }
+        
+        var category = await unitOfWork.ProductRepository.GetCategoryById(products.First().CategoryId);
+        if (category == null) throw new InOutException("errors.category-not-found");
+
+        var allProducts = await unitOfWork.ProductRepository.GetByCategory(category);
+        if (allProducts.Count != products.Count) throw new InOutException("errors.product-not-found");
+
+        foreach (var product in products)
+        {
+            product.SortValue = ids.IndexOf(product.Id);
+            unitOfWork.ProductRepository.Update(product);
         }
         
         await unitOfWork.CommitAsync();

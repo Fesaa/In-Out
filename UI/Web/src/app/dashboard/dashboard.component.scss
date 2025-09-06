@@ -170,19 +170,3 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
-// Dark mode support (optional)
-@media (prefers-color-scheme: dark) {
-  .nav-button {
-    background: var(--primary-color-light);
-    border-color: var(--primary-color-lighter);
-
-    &:hover {
-      background: var(--primary-color);
-    }
-  }
-
-  .nav-button-text {
-    color: var(--text-light);
-  }
-}

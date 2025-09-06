@@ -69,5 +69,20 @@ public class UserController(IUnitOfWork unitOfWork, IUserService userService, IM
         
         return Ok(await unitOfWork.UsersRepository.Search(query));
     }
+
+    /// <summary>
+    /// Update non OIDC synced attributes of a user
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task<ActionResult<UserDto>> UpdateUser(UserDto user)
+    {
+        var updated = await userService.Update(User, user);
+
+        var dto = mapper.Map<UserDto>(updated);
+        dto.Roles = HttpContext.User.GetRoles();
+        return Ok(dto);
+    }
     
 }

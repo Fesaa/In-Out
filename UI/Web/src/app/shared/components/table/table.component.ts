@@ -13,6 +13,7 @@ import {
 import {NgTemplateOutlet} from '@angular/common';
 import {CdkDrag, CdkDragDrop, CdkDropList} from '@angular/cdk/drag-drop';
 
+type TableTheme = '' | 'table-theme-elegant' | 'table-theme-minimal' | 'table-theme-bronze'
 
 @Component({
   selector: 'app-table',
@@ -34,6 +35,8 @@ export class TableComponent<T> implements OnInit {
   items = input.required<T[]>();
   pagination = input(true);
   pageSize = input(10);
+  fixedTable = input(false);
+  tableTheme = input<TableTheme>('');
 
   dragAble = input(false);
   dragTableId = input<string>();

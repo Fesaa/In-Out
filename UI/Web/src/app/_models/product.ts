@@ -3,6 +3,7 @@ export type Product = {
   name: string;
   description: string;
   categoryId: number;
+  sortValue: number;
   type: ProductType;
   isTracked: boolean;
   enabled: boolean;

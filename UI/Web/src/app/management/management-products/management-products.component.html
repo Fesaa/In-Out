@@ -165,6 +165,13 @@
             </button>
             <button
               type="button"
+              class="btn btn-sm p-1"
+              (click)="sortProducts(item)"
+            >
+              <i class="fas fa-arrow-up-short-wide"></i>
+            </button>
+            <button
+              type="button"
               class="btn btn-sm p-1 text-danger"
               (click)="deleteCategory(item)"
               [disabled]="categories().length === 1"

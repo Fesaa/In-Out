@@ -2,7 +2,6 @@ import {computed, inject, Injectable, signal} from '@angular/core';
 import {AuthService, Role} from './auth.service';
 
 export enum ManagementSettingsId {
-  Overview = 'overview',
   Products = 'products',
   Clients = 'clients',
   Server= 'server',
@@ -13,7 +12,7 @@ export enum NavigationsId {
   NewDelivery = 'newDelivery',
   Deliveries = 'deliveries',
   Stock = 'stock',
-  Management = 'management',
+  User = 'user',
   Logout = 'logout',
 }
 
@@ -99,6 +98,13 @@ export class NavigationService {
       icon: 'fas fa-server',
       requiredRoles: [Role.ManageApplication],
       routerLink: '/management/server'
+    },
+    {
+      id: NavigationsId.User,
+      translationKey: 'navigation.items.user',
+      icon: 'fas fa-user',
+      requiredRoles: [],
+      routerLink: '/management/user'
     },
     {
       id: NavigationsId.Logout,

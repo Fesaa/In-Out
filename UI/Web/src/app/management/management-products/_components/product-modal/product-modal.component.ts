@@ -37,6 +37,7 @@ export class ProductModalComponent implements OnInit {
     type: ProductType.Consumable,
     enabled: true,
     isTracked: true,
+    sortValue: 0,
   });
 
   isSaving = signal(false);
@@ -76,6 +77,7 @@ export class ProductModalComponent implements OnInit {
       categoryId: formValue.category,
       enabled: formValue.enabled,
       isTracked: formValue.isTracked,
+      sortValue: this.product().sortValue,
     }
 
     const action$ = id === -1

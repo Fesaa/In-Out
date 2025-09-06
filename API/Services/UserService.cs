@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 
@@ -13,6 +14,14 @@ public interface IUserService
     /// <param name="principal"></param>
     /// <returns></returns>
     Task<User> GetUser(ClaimsPrincipal principal);
+
+    /// <summary>
+    /// Updates non OIDC synced attributes (preferences)
+    /// </summary>
+    /// <param name="principal"></param>
+    /// <param name="userDto"></param>
+    /// <returns></returns>
+    Task<User> Update(ClaimsPrincipal principal, UserDto userDto);
 }
 
 public class UserService(IUnitOfWork unitOfWork): IUserService
@@ -36,7 +45,18 @@ public class UserService(IUnitOfWork unitOfWork): IUserService
             
         return user;
     }
-    
+
+    public async Task<User> Update(ClaimsPrincipal principal, UserDto userDto)
+    {
+        var user = await GetUser(principal);
+        if (user.Id != userDto.Id) throw new UnauthorizedAccessException();
+
+        user.Language = userDto.Language;
+        
+        await unitOfWork.CommitAsync();
+        return user;
+    }
+
     private async Task<User> NewUser(ClaimsPrincipal principal)
     {
         var user = DefaultUser(principal.GetUserId());

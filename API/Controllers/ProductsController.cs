@@ -156,4 +156,17 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
         await productService.OrderCategories(ids);
         return Ok();
     }
+
+    /// <summary>
+    /// Re-order products, requires all products to be part of the same category
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
+    [HttpPost("order")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
+    public async Task<IActionResult> OrderProducts(IList<int> ids)
+    {
+        await productService.OrderProducts(ids);
+        return Ok();
+    }
 }
