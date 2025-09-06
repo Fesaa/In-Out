@@ -1,9 +1,10 @@
-import {computed, inject, Injectable, Signal, signal} from '@angular/core';
+import {computed, effect, inject, Injectable, Signal, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
 import {toObservable} from '@angular/core/rxjs-interop';
 import {catchError, map, of, switchMap, tap} from 'rxjs';
-import {User} from '../_models/user';
+import {AllLanguages, User} from '../_models/user';
+import {TranslocoService} from '@jsverse/transloco';
 
 export enum Role {
   CreateForOthers = 'CreateForOthers',
@@ -16,16 +17,13 @@ export enum Role {
   ManageApplication = 'ManageApplication',
 }
 
-export type UserInfo = {
-  UserName: string;
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
   private readonly httpClient = inject(HttpClient);
+  private readonly transLoco = inject(TranslocoService);
 
   private readonly baseUrl = environment.apiUrl;
 
@@ -34,20 +32,31 @@ export class AuthService {
   public readonly loaded$ = toObservable(this.loaded);
 
   public readonly roles: Signal<Role[]> = computed(() => {
-    const userInfo = this.userInfo();
+    const userInfo = this.user();
     if (!userInfo) return [];
 
     return userInfo.roles;
   });
 
   public readonly isAuthenticated= computed((): boolean => {
-    return this.userInfo() !== undefined;
+    return this.user() !== null;
   });
 
-  private readonly _userInfo = signal<User | undefined>(undefined);
-  public readonly userInfo = this._userInfo.asReadonly();
+  // There is always a user, as we load it before the app inits
+  private readonly _user = signal<User>(null!);
+  public readonly user = this._user.asReadonly();
 
   constructor() {
+    effect(() => {
+      const user = this._user();
+      if (user == null) return;
+
+      const language = user.language || 'en';
+      if (!AllLanguages.includes(language)) return;
+
+      this.transLoco.setActiveLang(language);
+      this.transLoco.load(language).subscribe();
+    });
   }
 
   loadUser() {
@@ -60,7 +69,7 @@ export class AuthService {
 
         return this.httpClient.get<User>(this.baseUrl + 'user/').pipe(
           tap(user => {
-            this._userInfo.set(user);
+            this._user.set(user);
             this._loaded.set(true);
           }),
           map(() => true),
@@ -73,10 +82,10 @@ export class AuthService {
     window.location.href = "/Auth/logout";
   }
 
-  private decodeJwt(token: string) {
-    const payload = token.split('.')[1];
-    const decoded = atob(payload);
-    return JSON.parse(decoded);
+  update(user: User) {
+    return this.httpClient.post<User>(`${this.baseUrl}user/`, user).pipe(
+      tap(user => this._user.set(user)),
+    )
   }
 
 }

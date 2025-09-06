@@ -1,0 +1,8 @@
+{
+  "client-update-company-number-note": "Het bedrijfsnummer van deze klant is bijgewerkt sinds deze levering werd gestart. Van: {0} naar {1}.",
+  "client-update-address-note": "Het adres van deze klant is bijgewerkt sinds deze levering werd gestart. Van {0} naar {1}.",
+  "client-update-invoice-email": "Het factuur e-mailadres van deze klant is bijgewerkt sinds deze levering werd gestart. Van {0} naar {1}.",
+  "stock-bulk-stocks-not-found": "Kon geen voorraad vinden voor product-id's: {0}",
+  "stock-bulk-insufficient-stock": "{0} heeft niet genoeg items op voorraad. Heeft {1}, nodig: {2}"
+
+}

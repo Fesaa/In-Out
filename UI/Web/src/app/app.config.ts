@@ -11,12 +11,13 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi}
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {TranslocoHttpLoader} from './_services/transloco-loader';
-import {provideTransloco} from '@jsverse/transloco';
+import {provideTransloco, TranslocoService} from '@jsverse/transloco';
 import {provideToastr} from 'ngx-toastr';
 import {ErrorInterceptor} from './_interceptors/error-interceptor';
 import {DeliveryStatePipe} from './_pipes/delivery-state-pipe';
 import {AuthService} from './_services/auth.service';
-import {firstValueFrom} from 'rxjs';
+import {filter, firstValueFrom, map, of, switchMap, tap} from 'rxjs';
+import {AllLanguages} from './_models/user';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,7 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideTransloco({
       config: {
-        availableLangs: ['en'],
+        availableLangs: AllLanguages,
         defaultLang: 'en',
         missingHandler: {
           useFallbackTranslation: true,
@@ -43,14 +44,15 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader,
     }),
-    provideAppInitializer(async () => {
+    provideAppInitializer(() => {
       const authService = inject(AuthService);
-      const loggedIn = await firstValueFrom(authService.loadUser());
-      if (!loggedIn) {
-        window.location.href = 'Auth/login';
-      }
-
-      return Promise.resolve();
+      return firstValueFrom(authService.loadUser().pipe(
+        tap(loggedIn => {
+          if (!loggedIn) {
+            authService.logout();
+          }
+        }),
+      ));
     }),
   ]
 };

@@ -1,0 +1,473 @@
+{
+  "common": {
+    "edit": "Bewerken",
+    "close": "Sluiten",
+    "cancel": "Annuleren",
+    "save": "Opslaan",
+    "create": "Aanmaken",
+    "update": "Bijwerken",
+    "confirm": "Bevestigen",
+    "actions": "Acties"
+  },
+
+  "dashboard": {
+    "title": "Dashboard"
+  },
+
+  "errors": {
+    "generic": "Er is een fout opgetreden",
+    "no-fallback-category": "Kan categorie niet verwijderen zolang er geen alternatieve categorie bestaat",
+    "not-found": "Iets werd niet gevonden!",
+    "unfinished-deliveries": "Kan klant niet verwijderen, er zijn nog openstaande leveringen",
+    "client-already-exists": "Deze klant bestaat al",
+    "client-not-found": "Klant niet gevonden",
+    "delivery-not-found": "Levering niet gevonden",
+    "delivery-locked": "Deze levering kan niet worden gewijzigd",
+    "cannot-change-recipient": "Kan ontvanger niet wijzigen",
+    "stock-not-found": "Voorraad niet gevonden",
+    "product-not-found": "Product niet gevonden",
+    "product-in-use": "Product wordt gevolgd in voorraad",
+    "name-in-use": "Deze naam wordt al gebruikt",
+    "not-enough-categories": "Niet genoeg categorieën gerefereerd in uw verzoek",
+    "not-enough-products": "Niet genoeg producten om te sorteren",
+    "no-sorting-between-categories": "Kan producten van verschillende categorieën niet sorteren"
+  },
+
+  "confirm-modal": {
+    "title": "Bevestig uw volgende actie",
+    "generic": "Weet u zeker dat u door wilt gaan met deze actie?",
+    "cancel": "{{common.cancel}}",
+    "confirm": "{{common.confirm}}",
+    "close": "{{common.close}}"
+  },
+
+  "client-modal": {
+    "title": "Klant",
+    "description": "Klanten moeten alleen een uniek bedrijfsnummer hebben indien ingesteld, en een naam. Alle andere informatie is zonder beperkingen of validatie. We raden aan om zoveel mogelijk correcte informatie in te vullen, omdat dit het verwerken van leveringen vergemakkelijkt",
+    "cancel": "{{common.cancel}}",
+    "create": "{{common.create}}",
+    "close": "{{common.close}}",
+    "update": "{{common.update}}",
+    "name": "Naam",
+    "name-tooltip": "Naam om de klant te helpen identificeren",
+    "address": "Adres",
+    "address-tooltip": "Lever- of factuuradres van de klant",
+    "companyNumber": "Bedrijfsnummer",
+    "companyNumber-tooltip": "Unieke identificatie voor het bedrijf. Moet uniek zijn voor alle klanten.",
+    "contactEmail": "Contact E-mail",
+    "contactEmail-tooltip": "E-mailadres van het hoofdcontactpersoon voor deze klant",
+    "contactName": "Contactpersoon",
+    "contactName-tooltip": "Volledige naam van de hoofdcontactpersoon",
+    "contactNumber": "Contactnummer",
+    "contactNumber-tooltip": "Telefoonnummer van de hoofdcontactpersoon",
+    "invoiceEmail": "Factuur E-mail",
+    "invoiceEmail-tooltip": "E-mail voor het ontvangen van facturen en factureringsgerelateerde communicatie"
+  },
+
+  "import-client-modal": {
+    "title": "Klanten importeren uit CSV",
+    "cancel": "{{common.cancel}}",
+    "create": "{{common.create}}",
+    "close": "{{common.close}}",
+    "import": "Importeren",
+    "next": "Volgende",
+    "import-description": "Selecteer uw CSV-export om klanten in bulk te importeren vanuit een bekende bron"
+  },
+
+  "client-field-pipe": {
+    "name": "Naam",
+    "address": "Adres",
+    "company-number": "Bedrijfsnummer",
+    "contact-email": "Contact E-mail",
+    "contact-name": "Contactpersoon",
+    "contact-number": "Contactnummer",
+    "invoice-email": "Factuur e-mail"
+  },
+
+  "manage-delivery": {
+    "loading": "Laden...",
+    "new-delivery": "Nieuwe Levering",
+    "edit-delivery-with-id": "Levering #{{id}} naar {{name}} bewerken",
+    "unknown": "onbekend",
+    "items-selected": "{{count}} items geselecteerd",
+    "save-delivery": "Levering Opslaan",
+    "save": "{{common.save}}",
+    "consumable": "Verbruiksgoed",
+    "one-time": "Eenmalig",
+    "recipient": "Ontvanger",
+    "from": "Van",
+    "success": "Uw levering is succesvol bijgewerkt",
+    "failed": "Kon uw levering niet verzenden, controleer uw invoer",
+    "delivery-locked": "Deze levering kan niet worden gewijzigd in de huidige staat",
+    "message-label": "Bericht",
+    "message-tooltip": "Een optioneel bericht, als extra informatie"
+  },
+
+  "filter": {
+    "filter-title": "Leveringen filteren",
+    "filter-combination-and": "Voldoe aan alle filters",
+    "filter-combination-or": "Voldoe aan een van de filters",
+    "add-filter": "Statement toevoegen",
+    "search": "Zoeken",
+    "limit-label": "Limiet",
+    "sort-label": "Sorteren op",
+    "sort-direction": "Sorteerrichting"
+  },
+
+  "browse-deliveries": {
+    "from": "Van",
+    "to": "Ontvanger",
+    "state": "Leveringsstatus",
+    "size": "Grootte",
+    "created": "Aangemaakt op",
+    "actions": "Acties",
+    "transition": "Overgaan",
+    "no-deliveries": "Er werden geen leveringen gevonden voor uw filter"
+  },
+
+  "transition-delivery-modal": {
+    "title": "Leveringsstatus wijzigen",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "cur-label": "Huidige status: {{state}}",
+    "no-transition-possible": "U kunt de status van deze levering niet wijzigen"
+  },
+
+  "view-delivery-modal": {
+    "title": "Levering {{number}} naar {{to}}",
+    "close": "{{common.close}}",
+    "participants": {
+      "label": "Deelnemers",
+      "from": "Van",
+      "to": "Naar"
+    },
+    "message": {
+      "label": "Bericht"
+    },
+    "systemMessages": {
+      "label": "Systeemberichten"
+    },
+    "lines": {
+      "category": "Categorie",
+      "label": "Items",
+      "product": "Product",
+      "quantity": "Hoeveelheid"
+    },
+    "dates": {
+      "label": "Tijdstempels",
+      "created": "Aangemaakt",
+      "modified": "Laatst Gewijzigd"
+    }
+  },
+
+  "under-construction": {
+    "title": "In Ontwikkeling",
+    "message": "We werken hard om u iets geweldigs te brengen. Kom binnenkort terug!",
+    "back": "Ga Terug naar Home"
+  },
+
+  "delivery-state-tooltips": {
+    "in-progress": "De levering wordt nog bewerkt en mag niet worden verwerkt",
+    "completed": "De levering is klaar om verwerkt te worden",
+    "handled": "De levering is verwerkt",
+    "cancelled": "De levering is geannuleerd"
+  },
+
+  "browse-stock": {
+    "name": "Naam",
+    "category": "Categorie",
+    "description": "Beschrijving",
+    "quantity": "Hoeveelheid",
+    "actions": "Acties"
+  },
+
+  "stock-history-modal": {
+    "title": "Voorraadgeschiedenis: {{name}}",
+    "close": "{{common.close}}",
+    "date": "Datum",
+    "operation": "Bewerking",
+    "change": "Wijziging",
+    "reference": "Referentie",
+    "notes": "Notities",
+    "actions": "Acties",
+    "empty": "{{common.empty}}"
+  },
+
+  "edit-stock-modal": {
+    "title": "Voorraad bewerken: {{name}}",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "product-label": "Product",
+    "product-tooltip": "Wijs een product toe aan de voorraad, elk product mag slechts één voorraad hebben",
+    "name-label": "Naam",
+    "name-tooltip": "De naam van uw voorraad, over het algemeen gelijk aan uw product",
+    "description-label": "Beschrijving",
+    "description-tooltip": "Aanvullende info om uw voorraad te identificeren"
+  },
+
+  "update-stock-modal": {
+    "title": "Voorraad bijwerken: {{name}}",
+    "close": "{{common.close}}",
+    "cancel": "{{common.cancel}}",
+    "save": "{{common.save}}",
+    "saving": "{{common.saving}}",
+    "operation-label": "Bewerking",
+    "operation-tooltip": "De bewerking om uit te voeren op de geselecteerde voorraad. Toevoegen, verwijderen, instellen",
+    "value-label": "Waarde",
+    "value-tooltip": "De waarde om te gebruiken in de bewerking",
+    "notes-label": "Notities",
+    "notes-tooltip": "Optionele notities over waarom deze update moest plaatsvinden",
+    "reference-label": "Referentie",
+    "reference-tooltip": "Optionele referentie naar wat de wijziging veroorzaakt, wordt automatisch voor u gegenereerd indien leeg gelaten"
+  },
+
+  "stock-operation-pipe": {
+    "add": "Toevoegen",
+    "remove": "Verwijderen",
+    "set": "Instellen"
+  },
+
+  "typeahead": {
+    "placeholder": "Zoeken...",
+    "aria": {
+      "clear": "Selectie wissen",
+      "lock": "Veld vergrendelen",
+      "unlock": "Veld ontgrendelen",
+      "removeItem": "{{value}} verwijderen",
+      "results": "Zoekresultaten"
+    },
+    "button": {
+      "add": "\"{{value}}\" toevoegen"
+    },
+    "text": {
+      "noResults": "Geen resultaten gevonden"
+    }
+  },
+  "filter-field-pipe": {
+    "delivery-state": "Leveringsstatus",
+    "from": "Van",
+    "recipient": "Ontvanger",
+    "lines": "Regels",
+    "products": "Producten",
+    "created": "Aangemaakt",
+    "last-modified": "Laatst Gewijzigd",
+    "unknown": "Onbekend"
+  },
+  "filter-comparison-pipe": {
+    "contains": "Bevat",
+    "not-contains": "Bevat niet",
+    "equals": "Is gelijk aan",
+    "not-equals": "Is niet gelijk aan",
+    "starts-with": "Begint met",
+    "ends-with": "Eindigt met",
+    "greater-than": "Groter dan",
+    "greater-than-or-equals": "Groter dan of gelijk aan",
+    "less-than": "Kleiner dan",
+    "less-than-or-equals": "Kleiner dan of gelijk aan",
+    "unknown": "Onbekend"
+  },
+  "delivery-state-pipe": {
+    "in-progress": "In Behandeling",
+    "completed": "Voltooid",
+    "handled": "Afgehandeld",
+    "cancelled": "Geannuleerd",
+    "unknown": "Onbekend"
+  },
+  "sort-field-pipe": {
+    "from": "Van",
+    "recipient": "Ontvanger",
+    "creation-date": "Aanmaakdatum"
+  },
+
+  "navigation": {
+    "items": {
+      "dashboard": "Dashboard",
+      "new-delivery": "Nieuwe levering",
+      "deliveries": "Leveringen bekijken",
+      "stock": "Voorraad",
+      "management": "Beheer",
+      "user": "Gebruiker",
+      "logout": "Uitloggen"
+    },
+    "management": {
+      "items": {
+        "overview": "Overzicht",
+        "products": "Producten",
+        "clients": "Klanten",
+        "deliveries": "Leveringen",
+        "server": "Server"
+      }
+    }
+  },
+
+  "management": {
+    "products": {
+      "title": "Productbeheer",
+      "products-table-label": "Producten",
+      "categories-table-label": "Categorieën",
+      "create-category": "Categorie Aanmaken",
+      "create-first-category": "Uw Eerste Categorie Aanmaken",
+      "create-product": "Product Aanmaken",
+      "create-first-product": "Uw Eerste Product Aanmaken",
+      "no-categories": {
+        "title": "Geen Categorieën Beschikbaar",
+        "message": "U moet minstens één categorie aanmaken voordat u producten kunt toevoegen. Categorieën helpen uw producten te organiseren en maken ze gemakkelijker te beheren."
+      },
+      "no-products": {
+        "title": "Geen Producten Gevonden",
+        "message": "Uw productcatalogus is leeg. Begin met het opbouwen van uw voorraad door uw eerste product aan te maken."
+      },
+      "confirm-delete-product": "Weet u zeker dat u {{name}} wilt verwijderen?",
+      "destructive-actions": "Deze actie is destructief en kan niet ongedaan worden gemaakt!",
+      "confirm-delete-category": "Weet u zeker dat u {{name}} wilt verwijderen?",
+      "confirm-delete-category-re-assign": "{{products}} Product wordt opnieuw toegewezen aan de categorie \"{{newCategory}}\"",
+      "table": {
+        "header": {
+          "name": "Naam",
+          "description": "Beschrijving",
+          "category": "Categorie",
+          "actions": "Acties"
+        }
+      },
+      "categories": {
+        "table": {
+          "header": {
+            "name": "Naam",
+            "enabled": "Ingeschakeld",
+            "size": "Aantal producten in deze categorie",
+            "actions": "Acties"
+          },
+          "cell": {
+            "item": "{{count}} producten"
+          }
+        }
+      }
+    },
+    "clients": {
+      "title": "Klantenbeheer",
+      "create-client": "Klant aanmaken",
+      "import-clients": "Klanten importeren",
+      "no-clients": {
+        "title": "Geen klanten gevonden",
+        "message": "Importeer of maak van tevoren klanten aan om tijd te besparen bij het maken van leveringen in de toekomst!",
+        "btn": "Klanten importeren"
+      },
+      "table": {
+        "header": {
+          "name": "Naam",
+          "companyNumber": "Bedrijfsnummer",
+          "contactEmail": "E-mail",
+          "contactNumber": "Telefoonnummer",
+          "actions": "{{common.actions}}",
+          "address": "Adres",
+          "invoiceEmail": "Factuur E-mail",
+          "contactName": "Contactpersoon"
+        }
+      }
+    },
+    "server": {
+      "title": "Serverbeheer",
+      "general": "Algemeen",
+      "export": "Exporteren",
+      "general-title": "Algemene serverinstellingen",
+      "log-level-label": "Log niveau",
+      "log-level-tooltip": "Schakel debug in wanneer er problemen optreden, houd anders hoger om schijfruimte te besparen",
+      "export-settings": {
+        "csv-export-title": "CSV Export configuratie",
+        "available-fields": "Alle beschikbare (ongebruikte) velden",
+        "selected-fields": "Geselecteerde velden",
+        "drag-fields-here": "Sleep velden hierheen om uw export aan te passen"
+      }
+    },
+    "user": {
+      "title": "Gebruikers voorkeuren",
+      "language-title": "Taal",
+      "language-subtitle": "De taal in de web app en foutmeldingen."
+    }
+  },
+
+  "language-pipe": {
+    "en": "English",
+    "nl": "Nederlands"
+  },
+
+  "product-type-pipe": {
+    "one-time": "Eenmalig",
+    "consumable": "Meerdere keren"
+  },
+
+  "delivery-export-field-pipe": {
+    "id": "ID",
+    "state": "Status",
+    "from-id": "Afzender ID",
+    "from": "Afzender Naam",
+    "recipient-id": "Ontvanger ID",
+    "recipient-name": "Ontvanger Naam",
+    "recipient-email": "Ontvanger E-mail",
+    "company-number": "Bedrijfsnummer",
+    "message": "Bericht",
+    "products": "Producten",
+    "created-utc": "Aanmaakdatum (UTC)",
+    "last-modified-utc": "Laatst Gewijzigd Datum (UTC)"
+  },
+
+  "log-level-pipe": {
+    "verbose": "Uitgebreid",
+    "debug": "Debug",
+    "information": "Informatie",
+    "warning": "Waarschuwing",
+    "error": "Fout",
+    "fatal": "Fataal"
+  },
+
+  "product-modal": {
+    "title": "Product",
+    "description": "Producten zijn alles wat kan verschijnen in een levering, groepeer ze samen door categorieën te gebruiken",
+    "create": "{{common.create}}",
+    "update": "{{common.update}}",
+    "cancel": "{{common.cancel}}",
+    "name": "Naam",
+    "name-tooltip": "De naam moet uniek zijn",
+    "description-control": "Beschrijving",
+    "description-tooltip": "Optionele extra informatie over het product om gebruikers te helpen het te identificeren",
+    "description-default-value": "geen beschrijving ingesteld...",
+    "category": "Categorie",
+    "category-tooltip": "Bepaalt hoe het product wordt gegroepeerd in het nieuwe leveringsformulier",
+    "type": "Producttype",
+    "type-tooltip": "Hoe vaak kan het product worden gekocht per levering",
+    "is-tracked": "Product volgen in voorraad",
+    "is-tracked-tooltip": "Indien uitgeschakeld, wordt het product niet langer gevolgd in voorraad. U moet de huidige hoeveelheid handmatig verwijderen indien van toepassing",
+    "enabled": "Ingeschakeld",
+    "enabled-tooltip": "Het product kan worden gebruikt"
+  },
+
+  "product-category-modal": {
+    "title": "Productcategorie",
+    "description": "Categorieën groeperen verschillende items samen en geven enige ordening aan uw leveringsformulier. Het wordt aanbevolen om ze niet te groot, noch te klein te maken.",
+    "first-run": "U moet minstens één categorie hebben voordat u producten kunt beginnen aan te maken",
+    "create": "{{common.create}}",
+    "update": "{{common.update}}",
+    "cancel": "{{common.cancel}}",
+    "close": "{{common.close}}",
+    "name": "Naam",
+    "name-tooltip": "Naam weergegeven in het nieuwe leveringsformulier, moet uniek zijn",
+    "enabled": "Ingeschakeld",
+    "enabled-tooltip": "Wanneer een categorie is uitgeschakeld, worden alle producten erin ook uitgeschakeld",
+    "disabled": "Uitgeschakeld",
+    "auto-collapse": "Automatisch inklappen",
+    "auto-collapse-tooltip": "Indien ingeschakeld, worden producten in deze categorie standaard verborgen in het nieuwe leveringsformulier"
+  },
+
+  "sort-product-category-modal": {
+    "title": "Producten sorteren binnen {{category}}",
+    "create": "{{common.create}}",
+    "update": "{{common.update}}",
+    "cancel": "{{common.cancel}}",
+    "close": "{{common.close}}",
+    "header-name": "Naam"
+  }
+}

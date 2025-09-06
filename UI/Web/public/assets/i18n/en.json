@@ -10,6 +10,10 @@
     "actions": "Actions"
   },
 
+  "dashboard": {
+    "title": "Dashboard"
+  },
+
   "errors": {
     "generic": "An error has occurred",
     "no-fallback-category": "Cannot delete category while no fallback category exists",
@@ -286,6 +290,7 @@
       "deliveries": "Browse deliveries",
       "stock": "Stock",
       "management": "Management",
+      "user": "User",
       "logout": "Logout"
     },
     "management": {
@@ -377,7 +382,17 @@
         "selected-fields": "Selected fields",
         "drag-fields-here": "Drag fields here to customise your export"
       }
+    },
+    "user": {
+      "title": "User preferences",
+      "language-title": "Language",
+      "language-subtitle": "The language in the web app and error messages."
     }
+  },
+
+  "language-pipe": {
+    "en": "English",
+    "nl": "Nederlands"
   },
 
   "product-type-pipe": {
