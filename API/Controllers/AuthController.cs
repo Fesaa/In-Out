@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [Route("[controller]")]
-public class AuthController: ControllerBase
+public class AuthController(ILogger<AuthController> logger): ControllerBase
 {
     /// <summary>
     /// Trigger OIDC login flow
@@ -33,14 +33,14 @@ public class AuthController: ControllerBase
     {
         if (!Request.Cookies.ContainsKey(OidcService.CookieName))
         {
-            return Redirect("/");
+            return Redirect("/Auth/login");
         }
 
         var res = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         if (!res.Succeeded || res.Properties == null || string.IsNullOrEmpty(res.Properties.GetString(OidcService.IdToken)))
         {
             HttpContext.Response.Cookies.Delete(OidcService.CookieName);
-            return Redirect("/");
+            return Redirect("/Auth/login");
         }
         
         return SignOut(
