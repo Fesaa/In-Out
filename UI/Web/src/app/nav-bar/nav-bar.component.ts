@@ -65,10 +65,6 @@ export class NavBarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  logout() {
-    this.authService.logout();
-  }
-
   toggleMobileMenu() {
     this.navService.isMobileMenuOpen.update(v => !v);
   }
@@ -88,6 +84,4 @@ export class NavBarComponent implements OnInit {
       this.navService.isAccountDropdownOpen.set(false);
     }
   }
-
-  protected readonly main = main;
 }
