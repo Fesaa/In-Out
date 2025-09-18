@@ -1,13 +1,12 @@
 import {computed, signal} from '@angular/core';
 
-
 export class Tracker<T, S> {
 
   private readonly idFunc: (t: T) => S;
   private readonly comparator: (a: T, b: T) => boolean;
 
   private readonly _items = signal<T[]>([]);
-  private readonly _lookup= signal(new Map<S, T>());
+  private readonly _lookup = signal(new Map<S, T>());
 
   public readonly items = this._items.asReadonly();
   public readonly ids = computed(() => this.items().map(x => this.idFunc(x)));
@@ -28,48 +27,46 @@ export class Tracker<T, S> {
     const id = this.idFunc(item);
     if (this._lookup().has(id)) return false;
 
-    this._items.update(i => {
-      i.push(item);
-      return i;
-    });
-
-    this._lookup.update(m => {
-      m.set(id, item);
-      return m;
-    });
+    this._items.update(items => [...items, item]);
+    this._lookup.update(map => new Map(map).set(id, item));
 
     return true;
   }
 
   addAll(items: T[]) {
-    items.forEach(this.add)
+    items.forEach(item => this.add(item));
   }
 
   remove(item: T) {
     const id = this.idFunc(item);
     if (!this._lookup().has(id)) return false;
 
-    this._items.update(i => i.filter(t => !this.comparator(t, item)));
-    this._lookup.update(m => {
-      m.delete(id);
-      return m;
+    this._items.update(items => items.filter(t => !this.comparator(t, item)));
+
+    this._lookup.update(map => {
+      const newMap = new Map(map);
+      newMap.delete(id);
+      return newMap;
     });
 
     return true;
   }
 
   removeAll(items: T[]) {
-    items.forEach(this.remove)
+    items.forEach(item => this.remove(item));
+  }
+
+  toggle(item: T) {
+    const id = this.idFunc(item);
+    if (this._lookup().has(id)) {
+      return this.remove(item);
+    }
+
+    return this.add(item);
   }
 
   reset() {
     this._items.set([]);
     this._lookup.set(new Map<S, T>());
   }
-
-
-
-
-
-
 }
