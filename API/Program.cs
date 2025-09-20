@@ -77,7 +77,8 @@ public class Program
                 
                 var env = ctx.HostingEnvironment;
                 cfg.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: false)
-                    .AddJsonFile($"config/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false);
+                    .AddJsonFile($"config/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false)
+                    .AddEnvironmentVariables();
             })
             .ConfigureWebHostDefaults(builder =>
             {
