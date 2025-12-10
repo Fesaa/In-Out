@@ -72,6 +72,11 @@ public static class IdentityServiceExtensions
                         {
                             ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         }
+                        else
+                        {
+                            ctx.Response.Redirect($"/Auth/login?returnUrl={Uri.EscapeDataString(ctx.Request.Path)}");
+                        }
+                        
                         return Task.CompletedTask;
                     }
                 };
@@ -120,7 +125,7 @@ public static class IdentityServiceExtensions
                         }
 
                         return Task.CompletedTask;
-                    }
+                    },
                 };
             });
 
