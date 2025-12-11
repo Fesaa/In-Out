@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace API.Controllers;
 
 public class FallbackController: Controller
 {
+    [Authorize]
     [SwaggerIgnore]
     public PhysicalFileResult Index()
     {
