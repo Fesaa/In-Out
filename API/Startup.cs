@@ -43,7 +43,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                     Url = new Uri("https://opensource.org/licenses/MIT")
                 }
             });
-            
+
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var filePath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             //opt.IncludeXmlComments(filePath, true);
@@ -53,7 +53,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey
             });
-            
+
             opt.AddSecurityRequirement(new OpenApiSecurityRequirement {
                 {
                     new OpenApiSecurityScheme
@@ -111,12 +111,12 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             Task.Run(async () =>
             {
                 var ctx = serviceProvider.GetRequiredService<DataContext>();
-                
+
                 logger.LogInformation("Running Migrations");
-                
+
                 await ManualMigrationAddStockForExistingProducts.Migrate(ctx, logger);
                 await ManualMigrationAddProductSortValues.Migrate(ctx, logger);
-                
+
                 logger.LogInformation("Running Migrations - complete");
             }).GetAwaiter().GetResult();
         }
@@ -124,7 +124,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
         {
             logger.LogCritical(ex, "An error occurred during migration");
         }
-        
+
         if (env.IsDevelopment())
         {
             app.UseSwagger();
@@ -201,7 +201,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
 
             await next();
         });
-        
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
@@ -210,7 +210,7 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
             endpoints.MapFallbackToController("Index", "Fallback");
             endpoints.MapPrometheusScrapingEndpoint().DisableHttpMetrics();
         });
-        
+
         applicationLifetime.ApplicationStarted.Register(() =>
         {
             try
@@ -230,21 +230,23 @@ public class Startup(IConfiguration cfg, IWebHostEnvironment env)
     {
         try
         {
-            var favicon = cfg.GetValue<string>("Favicon");
-            if (string.IsNullOrWhiteSpace(favicon)) return;
-
-            if (!Directory.Exists("wwwroot")) return;
-
-            var filePath = Path.Join("wwwroot", "favicon.ico");
-
-            var data = Convert.FromBase64String(favicon);;
-            
-            File.WriteAllBytes(filePath, data);
-            logger.LogDebug("Overwritten favicon from configuration");
+            OverrideFromBase64(Path.Join("wwwroot", "favicon.ico"), "Favicon");
+            OverrideFromBase64(Path.Join("wwwroot", "apple-touch-icon.png"), "AppleTouch");
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "An error occurred during overwrite of favicon");
         }
+    }
+
+    protected void OverrideFromBase64(string filePath, string configKey)
+    {
+        var favicon = cfg.GetValue<string>(configKey);
+        if (string.IsNullOrWhiteSpace(favicon)) return;
+        if (!Directory.Exists(Path.GetDirectoryName(filePath))) return;
+
+        var data = Convert.FromBase64String(favicon);;
+
+        File.WriteAllBytes(filePath, data);
     }
 }
