@@ -32,7 +32,7 @@
                 <span>{{t('actions')}}</span>
 
                 @if (authService.roles().includes(Role.HandleDeliveries)) {
-                  <button class="ms-2 btn btn-olive" (click)="export()">
+                  <button class="ms-2 btn btn-olive" [disabled]="tracker.empty()" (click)="export()">
                     <i class="fas fa-download"></i>
                   </button>
                 }
