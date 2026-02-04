@@ -192,11 +192,11 @@ export class ManageDeliveryComponent implements OnInit {
       const existingLine = delivery.lines.find(l => l.productId === product.id);
       const quantity = existingLine ? existingLine.quantity : 0;
 
-      this.totalItems.update(t => t + quantity);
+      this.totalItems.update(t => t + Math.abs(quantity));
 
       this.deliveryForm.addControl(
         `product_${product.id}`,
-        new FormControl(quantity, [Validators.min(0)])
+        new FormControl(quantity)
       );
     });
   }
@@ -227,7 +227,7 @@ export class ManageDeliveryComponent implements OnInit {
   updateProductQuantity(productId: number, quantity: number) {
     const control = this.deliveryForm.get(`product_${productId}`) as unknown as FormControl<number>;
     if (control) {
-      control.setValue(Math.max(0, quantity));
+      control.setValue(quantity);
       this.deliveryForm.markAsDirty();
     }
   }
@@ -235,13 +235,19 @@ export class ManageDeliveryComponent implements OnInit {
   incrementProduct(productId: number) {
     const currentQuantity = this.getProductQuantity(productId);
     this.updateProductQuantity(productId, currentQuantity + 1);
-    this.totalItems.update(t => t + 1);
+
+    if (currentQuantity > 0) {
+      this.totalItems.update(t => t + 1);
+    }
   }
 
   decrementProduct(productId: number) {
     const currentQuantity = this.getProductQuantity(productId);
-    this.updateProductQuantity(productId, Math.max(0, currentQuantity - 1));
-    this.totalItems.update(t => t - 1);
+    this.updateProductQuantity(productId, currentQuantity - 1);
+
+    if (currentQuantity > 0) {
+      this.totalItems.update(t => t - 1);
+    }
   }
 
   toggleCategory(categoryId: number, forceHide: boolean = false) {
@@ -269,7 +275,8 @@ export class ManageDeliveryComponent implements OnInit {
   getCategoryTotal(categoryId: number): number {
     const products = this.groupedProducts().get(categoryId) || [];
     return products.reduce((total, product) => {
-      return total + this.getProductQuantity(product.id);
+      const productTotal = this.getProductQuantity(product.id);
+      return total + Math.abs(productTotal);
     }, 0);
   }
 
@@ -287,12 +294,10 @@ export class ManageDeliveryComponent implements OnInit {
     const lines: DeliveryLine[] = [];
     this.products().forEach(product => {
       const quantity = formValue[`product_${product.id}`] || 0;
-      if (quantity > 0) {
-        lines.push({
-          productId: product.id,
-          quantity: quantity,
-        });
-      }
+      lines.push({
+        productId: product.id,
+        quantity: quantity,
+      });
     });
 
     const deliveryData = {

@@ -110,9 +110,16 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
 
     public async Task<int> GetHighestSortValue(ProductCategory category)
     {
-        return await ctx.Products
-            .Where(p => p.CategoryId == category.Id)
-            .MaxAsync(p => p.SortValue);
+        try
+        {
+            return await ctx.Products
+                .Where(p => p.CategoryId == category.Id)
+                .MaxAsync(p => p.SortValue);
+        }
+        catch (InvalidOperationException)
+        {
+            return 0;
+        }
     }
 
     public void Add(Product product)

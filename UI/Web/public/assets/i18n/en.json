@@ -288,6 +288,7 @@
     "title": "Navigation",
     "home": "Home",
     "items": {
+      "title": "Actions",
       "dashboard": "Dashboard",
       "new-delivery": "New delivery",
       "deliveries": "Browse deliveries",

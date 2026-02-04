@@ -77,7 +77,7 @@ export class ButtonGroupService {
 
     return {
       key: ButtonGroupKey.Navigation,
-      title: translate('navigation.title'),
+      title: translate('navigation.items.title'),
       icon: 'fas fa-bars',
       buttons: [
         {
