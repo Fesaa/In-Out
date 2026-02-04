@@ -24,6 +24,7 @@ import {Tracker} from '../shared/tracker';
 import {ExportService} from '../_services/export.service';
 import {ExportKind} from '../_models/export';
 import {AuthService, Role} from '../_services/auth.service';
+import {LoadingSpinnerComponent} from '@inout/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-browse-deliveries',
@@ -36,6 +37,7 @@ import {AuthService, Role} from '../_services/auth.service';
     FilterComponent,
     UtcToLocalTimePipe,
     NgbTooltip,
+    LoadingSpinnerComponent,
   ],
   templateUrl: './browse-deliveries.component.html',
   styleUrl: './browse-deliveries.component.scss',
@@ -52,6 +54,7 @@ export class BrowseDeliveriesComponent implements OnInit {
 
   showNavbar = input(true);
 
+  loading = signal(true);
   deliveries = signal<Delivery[]>([]);
   products = signal<Product[]>([]);
   categories = signal<ProductCategory[]>([]);
@@ -67,6 +70,7 @@ export class BrowseDeliveriesComponent implements OnInit {
   }
 
   loadFilter(filter: Filter) {
+    this.loading.set(true);
     this.deliveryService.filter(filter).subscribe({
       next: (data: Delivery[]) => {
         this.deliveries.set(data);
@@ -76,7 +80,7 @@ export class BrowseDeliveriesComponent implements OnInit {
         console.log(err);
         this.toastr.error(err, translate('errors.filter-fail'));
       }
-    });
+    }).add(() => this.loading.set(false));
   }
 
   trackDelivery(idx: number, d: Delivery) {

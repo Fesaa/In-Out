@@ -128,7 +128,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         }
 
         if (!isNew) unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
-        delivery.Lines = aggregatedNewLines;
+        delivery.Lines = aggregatedNewLines.Where(l => l.Quantity != 0).ToList();
     }
 
     public async Task DeleteDelivery(ClaimsPrincipal actor, int id)

@@ -236,7 +236,7 @@ export class ManageDeliveryComponent implements OnInit {
     const currentQuantity = this.getProductQuantity(productId);
     this.updateProductQuantity(productId, currentQuantity + 1);
 
-    if (currentQuantity > 0) {
+    if (currentQuantity >= 0) {
       this.totalItems.update(t => t + 1);
     }
   }

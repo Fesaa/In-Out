@@ -2,81 +2,84 @@
 
   <app-filter (search)="loadFilter($event)"></app-filter>
 
-  @if (deliveries().length === 0) {
-    <div class="d-flex justify-content-center align-items-center">
-      <div class="text-center p-4">
-        <i class="fa fa-magnifying-glass"></i>
-        <h5 class="mb-3">
-          {{ t('no-deliveries') }}
-        </h5>
-      </div>
-    </div>
+  @if (loading()) {
+    <app-loading-spinner></app-loading-spinner>
   } @else {
-    <app-table
-      [items]="deliveries()"
-      [trackByIdFunc]="trackDelivery"
-      [pageSize]="20"
-    >
-      <ng-template #header>
-        <tr>
-          <th class="table-header-cell">{{t('from')}}</th>
-          <th class="table-header-cell">{{t('to')}}</th>
-          <th class="table-header-cell">{{t('state')}}</th>
-          <th class="table-header-cell">{{t('size')}}</th>
-          <th class="table-header-cell">{{t('created')}}</th>
-          <th class="table-header-cell">
-            <div class="d-flex justify-content-between align-items-center">
-              <span>{{t('actions')}}</span>
+    @if (deliveries().length === 0) {
+      <div class="d-flex justify-content-center align-items-center">
+        <div class="text-center p-4">
+          <i class="fa fa-magnifying-glass"></i>
+          <h5 class="mb-3">
+            {{ t('no-deliveries') }}
+          </h5>
+        </div>
+      </div>
+    } @else {
+      <app-table
+        [items]="deliveries()"
+        [trackByIdFunc]="trackDelivery"
+        [pageSize]="20"
+      >
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">{{t('from')}}</th>
+            <th class="table-header-cell">{{t('to')}}</th>
+            <th class="table-header-cell">{{t('state')}}</th>
+            <th class="table-header-cell">{{t('size')}}</th>
+            <th class="table-header-cell">{{t('created')}}</th>
+            <th class="table-header-cell">
+              <div class="d-flex justify-content-between align-items-center">
+                <span>{{t('actions')}}</span>
+
+                @if (authService.roles().includes(Role.HandleDeliveries)) {
+                  <button class="ms-2 btn btn-olive" (click)="export()">
+                    <i class="fas fa-download"></i>
+                  </button>
+                }
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template #cell let-delivery>
+          <td class="table-cell">{{ delivery.from.name }}</td>
+          <td class="table-cell">{{ delivery.recipient.name }}</td>
+          <td class="table-cell">
+            <app-badge [colour]="stateBadgeColour(delivery.state)" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
+          </td>
+          <td class="table-cell">
+            <app-badge>{{delivery.lines.length}}</app-badge>
+          </td>
+          <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
+          <td class="table-cell">
+
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm" [ngbTooltip]="t('transition')" (click)="transitionDelivery(delivery)">
+                <i class="fas fa-arrows-spin"></i>
+              </button>
+
+              <a class="btn btn-sm" [ngbTooltip]="t('edit')" href="/delivery/manage?deliveryId={{delivery.id}}" target="_blank" >
+                <i class="fas fa-pencil"></i>
+              </a>
+
+              <button class="btn btn-sm" (click)="showInfo(delivery)">
+                <i class="fas fa-info"></i>
+              </button>
 
               @if (authService.roles().includes(Role.HandleDeliveries)) {
-                <button class="ms-2 btn btn-olive" (click)="export()">
-                  <i class="fas fa-download"></i>
-                </button>
+                @if (tracker.lookup().has(delivery.id)) {
+                  <input type="checkbox" checked (click)="tracker.remove(delivery)">
+                } @else {
+                  <input type="checkbox" (click)="tracker.add(delivery)">
+                }
               }
+
             </div>
-          </th>
-        </tr>
-      </ng-template>
 
-      <ng-template #cell let-delivery>
-        <td class="table-cell">{{ delivery.from.name }}</td>
-        <td class="table-cell">{{ delivery.recipient.name }}</td>
-        <td class="table-cell">
-          <app-badge [colour]="stateBadgeColour(delivery.state)" [clickAble]="true" (click)="transitionDelivery(delivery)">{{delivery.state | deliveryState}}</app-badge>
-        </td>
-        <td class="table-cell">
-          <app-badge>{{delivery.lines.length}}</app-badge>
-        </td>
-        <td class="table-cell">{{ delivery.createdUtc ?? '—' | utcToLocalTime:'shortDate' }}</td>
-        <td class="table-cell">
-
-          <div class="d-flex align-items-center gap-2">
-            <button class="btn btn-sm" [ngbTooltip]="t('transition')" (click)="transitionDelivery(delivery)">
-              <i class="fas fa-arrows-spin"></i>
-            </button>
-
-            <a class="btn btn-sm" href="/delivery/manage?deliveryId={{delivery.id}}" target="_blank" >
-              <i class="fas fa-pencil"></i>
-            </a>
-
-            <button class="btn btn-sm" (click)="showInfo(delivery)">
-              <i class="fas fa-info"></i>
-            </button>
-
-            @if (authService.roles().includes(Role.HandleDeliveries)) {
-              @if (tracker.lookup().has(delivery.id)) {
-                <input type="checkbox" checked (click)="tracker.remove(delivery)">
-              } @else {
-                <input type="checkbox" (click)="tracker.add(delivery)">
-              }
-            }
-
-          </div>
-
-        </td>
-      </ng-template>
-    </app-table>
+          </td>
+        </ng-template>
+      </app-table>
+    }
   }
-
 
 </div>
