@@ -15,7 +15,9 @@ public interface IProductService
     Task UpdateProductCategory(ProductCategoryDto dto);
     Task DeleteProduct(int id);
     Task DeleteProductCategory(int id);
-    
+    Task<PriceCategoryDto> CreatePriceCategory(PriceCategoryDto dto);
+    Task UpdatePriceCategory(PriceCategoryDto dto);
+
     /// <summary>
     /// Sets the sort value of all categories to the index in the list
     /// </summary>
@@ -36,9 +38,11 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     {
         var category = await unitOfWork.ProductRepository.GetCategoryById(dto.CategoryId);
         if (category == null) throw new InOutException("errors.category-not-found");
-        
+
+        var prices = await ValidateAndMapPrices(dto.Prices);
+
         var maxSortValue = await unitOfWork.ProductRepository.GetHighestSortValue(category);
-        
+
         var product = new Product
         {
             Name = dto.Name,
@@ -48,18 +52,14 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
             Type = dto.Type,
             IsTracked = dto.IsTracked,
             Enabled = dto.Enabled,
-            SortValue = maxSortValue+1,
+            SortValue = maxSortValue + 1,
+            Prices = prices
         };
 
         unitOfWork.ProductRepository.Add(product);
         await unitOfWork.CommitAsync();
 
-        var stock = new Stock
-        {
-            Product = product,
-            Quantity = 0,
-        };
-        
+        var stock = new Stock { Product = product, Quantity = 0 };
         unitOfWork.StockRepository.Add(stock);
         await unitOfWork.CommitAsync();
 
@@ -96,27 +96,26 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
             extProduct.Name = dto.Name;
             extProduct.NormalizedName = dto.Name.ToNormalized();
         }
-        
+
         if (extProduct.CategoryId != dto.CategoryId)
         {
             var category = await unitOfWork.ProductRepository.GetCategoryById(dto.CategoryId);
             if (category == null) throw new InOutException("errors.category-not-found");
-            
+
             var maxSortValue = await unitOfWork.ProductRepository.GetHighestSortValue(category);
             extProduct.CategoryId = dto.CategoryId;
             extProduct.SortValue = maxSortValue + 1;
         }
 
+        extProduct.Prices = await ValidateAndMapPrices(dto.Prices);
+
         extProduct.Description = dto.Description;
         extProduct.Type = dto.Type;
         extProduct.IsTracked = dto.IsTracked;
-        extProduct.Enabled  = dto.Enabled;
+        extProduct.Enabled = dto.Enabled;
 
         unitOfWork.ProductRepository.Update(extProduct);
-        if (unitOfWork.HasChanges())
-        {
-            await unitOfWork.CommitAsync();
-        }
+        if (unitOfWork.HasChanges()) await unitOfWork.CommitAsync();
     }
 
     public async Task UpdateProductCategory(ProductCategoryDto dto)
@@ -155,14 +154,14 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
     {
         var category = await unitOfWork.ProductRepository.GetCategoryById(id);
         if (category == null) throw new InOutException("errors.product-not-found");
-        
+
         var products = await unitOfWork.ProductRepository.GetByCategory(category);
         if (products.Count > 0)
         {
             var defaultCategory = await unitOfWork.ProductRepository.GetFirstCategory();
             if (defaultCategory == null || defaultCategory.Id == category.Id)
                 throw new InOutException("errors.no-fallback-category");
-            
+
             foreach (var product in products)
             {
                 product.Category = defaultCategory;
@@ -174,18 +173,53 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
         await unitOfWork.CommitAsync();
     }
 
+    public async Task<PriceCategoryDto> CreatePriceCategory(PriceCategoryDto dto)
+    {
+        var existing = await unitOfWork.ProductRepository.GetPriceCategoryByName(dto.Name);
+        if (existing != null) throw new InOutException("errors.price-category-exists");
+
+        var priceCategory = new PriceCategory
+        {
+            Name = dto.Name,
+            NormalizedName = dto.Name.ToNormalized()
+        };
+
+        unitOfWork.ProductRepository.Add(priceCategory);
+        await unitOfWork.CommitAsync();
+
+        return mapper.Map<PriceCategoryDto>(priceCategory);
+    }
+
+    public async Task UpdatePriceCategory(PriceCategoryDto dto)
+    {
+        var priceCategory = await unitOfWork.ProductRepository.GetPriceCategoryById(dto.Id);
+        if (priceCategory == null) throw new InOutException("errors.price-category-not-found");
+
+        if (priceCategory.NormalizedName != dto.Name.ToNormalized())
+        {
+            var other = await unitOfWork.ProductRepository.GetPriceCategoryByName(dto.Name);
+            if (other != null) throw new InOutException("errors.name-in-use");
+
+            priceCategory.Name = dto.Name;
+            priceCategory.NormalizedName = dto.Name.ToNormalized();
+        }
+
+        unitOfWork.ProductRepository.Update(priceCategory);
+        if (unitOfWork.HasChanges()) await unitOfWork.CommitAsync();
+    }
+
     public async Task OrderCategories(IList<int> ids)
     {
         ids = ids.Distinct().ToList();
         var categories = await unitOfWork.ProductRepository.GetAllCategories();
         if (ids.Count != categories.Count) throw new InOutException("errors.not-enough-categories");
-        
+
         foreach (var category in categories)
         {
             category.SortValue = ids.IndexOf(category.Id);
             unitOfWork.ProductRepository.Update(category);
         }
-        
+
         await unitOfWork.CommitAsync();
     }
 
@@ -199,7 +233,7 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
         {
             throw new InOutException("errors.no-sorting-between-categories");
         }
-        
+
         var category = await unitOfWork.ProductRepository.GetCategoryById(products.First().CategoryId);
         if (category == null) throw new InOutException("errors.category-not-found");
 
@@ -211,7 +245,30 @@ public class ProductService(IUnitOfWork unitOfWork, IMapper mapper): IProductSer
             product.SortValue = ids.IndexOf(product.Id);
             unitOfWork.ProductRepository.Update(product);
         }
-        
+
         await unitOfWork.CommitAsync();
+    }
+
+    /// <summary>
+    /// Validates that all PriceCategory IDs in the DTO exist in the database.
+    /// </summary>
+    private async Task<Dictionary<int, float>> ValidateAndMapPrices(Dictionary<int, float> dtoPrices)
+    {
+        if (dtoPrices == null || !dtoPrices.Any()) return new Dictionary<int, float>();
+
+        var allPriceCategories = await unitOfWork.ProductRepository.GetAllPriceCategories();
+        var validIds = allPriceCategories.Select(pc => pc.Id).ToHashSet();
+        var result = new Dictionary<int, float>();
+
+        foreach (var entry in dtoPrices)
+        {
+            // We check the ID from the PriceCategoryDto key
+            if (!validIds.Contains(entry.Key))
+                throw new InOutException($"errors.price-category-not-found-id-{entry.Key}");
+
+            result.Add(entry.Key, entry.Value);
+        }
+
+        return result;
     }
 }

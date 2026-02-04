@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../../environments/environment';
-import {Product, ProductCategory} from '../_models/product';
+import {PriceCategory, Product, ProductCategory} from '../_models/product';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -62,4 +62,17 @@ export class ProductService {
   orderProducts(ids: number[]) {
     return this.http.post(`${this.baseUrl}order`, ids);
   }
+
+  getPriceCategories(): Observable<PriceCategory[]> {
+    return this.http.get<PriceCategory[]>(`${this.baseUrl}price-category`);
+  }
+
+  createPriceCategory(priceCategory: PriceCategory): Observable<PriceCategory> {
+    return this.http.post<PriceCategory>(`${this.baseUrl}price-category`, priceCategory);
+  }
+
+  updatePriceCategory(priceCategory: PriceCategory): Observable<PriceCategory> {
+    return this.http.put<PriceCategory>(`${this.baseUrl}price-category`, priceCategory);
+  }
+
 }

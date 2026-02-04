@@ -312,6 +312,20 @@
     }
   },
 
+  "price-category-modal": {
+    "title-create": "Create Price Category",
+    "title-update": "Update Price Category",
+    "description": "Price categories allow you to define different pricing tiers (e.g., Staff, VIP) for your products.",
+    "name-label": "Category Name",
+    "name-hint": "The display name for this pricing tier.",
+    "name-placeholder": "e.g. Member",
+    "close": "Close",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "saving": "Saving..."
+  },
+
   "management": {
     "products": {
       "title": "Product Management",
@@ -351,6 +365,17 @@
           },
           "cell": {
             "item": "{{count}} products"
+          }
+        }
+      },
+      "create-price-category": "New Price Category",
+      "price-categories-table-label": "Price Categories",
+      "price-categories": {
+        "table": {
+          "header": {
+            "id": "ID",
+            "name": "Name",
+            "actions": "Actions"
           }
         }
       }
@@ -450,7 +475,9 @@
     "is-tracked": "Track product in stock",
     "is-tracked-tooltip": "When disabled, product is no longer tracked in stock. You have to remove the current amount manually if applicable",
     "enabled": "Enabled",
-    "enabled-tooltip": "The product can be used"
+    "enabled-tooltip": "The product can be used",
+    "prices-title": "Price Categories",
+    "price-for": "Set the unit price for the {{name}} tier."
   },
 
   "product-category-modal": {

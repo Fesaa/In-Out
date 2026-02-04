@@ -82,6 +82,32 @@
             }
           </div>
 
+          <div class="col-md-12 col-sm-12 mt-4">
+            <h6 class="price-header border-bottom pb-2">{{t('prices-title')}}</h6>
+          </div>
+
+          @if (productForm.get('prices'); as priceGroup) {
+            <div [formGroup]="$any(priceGroup)">
+              @for (pc of priceCategories(); track pc.id) {
+                <div class="col-md-12 col-sm-12 mt-2">
+                  @if (priceGroup.get(pc.id.toString()); as control) {
+                    <app-settings-item [control]="control" [title]="pc.name" [subtitle]="t('price-for', {name: pc.name})">
+                      <ng-template #view>
+                        {{control.value | number:'1.2-2'}}
+                      </ng-template>
+                      <ng-template #edit>
+                        <div class="input-group">
+                          <span class="input-group-text">€</span>
+                          <input [formControlName]="pc.id.toString()" type="number" step="0.01" class="form-control">
+                        </div>
+                      </ng-template>
+                    </app-settings-item>
+                  }
+                </div>
+              }
+            </div>
+          }
+
           <div class="col-md-12 col-sm-12 mt-2">
             @if (productForm.get('isTracked'); as control) {
               <app-settings-item [control]="control" [subtitle]="t('is-tracked-tooltip')" [isEditMode]="true" [showEdit]="false">

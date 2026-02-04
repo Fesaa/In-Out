@@ -21,6 +21,13 @@
             <i class="fas fa-plus" aria-hidden="true"></i>
             {{t('create-product')}}
           </button>
+          <button
+            type="button"
+            class="btn btn-info"
+            (click)="createOrUpdatePriceCategory()">
+            <i class="fas fa-tags" aria-hidden="true"></i>
+            {{t('create-price-category')}}
+          </button>
         </div>
       </div>
     </div>
@@ -177,6 +184,46 @@
               [disabled]="categories().length === 1"
             >
               <i class="fas fa-trash" aria-hidden="true"></i>
+            </button>
+          </td>
+        </ng-template>
+      </app-table>
+    }
+
+    @if (priceCategories().length > 0) {
+      <h5 class="mt-4">{{t('price-categories-table-label')}}</h5>
+
+      <app-table [pagination]="false"
+                 [items]="priceCategories()"
+                 [trackByIdFunc]="priceCategoryTracker"
+                 *transloco="let t; prefix: 'management.products.price-categories.table'">
+        <ng-template #header>
+          <tr>
+            <th class="table-header-cell">
+              {{t('header.id')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.name')}}
+            </th>
+            <th class="table-header-cell">
+              {{t('header.actions')}}
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template #cell let-item>
+          <td class="table-cell">
+            #{{item.id}}
+          </td>
+          <td class="table-cell">
+            {{item.name}}
+          </td>
+          <td class="table-cell">
+            <button
+              type="button"
+              class="btn btn-sm p-1"
+              (click)="createOrUpdatePriceCategory(item)"
+            >
+              <i class="fas fa-edit" aria-hidden="true"></i>
             </button>
           </td>
         </ng-template>

@@ -13,7 +13,7 @@ public class DataContext: DbContext
         ChangeTracker.Tracked += OnEntityTracked;
         ChangeTracker.StateChanged += OnEntityStateChanged;
     }
-    
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -24,21 +24,30 @@ public class DataContext: DbContext
                 v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
                 v => JsonSerializer.Deserialize<List<SystemMessage>>(v, JsonSerializerOptions.Default) ?? new List<SystemMessage>()
             );
+
+        builder.Entity<Product>()
+            .Property(d => d.Prices)
+            .HasConversion(
+                v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                v => JsonSerializer.Deserialize<Dictionary<int, float>>(v, JsonSerializerOptions.Default) ?? new Dictionary<int, float>()
+            ).HasColumnType("TEXT")
+            .HasDefaultValue(new Dictionary<int, float>());
     }
-    
+
     public DbSet<ManualMigration> ManualMigrations { get; set; }
     public DbSet<ServerSetting> ServerSettings { get; set; }
     public DbSet<User> Users { get; set; }
-    
+
     public DbSet<ProductCategory> ProductCategories { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<PriceCategory> PriceCategories { get; set; }
     public DbSet<Delivery> Deliveries { get; set; }
     public DbSet<DeliveryLine> DeliveryLines { get; set; }
     public DbSet<Stock> ProductStock { get; set; }
     public DbSet<StockHistory> StockHistory { get; set; }
-    
+
     public DbSet<Client> Clients { get; set; }
-    
+
     private static void OnEntityTracked(object? sender, EntityTrackedEventArgs e)
     {
         if (e.FromQuery || e.Entry.State != EntityState.Added || e.Entry.Entity is not IEntityDate entity) return;
@@ -51,13 +60,13 @@ public class DataContext: DbContext
             entity.CreatedUtc = DateTime.UtcNow;
         }
     }
-    
+
     private static void OnEntityStateChanged(object? sender, EntityStateChangedEventArgs e)
     {
         if (e.NewState != EntityState.Modified || e.Entry.Entity is not IEntityDate entity) return;
         entity.LastModifiedUtc = DateTime.UtcNow;
     }
-    
+
     private void OnSaveChanges()
     {
         foreach (var saveEntity in ChangeTracker.Entries()
@@ -82,5 +91,5 @@ public class DataContext: DbContext
 
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
-    
+
 }
