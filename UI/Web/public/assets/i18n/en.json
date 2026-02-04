@@ -100,7 +100,8 @@
     "failed": "Failed to submit your delivery, check your input",
     "delivery-locked": "This delivery cannot be changed in its current state",
     "message-label": "Message",
-    "message-tooltip": "An optional message, as extra information"
+    "message-tooltip": "An optional message, as extra information",
+    "no-products-available": "No products available"
   },
 
   "filter": {
