@@ -1,8 +1,12 @@
 <div *transloco="let t;">
-
-  @if (navService.showNavBar()) {
+  <div class="app-container"
+       [class.with-sidebar]="utilityService.breakPoint() > Breakpoint.Mobile && navService.showNavBar()">
     <app-nav-bar></app-nav-bar>
-  }
 
-  <router-outlet></router-outlet>
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>
+
+

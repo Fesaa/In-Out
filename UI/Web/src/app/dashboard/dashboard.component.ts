@@ -2,11 +2,14 @@ import {ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit} from '@an
 import {NavigationItem, NavigationService} from '../_services/navigation.service';
 import {TranslocoDirective} from '@jsverse/transloco';
 import {Router} from '@angular/router';
+import {ButtonGroupService} from '@inout/button-grid/button-group.service';
+import {ButtonGridComponent} from '@inout/button-grid/button-grid.component';
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    TranslocoDirective
+    TranslocoDirective,
+    ButtonGridComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -16,6 +19,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private readonly router = inject(Router);
   protected readonly navigationService = inject(NavigationService);
+  protected readonly buttonGroupService = inject(ButtonGroupService);
 
   navigate(item: NavigationItem): void {
     if (item.routerLink) {

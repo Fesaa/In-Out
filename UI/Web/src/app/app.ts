@@ -7,11 +7,13 @@ import {NavigationService} from './_services/navigation.service';
 import {filter} from 'rxjs';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {Breakpoint, UtilityService} from './_services/utility.service';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, TranslocoModule, NavBarComponent],
   templateUrl: './app.html',
+  standalone: true,
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
@@ -20,6 +22,7 @@ export class App implements OnInit {
   protected readonly oidcService = inject(AuthService);
   private readonly transLoco = inject(TranslocoService);
   protected readonly navService = inject(NavigationService);
+  protected readonly utilityService = inject(UtilityService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly ngbModal = inject(NgbModal)
@@ -56,7 +59,9 @@ export class App implements OnInit {
     // Sets a CSS variable for the actual device viewport height. Needed for mobile dev.
     const vh = window.innerHeight * 0.01;
     document.documentElement.style.setProperty('--vh', `${vh}px`);
+    this.utilityService.updateBreakPoint();
   }
 
 
+  protected readonly Breakpoint = Breakpoint;
 }

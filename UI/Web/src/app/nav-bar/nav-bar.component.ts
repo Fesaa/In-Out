@@ -1,33 +1,15 @@
-import {ChangeDetectionStrategy, Component, computed, HostListener, inject, OnInit, Signal} from '@angular/core';
-import {NgTemplateOutlet, TitleCasePipe} from "@angular/common";
+import {ChangeDetectionStrategy, Component, computed, HostListener, inject, signal} from '@angular/core';
+import {toSignal} from "@angular/core/rxjs-interop";
+import {Breakpoint, UtilityService} from "../_services/utility.service";
+import {RouterLink} from "@angular/router";
+import {ButtonGroup, ButtonGroupKey, ButtonGroupService} from "../button-grid/button-group.service";
+import {translate, TranslocoPipe} from "@jsverse/transloco";
+import {TitleCasePipe} from "@angular/common";
 import {animate, style, transition, trigger} from "@angular/animations";
-import {RouterLink} from '@angular/router';
-import {AuthService} from '../_services/auth.service';
-import {NavigationItem, NavigationService, NavigationsId} from '../_services/navigation.service';
-import {TranslocoPipe} from '@jsverse/transloco';
-import {main} from '@popperjs/core';
-
-const drawerAnimation = trigger('drawerAnimation', [
-  transition(':enter', [
-    style({ transform: 'translateX(-100%)', opacity: 0 }),
-    animate('250ms ease-out', style({ transform: 'translateX(0)', opacity: 1 })),
-  ]),
-  transition(':leave', [
-    animate('200ms ease-in', style({ transform: 'translateX(-100%)', opacity: 0 })),
-  ]),
-]);
-
-const dropdownAnimation = trigger('dropdownAnimation', [
-  transition(':enter', [
-    style({ opacity: 0, transform: 'translateY(-8px)' }),
-    animate('150ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
-  ]),
-  transition(':leave', [
-    animate('100ms ease-in', style({ opacity: 0, transform: 'translateY(-8px)' })),
-  ]),
-]);
-
-
+import {MobileGridComponent} from "../button-grid/mobile-grid/mobile-grid.component";
+import {AuthService} from '@inout/_services/auth.service';
+import {NavigationService} from '@inout/_services/navigation.service';
+import {BadgeComponent} from '@inout/shared/components/badge/badge.component';
 
 @Component({
   selector: 'app-nav-bar',
@@ -36,52 +18,96 @@ const dropdownAnimation = trigger('dropdownAnimation', [
   imports: [
     RouterLink,
     TitleCasePipe,
+    MobileGridComponent,
     TranslocoPipe,
-    NgTemplateOutlet
+    BadgeComponent
   ],
-  animations: [drawerAnimation, dropdownAnimation],
+  animations: [
+    trigger('dropdownAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-8px)' }),
+        animate('150ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+      ]),
+      transition(':leave', [
+        animate('100ms ease-in', style({ opacity: 0, transform: 'translateY(-8px)' })),
+      ]),
+    ]),
+    trigger('expandCollapse', [
+      transition(':enter', [
+        style({ height: '0', opacity: 0, overflow: 'hidden' }),
+        animate('200ms ease-out', style({ height: '*', opacity: 1 })),
+      ]),
+      transition(':leave', [
+        style({ height: '*', opacity: 1, overflow: 'hidden' }),
+        animate('200ms ease-in', style({ height: '0', opacity: 0 })),
+      ]),
+    ])
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent {
 
-  protected authService = inject(AuthService);
-  protected navService = inject(NavigationService);
+  private readonly authService = inject(AuthService);
+  protected readonly navService = inject(NavigationService);
+  protected readonly buttonGroupService = inject(ButtonGroupService);
+  protected readonly utilityService = inject(UtilityService);
 
-  mainItems: Signal<NavigationItem[]> = computed(() => {
-    const fromNav = this.navService.items().filter(i => i.id !== NavigationsId.Logout);
-    return [{
-      id: NavigationsId.Dashboard,
-      translationKey: 'navigation.items.dashboard',
-      icon: 'fas fa-home',
-      requiredRoles: [],
-      routerLink: '/dashboard'
-    }, ...fromNav]
-  });
-  accountItems = computed(() => {
-    const main = this.mainItems();
-    return this.navService.items().filter(i => !main.includes(i));
-  })
+  currentUser = this.authService.user;
+  showNav = this.navService.showNavBar;
 
-  ngOnInit(): void {
+  isMobileGridOpen = signal(false);
+  isAccountDropdownOpen = signal(false);
+  expandedGroup = signal<ButtonGroupKey | null>(ButtonGroupKey.Navigation);
+
+  isMobile = computed(() => this.showNav() && this.utilityService.breakPoint() <= Breakpoint.Mobile);
+  isDesktop = computed(() => this.showNav() && this.utilityService.breakPoint() > Breakpoint.Mobile);
+
+  dashboardGroups = this.buttonGroupService.allGroups;
+
+  mobileButtonGroups = computed<ButtonGroup[]>(() => [
+    {
+      key: ButtonGroupKey.Any,
+      title: '',
+      icon: '',
+      buttons: [
+        {
+          title: translate('navigation.home'),
+          icon: 'fa fa-home',
+          navUrl: 'dashboard',
+          standAlone: true,
+        }
+      ]
+    },
+    ...this.buttonGroupService.allGroups(),
+  ])
+
+  toggleMobileGrid() {
+    this.isMobileGridOpen.update(v => !v);
   }
 
-  toggleMobileMenu() {
-    this.navService.isMobileMenuOpen.update(v => !v);
+  toggleGroup(key: ButtonGroupKey) {
+    const cur = this.expandedGroup();
+    if (cur === key) {
+      this.expandedGroup.set(null);
+    } else {
+      this.expandedGroup.set(key);
+    }
   }
 
-  toggleAccountDropdown() {
-    this.navService.isAccountDropdownOpen.update(v => !v);
+  isGroupExpanded(key: ButtonGroupKey): boolean {
+    return this.expandedGroup() == key;
   }
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (
-      this.navService.isAccountDropdownOpen() &&
+      this.isAccountDropdownOpen() &&
       !target.closest('.account-dropdown') &&
       !target.closest('.account-toggle')
     ) {
-      this.navService.isAccountDropdownOpen.set(false);
+      this.isAccountDropdownOpen.set(false);
     }
   }
+
 }

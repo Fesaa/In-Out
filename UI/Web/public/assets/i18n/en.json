@@ -284,6 +284,8 @@
   },
 
   "navigation": {
+    "title": "Navigation",
+    "home": "Home",
     "items": {
       "dashboard": "Dashboard",
       "new-delivery": "New delivery",
@@ -293,7 +295,11 @@
       "user": "User",
       "logout": "Logout"
     },
+    "account": {
+      "title": "Account"
+    },
     "management": {
+      "title": "Management",
       "items": {
         "overview": "Overview",
         "products": "Products",
