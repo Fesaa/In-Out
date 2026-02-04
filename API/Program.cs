@@ -36,12 +36,12 @@ public class Program
                 if ((await context.Database.GetPendingMigrationsAsync()).Any())
                 {
                     logger.LogInformation("Migrating database");
-                    await context.Database.MigrateAsync();   
+                    await context.Database.MigrateAsync();
                 }
 
                 logger.LogInformation("Seeding database");
                 await Seed.Run(context);
-                
+
                 var service = services.GetRequiredService<ISettingsService>();
                 var logLevel = await service.GetSettingsAsync<LogEventLevel>(ServerSettingKey.LogLevel);
                 LogLevelOptions.SwitchLogLevel(logLevel);
@@ -51,6 +51,7 @@ public class Program
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred while migrating the database.");
+                throw;
             }
 
             await host.RunAsync();
@@ -74,7 +75,7 @@ public class Program
             .ConfigureAppConfiguration((ctx, cfg) =>
             {
                 cfg.Sources.Clear();
-                
+
                 var env = ctx.HostingEnvironment;
                 cfg.AddJsonFile("config/appsettings.json", optional: true, reloadOnChange: false)
                     .AddJsonFile($"config/appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: false)
@@ -86,7 +87,7 @@ public class Program
                 {
                     opts.ListenAnyIP(5000, listenOptions => { listenOptions.Protocols = HttpProtocols.Http1AndHttp2;});
                 });
-                
+
                 builder.UseStartup<Startup>();
             });
 }

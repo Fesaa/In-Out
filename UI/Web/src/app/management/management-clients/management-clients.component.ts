@@ -8,6 +8,9 @@ import {ClientModalComponent} from './_components/client-modal/client-modal.comp
 import {DefaultModalOptions} from '../../_models/default-modal-options';
 import {ImportClientModalComponent} from './_components/import-client-modal/import-client-modal.component';
 import {ClientsTableComponent} from './_components/clients-table/clients-table.component';
+import {ProductService} from '@inout/_services/product.service';
+import {PriceCategory} from '@inout/_models/product';
+import {tap} from 'rxjs';
 
 @Component({
   selector: 'app-management-clients',
@@ -24,14 +27,21 @@ export class ManagementClientsComponent implements OnInit {
 
   private readonly modalService = inject(ModalService);
   private readonly clientSerivce = inject(ClientService);
+  private readonly productsService = inject(ProductService);
 
   loading = signal(true);
   clients = signal<Client[]>([]);
+  priceCategories = signal<PriceCategory[]>([]);
 
   clientWarning = computed(() => !this.loading() && this.clients().length === 0);
 
   ngOnInit(): void {
     this.loadClients();
+
+    this.productsService.getPriceCategories().pipe(
+      tap(pc => this.priceCategories.set(pc)),
+    ).subscribe();
+
   }
 
   private loadClients() {
@@ -41,11 +51,6 @@ export class ManagementClientsComponent implements OnInit {
       this.loading.set(false);
     });
   }
-
-  clientTracker(idx: number, client: Client): string {
-    return `${client.id}`
-  }
-
   importClients() {
     const [modal, component] = this.modalService.open(ImportClientModalComponent, DefaultModalOptions);
 
@@ -54,6 +59,7 @@ export class ManagementClientsComponent implements OnInit {
 
   createOrUpdateClient(client?: Client) {
     const [modal, component] = this.modalService.open(ClientModalComponent, DefaultModalOptions);
+    component.priceCategories.set(this.priceCategories());
     if (client) {
       component.client.set(client);
     }

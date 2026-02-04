@@ -7,6 +7,7 @@ import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {ClientService} from '../../../../_services/client.service';
 import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
 import {DefaultValuePipe} from '../../../../_pipes/default-value.pipe';
+import {PriceCategory} from '@inout/_models/product';
 
 @Component({
   selector: 'app-client-modal',
@@ -25,8 +26,9 @@ import {DefaultValuePipe} from '../../../../_pipes/default-value.pipe';
 export class ClientModalComponent implements OnInit {
 
   private readonly clientService = inject(ClientService);
-  private readonly cdRef = inject(ChangeDetectorRef);
   protected readonly modal = inject(NgbActiveModal);
+
+  priceCategories = model.required<PriceCategory[]>();
 
   client = model<Client>({
     id: -1,
@@ -36,7 +38,8 @@ export class ClientModalComponent implements OnInit {
     contactEmail: '',
     contactName: '',
     contactNumber: '',
-    invoiceEmail: ''
+    invoiceEmail: '',
+    defaultPriceCategoryId: null,
   });
 
   isSaving = signal(false);
@@ -53,6 +56,11 @@ export class ClientModalComponent implements OnInit {
     this.clientForm.addControl('contactName', new FormControl(client.contactName));
     this.clientForm.addControl('contactNumber', new FormControl(client.contactNumber));
     this.clientForm.addControl('invoiceEmail', new FormControl(client.invoiceEmail));
+    this.clientForm.addControl('defaultPriceCategoryId', new FormControl(client.defaultPriceCategoryId));
+  }
+
+  priceCategoryLabel(id: number) {
+    return this.priceCategories().find(pc => pc.id === id)?.name ?? '';
   }
 
   save() {

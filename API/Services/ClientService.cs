@@ -54,7 +54,15 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
             ContactEmail = dto.ContactEmail.Trim(),
             Address = dto.Address.Trim(),
         };
-        
+
+        if (dto.DefaultPriceCategoryId != null)
+        {
+            var priceCategory = await unitOfWork.ProductRepository
+                .GetPriceCategoryById(dto.DefaultPriceCategoryId.Value) ?? throw new InOutException("errors.price-category-not-found");
+
+            client.DefaultPriceCategoryId = priceCategory.Id;
+        }
+
         unitOfWork.ClientRepository.Add(client);
     }
 
@@ -80,7 +88,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
                 if (others != null)
                     throw new InOutException("errors.client-already-exists");
             }
-            
+
             logger.LogDebug("Updating CompanyNumber for {ClientId} - {ClientName}, adding note to outgoing deliveries", client.Id, client.Name);
             AddSystemNote(await localizationService.DefaultTranslate("client-update-company-number-note", client.CompanyNumber, dto.CompanyNumber.Trim()));
 
@@ -102,7 +110,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
 
             client.InvoiceEmail = dto.InvoiceEmail.Trim();
         }
-        
+
         client.ContactName = dto.ContactName.Trim();
         client.ContactNumber = dto.ContactNumber.Trim();
         client.ContactEmail = dto.ContactEmail.Trim();
@@ -116,14 +124,22 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
                 unitOfWork.DeliveryRepository.Update(delivery);
             }
         }
-        
+
+        if (dto.DefaultPriceCategoryId != null)
+        {
+            var priceCategory = await unitOfWork.ProductRepository
+                .GetPriceCategoryById(dto.DefaultPriceCategoryId.Value) ?? throw new InOutException("errors.price-category-not-found");
+
+            client.DefaultPriceCategoryId = priceCategory.Id;
+        }
+
         unitOfWork.ClientRepository.Update(client);
         await unitOfWork.CommitAsync();
         return;
 
         void AddSystemNote(string s) => systemNotes.Add(s.ToSystemMessage());
     }
-    
+
     public async Task DeleteClient(int id)
     {
         var client = await unitOfWork.ClientRepository.GetClientById(id);
@@ -133,7 +149,7 @@ public class ClientService(IUnitOfWork unitOfWork, ILogger<ClientService> logger
         var deliveries = await unitOfWork.DeliveryRepository.GetDeliveriesForClient(client.Id, [DeliveryState.InProgress, DeliveryState.Completed]);
         if (deliveries.Count > 0)
             throw new InOutException("errors.unfinished-deliveries");
-        
+
         unitOfWork.ClientRepository.Delete(client);
         await unitOfWork.CommitAsync();
     }

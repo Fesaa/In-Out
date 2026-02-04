@@ -11,8 +11,8 @@ public class Delivery: IEntityDate
     public int UserId { get; set; }
     public User From { get; set; }
     public Client Recipient { get; set; }
-
-    public PriceCategory? DefaultPriceCategory { get; set; }
+    public int PriceCategoryId { get; set; }
+    public PriceCategory PriceCategory { get; set; }
 
     public string Message { get; set; }
     public IList<SystemMessage> SystemMessages { get; set; }

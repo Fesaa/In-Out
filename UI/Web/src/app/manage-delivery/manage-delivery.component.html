@@ -70,6 +70,23 @@
           </div>
         }
 
+        <div class="col-12 mb-4">
+          @if (deliveryForm.get('priceCategoryId'); as control) {
+            <app-settings-item [control]="control" [title]="t('price-category-title')" [subtitle]="t('price-category-tooltip')">
+              <ng-template #view>
+                {{priceCategoryLabel(control.value) | defaultValue}}
+              </ng-template>
+              <ng-template #edit>
+                <select formControlName="priceCategoryId" class="form-control" id="form-control-priceCategoryId">
+                  @for (priceCategory of priceCategories(); track priceCategory.id) {
+                    <option [ngValue]="priceCategory.id">{{priceCategory.name}}</option>
+                  }
+                </select>
+              </ng-template>
+            </app-settings-item>
+          }
+        </div>
+
         <div class="col-12">
           @for (category of sortedCategories(); track category.id) {
             @let categoryProducts = groupedProducts().get(category.id);

@@ -43,6 +43,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         // For creation, we reconcile against an empty list
         await ReconcileStockAndLines(user, delivery, dto.Lines, isNew: true);
 
+        // Guard
+        var priceCategory = await unitOfWork.ProductRepository
+            .GetPriceCategoryById(dto.PriceCategoryId) ?? throw new InOutException("errors.price-category-not-found");
+        delivery.PriceCategoryId = priceCategory.Id;
+
         unitOfWork.DeliveryRepository.Add(delivery);
         await unitOfWork.CommitAsync();
 
@@ -75,6 +80,11 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         }
 
         await ReconcileStockAndLines(currentUser, delivery, dto.Lines, isNew: false);
+
+        // Guard
+        var priceCategory = await unitOfWork.ProductRepository
+            .GetPriceCategoryById(dto.PriceCategoryId) ?? throw new InOutException("errors.price-category-not-found");
+        delivery.PriceCategoryId = priceCategory.Id;
 
         unitOfWork.DeliveryRepository.Update(delivery);
         await unitOfWork.CommitAsync();

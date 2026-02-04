@@ -14,6 +14,7 @@ export type Delivery = {
   message: string,
   systemMessages: SystemMessage[],
   lines: DeliveryLine[],
+  priceCategoryId: number;
 
   createdUtc?: Date,
   lastModifiedUtc?: Date,

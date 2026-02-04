@@ -108,6 +108,25 @@
               </app-settings-item>
             }
           </div>
+
+          <div class="col-md-12 col-sm-12 mt-2">
+            @if (clientForm.get('defaultPriceCategoryId'); as control) {
+              <app-settings-item [control]="control" [title]="t('defaultPriceCategoryId')" [subtitle]="t('defaultPriceCategoryId-tooltip')">
+                <ng-template #view>
+                  {{priceCategoryLabel(control.value) | defaultValue}}
+                </ng-template>
+                <ng-template #edit>
+                  <select formControlName="defaultPriceCategoryId" class="form-control form-select" id="form-control-defaultPriceCategoryId">
+                    <option [ngValue]="null">{{t('defaultPriceCategoryId-none')}}</option>
+                    @for (priceCategory of priceCategories(); track priceCategory.id) {
+                      <option [ngValue]="priceCategory.id">{{priceCategory.name}}</option>
+                    }
+                  </select>
+                </ng-template>
+              </app-settings-item>
+            }
+          </div>
+
         </div>
       </form>
 

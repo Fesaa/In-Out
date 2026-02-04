@@ -61,7 +61,10 @@
     "contactNumber": "Contact Number",
     "contactNumber-tooltip": "Phone number of the main point of contact",
     "invoiceEmail": "Invoice Email",
-    "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
+    "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications",
+    "defaultPriceCategoryId": "Default Price Category",
+    "defaultPriceCategoryId-tooltip": "The default price category to use for this client, this will be used when creating deliveries for this client",
+    "defaultPriceCategoryId-none": "None"
   },
 
   "import-client-modal": {
@@ -101,7 +104,9 @@
     "delivery-locked": "This delivery cannot be changed in its current state",
     "message-label": "Message",
     "message-tooltip": "An optional message, as extra information",
-    "no-products-available": "No products available"
+    "no-products-available": "No products available",
+    "price-category-title": "Price Category",
+    "price-category-tooltip": "The price category to use for this delivery, may differ from the client's default price category"
   },
 
   "filter": {

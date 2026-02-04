@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {Delivery, DeliveryLine, DeliveryState} from '../_models/delivery';
-import {Product, ProductCategory, ProductType} from '../_models/product';
+import {PriceCategory, Product, ProductCategory, ProductType} from '../_models/product';
 import {catchError, forkJoin, of, switchMap, take, tap} from 'rxjs';
 import {ProductService} from '../_services/product.service';
 import {UserService} from '../_services/user.service';
@@ -22,10 +22,11 @@ import {DefaultModalOptions} from '../_models/default-modal-options';
 import {ModalService} from '../_services/modal.service';
 import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
 import {LoadingSpinnerComponent} from '@inout/shared/components/loading-spinner/loading-spinner.component';
+import {DefaultValuePipe} from '@inout/_pipes/default-value.pipe';
 
 @Component({
   selector: 'app-manage-delivery',
-  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, SettingsItemComponent, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, SettingsItemComponent, LoadingSpinnerComponent, DefaultValuePipe],
   templateUrl: './manage-delivery.component.html',
   styleUrl: './manage-delivery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -89,9 +90,11 @@ export class ManageDeliveryComponent implements OnInit {
     message: '',
     systemMessages: [],
     lines: [],
+    priceCategoryId: null!,
   });
   categories = signal<ProductCategory[]>([]);
   products = signal<Product[]>([]);
+  priceCategories = signal<PriceCategory[]>([]);
 
   user = signal<User | undefined>(undefined);
   selectedClient = signal<Client | undefined>(undefined);
@@ -130,6 +133,13 @@ export class ManageDeliveryComponent implements OnInit {
         this.location.replaceState(newUrl);
       }
     });
+
+    effect(() => {
+      const client = this.selectedClient();
+      if (client && client.defaultPriceCategoryId) {
+        this.deliveryForm.get('priceCategoryId')?.setValue(client.defaultPriceCategoryId as never)
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -150,13 +160,15 @@ export class ManageDeliveryComponent implements OnInit {
           this.userService.currentUser(),
           this.productService.getCategories(true),
           this.productService.allProducts(true),
+          this.productService.getPriceCategories(),
           delivery$
         ]);
       })
-    ).subscribe(([user, categories, products, delivery]) => {
+    ).subscribe(([user, categories, products, pc, delivery]) => {
       this.user.set(user);
       this.products.set(products);
       this.categories.set(categories);
+      this.priceCategories.set(pc);
       this.loading.set(false);
 
       if (delivery) {
@@ -187,6 +199,7 @@ export class ManageDeliveryComponent implements OnInit {
     this.deliveryForm.setControl('fromId', new FormControl(delivery.fromId, [Validators.required]));
     this.deliveryForm.setControl('clientId', new FormControl(delivery.clientId, [Validators.required, Validators.min(0)]));
     this.deliveryForm.setControl('message', new FormControl(delivery.message));
+    this.deliveryForm.setControl('priceCategoryId', new FormControl(delivery.priceCategoryId, [Validators.required]));
 
     this.totalItems.set(0);
     this.products().forEach(product => {
@@ -200,6 +213,10 @@ export class ManageDeliveryComponent implements OnInit {
         new FormControl(quantity)
       );
     });
+  }
+
+  priceCategoryLabel(id: number) {
+    return this.priceCategories().find(pc => pc.id === id)?.name ?? '';
   }
 
   selectClient(client: Client | Client[]) {
@@ -308,7 +325,8 @@ export class ManageDeliveryComponent implements OnInit {
       clientId: formValue.clientId,
       recipient: this.selectedClient(),
       message: formValue.message || '',
-      lines: lines
+      lines: lines,
+      priceCategoryId: formValue.priceCategoryId
     };
 
     const action$ = deliveryData.id === -1 ?

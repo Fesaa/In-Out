@@ -45,9 +45,21 @@ export class ModalService {
     bodyTemplate?: TemplateRef<unknown>;
     templateData?: unknown;
   }) {
+    return firstValueFrom(this.confirm$({
+      question: options.question ?? translate('confirm-modal.generic'),
+      ...options,
+    }))
+  }
+
+  confirm$(options: {
+    question: string;
+    title?: string;
+    bodyTemplate?: TemplateRef<unknown>;
+    templateData?: unknown;
+  }, onlyEmitTrue: boolean = false) {
     const [_, component] = this.open(ConfirmModalComponent, DefaultModalOptions);
 
-    component.question.set(options.question ?? translate('confirm-modal.generic'));
+    component.question.set(options.question);
 
     if (options.title) {
       component.title.set(options.title);
@@ -61,7 +73,7 @@ export class ModalService {
       component.templateData.set(options.templateData);
     }
 
-    return component.result$.pipe(take(1));
+    return component.result$.pipe(filter(b => !onlyEmitTrue || b), take(1));
   }
 
 

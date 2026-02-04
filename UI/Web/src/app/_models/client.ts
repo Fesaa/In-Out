@@ -9,4 +9,5 @@ export type Client = {
   contactName: string;
   contactEmail: string;
   contactNumber: string;
+  defaultPriceCategoryId: number | null;
 }
