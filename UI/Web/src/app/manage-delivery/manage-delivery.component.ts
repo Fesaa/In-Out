@@ -21,10 +21,11 @@ import {
 import {DefaultModalOptions} from '../_models/default-modal-options';
 import {ModalService} from '../_services/modal.service';
 import {SettingsItemComponent} from '../shared/components/settings-item/settings-item.component';
+import {LoadingSpinnerComponent} from '@inout/shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-manage-delivery',
-  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, SettingsItemComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslocoDirective, TypeaheadComponent, RouterLink, SettingsItemComponent, LoadingSpinnerComponent],
   templateUrl: './manage-delivery.component.html',
   styleUrl: './manage-delivery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

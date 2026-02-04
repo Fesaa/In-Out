@@ -1,11 +1,7 @@
 
 <div class="mx-md-5 mx-3" *transloco="let t; prefix: 'manage-delivery'">
   @if (loading()) {
-    <div class="d-flex justify-content-center align-items-center" style="min-height: 50vh;">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">{{ t('loading') }}</span>
-      </div>
-    </div>
+    <app-loading-spinner />
   } @else {
     <form [formGroup]="deliveryForm" (ngSubmit)="onSubmit()">
       <div class="row mb-4">
