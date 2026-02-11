@@ -1,0 +1,8 @@
+{
+    "name": "In-Out",
+    "short_name": "In-Out",
+    "icons": [],
+    "theme_color": "#000000",
+    "background_color": "#000000",
+    "display": "standalone"
+}

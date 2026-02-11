@@ -34,24 +34,38 @@
 
       @if (disabled() || locked()) {
         <div class="typeahead-input">
-          {{searchControl.value}}
+          @if (selectedItems().length > 0) {
+            {{ getDisplayText(selectedItems()[0]) }}
+          } @else {
+            {{ searchControl.value }}
+          }
         </div>
       } @else {
-        <input
-          #input
-          type="text"
-          class="typeahead-input"
-          [id]="settings().id"
-          [disabled]="disabled() || locked()"
-          [formControl]="searchControl"
-          [placeholder]="t('placeholder')"
-          (focus)="onFocus()"
-          (blur)="onBlur()"
-          (keydown)="onKeyDown($event)"
-          [attr.aria-expanded]="showDropdown()"
-          [attr.aria-haspopup]="true"
-          [attr.aria-autocomplete]="'list'"
-          role="combobox">
+        @if (!settings().multiple && selectedItems().length > 0 && !hasFocus()) {
+          <div class="selected-single-value" (click)="onFocus()">
+            @if (optionTemplate) {
+              <ng-container *ngTemplateOutlet="optionTemplate; context: { $implicit: selectedItems()[0], index: 0, selected: true }"></ng-container>
+            } @else {
+              {{ getDisplayText(selectedItems()[0]) }}
+            }
+          </div>
+        } @else {
+          <input
+            #input
+            type="text"
+            class="typeahead-input"
+            [id]="settings().id"
+            [disabled]="disabled() || locked()"
+            [formControl]="searchControl"
+            [placeholder]="t('placeholder')"
+            (focus)="onFocus()"
+            (blur)="onBlur()"
+            (keydown)="onKeyDown($event)"
+            [attr.aria-expanded]="showDropdown()"
+            [attr.aria-haspopup]="true"
+            [attr.aria-autocomplete]="'list'"
+            role="combobox">
+        }
       }
 
       @if (settings().showLocked) {

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, model, OnInit, signal} from '@angular/core';
-import {AllProductTypes, Product, ProductCategory, ProductType} from '../../../../_models/product';
+import {AllProductTypes, PriceCategory, Product, ProductCategory, ProductType} from '../../../../_models/product';
 import {ProductService} from '../../../../_services/product.service';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {LoadingSpinnerComponent} from '../../../../shared/components/loading-spinner/loading-spinner.component';
@@ -7,6 +7,7 @@ import {TranslocoDirective} from '@jsverse/transloco';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {SettingsItemComponent} from '../../../../shared/components/settings-item/settings-item.component';
 import {ProductTypePipe} from '../../../../_pipes/product-type-pipe';
+import {DecimalPipe} from '@angular/common';
 
 @Component({
   selector: 'app-product-modal',
@@ -15,7 +16,8 @@ import {ProductTypePipe} from '../../../../_pipes/product-type-pipe';
     TranslocoDirective,
     ReactiveFormsModule,
     SettingsItemComponent,
-    ProductTypePipe
+    ProductTypePipe,
+    DecimalPipe
   ],
   templateUrl: './product-modal.component.html',
   styleUrl: './product-modal.component.scss',
@@ -28,6 +30,7 @@ export class ProductModalComponent implements OnInit {
   protected readonly modal = inject(NgbActiveModal);
 
   categories = model<ProductCategory[]>([]);
+  priceCategories = model<PriceCategory[]>([]);
 
   product = model<Product>({
     id: -1,
@@ -38,6 +41,7 @@ export class ProductModalComponent implements OnInit {
     enabled: true,
     isTracked: true,
     sortValue: 0,
+    prices: {}
   });
 
   isSaving = signal(false);
@@ -62,6 +66,13 @@ export class ProductModalComponent implements OnInit {
     this.productForm.addControl('enabled', new FormControl(product.enabled, Validators.required));
     this.productForm.addControl('isTracked', new FormControl(product.isTracked, Validators.required));
 
+    const priceGroup = new FormGroup({});
+    this.priceCategories().forEach(pc => {
+      const initialPrice = product.prices[pc.id.toString()] ?? 0;
+      priceGroup.addControl(pc.id.toString(), new FormControl(initialPrice, [Validators.required]));
+    });
+    this.productForm.addControl('prices', priceGroup);
+
     this.cdRef.markForCheck();
   }
 
@@ -78,6 +89,7 @@ export class ProductModalComponent implements OnInit {
       enabled: formValue.enabled,
       isTracked: formValue.isTracked,
       sortValue: this.product().sortValue,
+      prices: formValue.prices,
     }
 
     const action$ = id === -1

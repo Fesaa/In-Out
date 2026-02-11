@@ -7,6 +7,7 @@ export type Product = {
   type: ProductType;
   isTracked: boolean;
   enabled: boolean;
+  prices: Record<string, number>;
 };
 
 export enum ProductType {
@@ -22,4 +23,9 @@ export type ProductCategory = {
   enabled: boolean;
   autoCollapse: boolean;
   sortValue: number;
+}
+
+export type PriceCategory = {
+  id: number;
+  name: string;
 }

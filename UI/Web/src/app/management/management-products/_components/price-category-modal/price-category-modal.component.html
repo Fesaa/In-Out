@@ -1,0 +1,54 @@
+<ng-container *transloco="let t; prefix: 'price-category-modal'">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h5 class="modal-title">{{priceCategory().id === -1 ? t('title-create') : t('title-update')}}</h5>
+      <button type="button" class="btn-close" [attr.aria-label]="t('close')" (click)="close()">
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="notice notice-info mb-3">
+        <i class="fas fa-tags notice-icon"></i>
+        <div class="notice-text">
+          <p class="notice-body">{{ t('description') }}</p>
+        </div>
+      </div>
+
+      <form [formGroup]="priceCategoryForm">
+        @if (priceCategoryForm.get('name'); as control) {
+          <app-settings-item
+            [control]="control"
+            [title]="t('name-label')"
+            [subtitle]="t('name-hint')">
+            <ng-template #view>
+              {{control.value | defaultValue}}
+            </ng-template>
+            <ng-template #edit>
+              <input
+                formControlName="name"
+                type="text"
+                class="form-control"
+                [placeholder]="t('name-placeholder')">
+            </ng-template>
+          </app-settings-item>
+        }
+      </form>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="close()">
+        {{t('cancel')}}
+      </button>
+      <button
+        type="button"
+        class="btn btn-olive"
+        (click)="save()"
+        [disabled]="isSaving() || !priceCategoryForm.valid">
+        @if (isSaving()) {
+          <app-loading-spinner size="small" />
+        }
+        <span>{{isSaving() ? t('saving') : (priceCategory().id === -1 ? t('create') : t('update'))}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

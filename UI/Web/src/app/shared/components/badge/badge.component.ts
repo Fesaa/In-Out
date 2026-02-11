@@ -15,11 +15,13 @@ export type BadgeColour = 'primary' | 'secondary' | 'error' | 'warning';
     </span>
   `,
   styleUrl: `./badge.component.scss`,
+  standalone: true
 })
 export class BadgeComponent {
 
   colour = input<BadgeColour>('primary');
   clickAble = input(false);
+  padding =  input('');
 
-  badgeClass = computed(() => `badge badge--${this.colour()}`);
+  badgeClass = computed(() => `badge badge--${this.colour()} ${this.padding()}`);
 }

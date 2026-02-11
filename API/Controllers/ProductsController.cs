@@ -143,7 +143,7 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
         await productService.DeleteProductCategory(id);
         return Ok();
     }
-    
+
     /// <summary>
     /// Re-order categories
     /// </summary>
@@ -167,6 +167,42 @@ public class ProductsController(IUnitOfWork unitOfWork, IProductService productS
     public async Task<IActionResult> OrderProducts(IList<int> ids)
     {
         await productService.OrderProducts(ids);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Returns all price categories (e.g., Member, Guest, VIP)
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("price-category")]
+    public async Task<ActionResult<IList<PriceCategoryDto>>> GetPriceCategories()
+    {
+        return Ok(await unitOfWork.ProductRepository.GetAllPriceCategoryDtos());
+    }
+
+    /// <summary>
+    /// Create a new price category
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("price-category")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
+    public async Task<ActionResult<PriceCategoryDto>> CreatePriceCategory(PriceCategoryDto dto)
+    {
+        var res = await productService.CreatePriceCategory(dto);
+        return Ok(res);
+    }
+
+    /// <summary>
+    /// Update an existing price category
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("price-category")]
+    [Authorize(Policy = PolicyConstants.ManageProducts)]
+    public async Task<IActionResult> UpdatePriceCategory(PriceCategoryDto dto)
+    {
+        await productService.UpdatePriceCategory(dto);
         return Ok();
     }
 }

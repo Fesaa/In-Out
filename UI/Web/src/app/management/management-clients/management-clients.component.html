@@ -31,7 +31,8 @@
         <p class="warning-message">{{t('no-clients.message')}}</p>
         <button
           type="button"
-          class="btn btn-warning-action">
+          class="btn btn-warning-action"
+          (click)="importClients()">
           <i class="fas fa-plus" aria-hidden="true"></i>
           {{t('no-clients.btn')}}
         </button>

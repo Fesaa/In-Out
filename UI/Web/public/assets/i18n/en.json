@@ -61,7 +61,10 @@
     "contactNumber": "Contact Number",
     "contactNumber-tooltip": "Phone number of the main point of contact",
     "invoiceEmail": "Invoice Email",
-    "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications"
+    "invoiceEmail-tooltip": "Email to receive invoices and billing-related communications",
+    "defaultPriceCategoryId": "Default Price Category",
+    "defaultPriceCategoryId-tooltip": "The default price category to use for this client, this will be used when creating deliveries for this client",
+    "defaultPriceCategoryId-none": "None"
   },
 
   "import-client-modal": {
@@ -100,7 +103,10 @@
     "failed": "Failed to submit your delivery, check your input",
     "delivery-locked": "This delivery cannot be changed in its current state",
     "message-label": "Message",
-    "message-tooltip": "An optional message, as extra information"
+    "message-tooltip": "An optional message, as extra information",
+    "no-products-available": "No products available",
+    "price-category-title": "Price Category",
+    "price-category-tooltip": "The price category to use for this delivery, may differ from the client's default price category"
   },
 
   "filter": {
@@ -284,7 +290,10 @@
   },
 
   "navigation": {
+    "title": "Navigation",
+    "home": "Home",
     "items": {
+      "title": "Actions",
       "dashboard": "Dashboard",
       "new-delivery": "New delivery",
       "deliveries": "Browse deliveries",
@@ -293,7 +302,11 @@
       "user": "User",
       "logout": "Logout"
     },
+    "account": {
+      "title": "Account"
+    },
     "management": {
+      "title": "Management",
       "items": {
         "overview": "Overview",
         "products": "Products",
@@ -302,6 +315,20 @@
         "server": "Server"
       }
     }
+  },
+
+  "price-category-modal": {
+    "title-create": "Create Price Category",
+    "title-update": "Update Price Category",
+    "description": "Price categories allow you to define different pricing tiers (e.g., Staff, VIP) for your products.",
+    "name-label": "Category Name",
+    "name-hint": "The display name for this pricing tier.",
+    "name-placeholder": "e.g. Member",
+    "close": "Close",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "saving": "Saving..."
   },
 
   "management": {
@@ -343,6 +370,17 @@
           },
           "cell": {
             "item": "{{count}} products"
+          }
+        }
+      },
+      "create-price-category": "New Price Category",
+      "price-categories-table-label": "Price Categories",
+      "price-categories": {
+        "table": {
+          "header": {
+            "id": "ID",
+            "name": "Name",
+            "actions": "Actions"
           }
         }
       }
@@ -442,7 +480,9 @@
     "is-tracked": "Track product in stock",
     "is-tracked-tooltip": "When disabled, product is no longer tracked in stock. You have to remove the current amount manually if applicable",
     "enabled": "Enabled",
-    "enabled-tooltip": "The product can be used"
+    "enabled-tooltip": "The product can be used",
+    "prices-title": "Price Categories",
+    "price-for": "Set the unit price for the {{name}} tier."
   },
 
   "product-category-modal": {

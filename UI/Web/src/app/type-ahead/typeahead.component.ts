@@ -132,7 +132,6 @@ export class TypeaheadComponent<T> implements OnInit {
   @ContentChild('optionItem') optionTemplate?: TemplateRef<any>;
   @ContentChild('badgeItem') badgeTemplate?: TemplateRef<any>;
 
-  // Signals
   hasFocus = signal(false);
   showAddItem = signal(false);
   selectedItems = signal<T[]>([]);
@@ -146,13 +145,10 @@ export class TypeaheadComponent<T> implements OnInit {
     return (idx: number, t: T) => `${idx}`;
   })
 
-  // Form Control
   searchControl = new FormControl('');
 
-  // Subjects
   private searchSubject = new Subject<string>();
 
-  // Computed signals
   showDropdown = computed(() =>
     this.hasFocus() &&
     (this.filteredOptions().length > 0 ||
@@ -178,7 +174,7 @@ export class TypeaheadComponent<T> implements OnInit {
           debounceTime(settings.debounce),
           distinctUntilChanged(),
           switchMap(term => {
-            if (!term || term.length < settings.minCharacters) {
+            if (term.length < settings.minCharacters) {
               return of([]);
             }
 
@@ -256,6 +252,10 @@ export class TypeaheadComponent<T> implements OnInit {
             }
           }
         });
+    }
+
+    if (settings.minCharacters === 0) {
+      this.searchSubject.next('');
     }
   }
 

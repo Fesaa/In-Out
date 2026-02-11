@@ -9,7 +9,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {ProductService} from '../../_services/product.service';
-import {Product, ProductCategory} from '../../_models/product';
+import {PriceCategory, Product, ProductCategory} from '../../_models/product';
 import {forkJoin} from 'rxjs';
 import {TableComponent} from '../../shared/components/table/table.component';
 import {TranslocoDirective} from '@jsverse/transloco';
@@ -20,6 +20,9 @@ import {ProductModalComponent} from './_components/product-modal/product-modal.c
 import {ModalService} from '../../_services/modal.service';
 import {CdkDragDrop, CdkDragHandle, moveItemInArray} from '@angular/cdk/drag-drop';
 import {SortProductsModalComponent} from './_components/sort-products-modal/sort-products-modal.component';
+import {
+  PriceCategoryModalComponent
+} from '@inout/management/management-products/_components/price-category-modal/price-category-modal.component';
 
 @Component({
   selector: 'app-management-products',
@@ -44,6 +47,7 @@ export class ManagementProductsComponent implements OnInit {
   loading = signal(true);
   products = signal<Product[]>([]);
   categories = signal<ProductCategory[]>([]);
+  priceCategories = signal<PriceCategory[]>([]);
 
   productWarning = computed(() => this.products().length === 0 && this.categories().length > 0)
   categoriesWarning = computed(() => this.categories().length === 0);
@@ -61,11 +65,13 @@ export class ManagementProductsComponent implements OnInit {
   ngOnInit(): void {
     forkJoin([
       this.productService.allProducts(),
-      this.productService.getCategories()
+      this.productService.getCategories(),
+      this.productService.getPriceCategories(),
     ]).subscribe({
-      next: ([products, categories]) => {
+      next: ([products, categories, prices]) => {
         this.products.set(products);
         this.categories.set(categories);
+        this.priceCategories.set(prices);
         this.loading.set(false);
       },
       error: error => {
@@ -84,6 +90,10 @@ export class ManagementProductsComponent implements OnInit {
     this.productService.allProducts().subscribe(products => {
       this.products.set(products);
     });
+  }
+
+  loadPriceCategories(): void {
+    this.productService.getPriceCategories().subscribe(data => this.priceCategories.set(data));
   }
 
   category(product: Product): ProductCategory | undefined {
@@ -112,11 +122,26 @@ export class ManagementProductsComponent implements OnInit {
   createOrUpdateProduct(product?: Product) {
     const [modal, component] = this.modalService.open(ProductModalComponent, DefaultModalOptions);
     component.categories.set(this.categories());
+    component.priceCategories.set(this.priceCategories());
     if (product) {
       component.product.set(product);
     }
 
     modal.closed.subscribe(() => this.loadProducts());
+  }
+
+  createOrUpdatePriceCategory(priceCategory?: PriceCategory) {
+    const [modal, component] = this.modalService.open(PriceCategoryModalComponent, DefaultModalOptions);
+    if (priceCategory) {
+      component.priceCategory.set(priceCategory);
+    }
+    component.existingPriceCategories.set(this.priceCategories());
+
+    modal.closed.subscribe(() => this.loadPriceCategories());
+  }
+
+  priceCategoryTracker(idx: number, pc: PriceCategory): string {
+    return `${pc.id}`;
   }
 
   sortProducts(category: ProductCategory) {

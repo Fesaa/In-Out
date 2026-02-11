@@ -21,12 +21,19 @@ public interface IProductRepository
     Task<IList<ProductCategoryDto>> GetAllCategoriesDtos(bool onlyEnabled = false);
     Task<IList<Product>> GetByCategory(ProductCategory category);
     Task<int> GetHighestSortValue(ProductCategory category);
+    Task<PriceCategory?> GetPriceCategoryById(int id);
+    Task<PriceCategory?> GetPriceCategoryByName(string name);
+    Task<IList<PriceCategory>> GetAllPriceCategories();
+    Task<IList<PriceCategoryDto>> GetAllPriceCategoryDtos();
     void Add(Product product);
     void Add(ProductCategory category);
+    void Add(PriceCategory priceCategory);
     void Update(Product product);
     void Update(ProductCategory category);
+    void Update(PriceCategory priceCategory);
     void Delete(Product product);
     void Delete(ProductCategory category);
+    void Delete(PriceCategory priceCategory);
     Task<int> Count();
 }
 
@@ -110,9 +117,39 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
 
     public async Task<int> GetHighestSortValue(ProductCategory category)
     {
-        return await ctx.Products
-            .Where(p => p.CategoryId == category.Id)
-            .MaxAsync(p => p.SortValue);
+        try
+        {
+            return await ctx.Products
+                .Where(p => p.CategoryId == category.Id)
+                .MaxAsync(p => p.SortValue);
+        }
+        catch (InvalidOperationException)
+        {
+            return 0;
+        }
+    }
+
+    public Task<PriceCategory?> GetPriceCategoryById(int id)
+    {
+        return ctx.PriceCategories.FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public Task<PriceCategory?> GetPriceCategoryByName(string name)
+    {
+        var normalized = name.ToNormalized();
+        return ctx.PriceCategories.FirstOrDefaultAsync(p => p.NormalizedName == normalized);
+    }
+
+    public async Task<IList<PriceCategory>> GetAllPriceCategories()
+    {
+        return await ctx.PriceCategories.ToListAsync();
+    }
+
+    public async Task<IList<PriceCategoryDto>> GetAllPriceCategoryDtos()
+    {
+        return await ctx.PriceCategories
+            .ProjectTo<PriceCategoryDto>(mapper.ConfigurationProvider)
+            .ToListAsync();
     }
 
     public void Add(Product product)
@@ -125,6 +162,11 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
         ctx.ProductCategories.Add(category).State = EntityState.Added;
     }
 
+    public void Add(PriceCategory priceCategory)
+    {
+        ctx.PriceCategories.Add(priceCategory).State = EntityState.Added;
+    }
+
     public void Update(Product product)
     {
         ctx.Products.Update(product).State = EntityState.Modified;
@@ -135,6 +177,11 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
         ctx.ProductCategories.Update(category).State = EntityState.Modified;
     }
 
+    public void Update(PriceCategory priceCategory)
+    {
+        ctx.PriceCategories.Update(priceCategory).State = EntityState.Modified;
+    }
+
     public void Delete(Product product)
     {
         ctx.Products.Remove(product).State = EntityState.Deleted;
@@ -143,6 +190,11 @@ public class ProductRepository(DataContext ctx, IMapper mapper): IProductReposit
     public void Delete(ProductCategory category)
     {
         ctx.ProductCategories.Remove(category).State = EntityState.Deleted;
+    }
+
+    public void Delete(PriceCategory priceCategory)
+    {
+        ctx.PriceCategories.Remove(priceCategory).State = EntityState.Deleted;
     }
 
     public async Task<int> Count()

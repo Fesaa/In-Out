@@ -25,61 +25,29 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
 
     public async Task<Delivery> CreateDelivery(int userId, DeliveryDto dto)
     {
-        var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId);
-        if (user == null)
-            throw new InOutException("errors.client-not-found");
-        
-        var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId);
-        if (client == null)
-            throw new InOutException("errors.client-not-found");
-        
-        using var tracker = TelemetryHelper.TrackOperation("create_client", new Dictionary<string, object?>
-        {
-            ["user_id"] = userId,
-        });
+        var user = await unitOfWork.UsersRepository.GetByUserIdAsync(userId) ?? throw new InOutException("errors.client-not-found");
+        var client = await unitOfWork.ClientRepository.GetClientById(dto.ClientId) ?? throw new InOutException("errors.client-not-found");
 
-        var lines = dto.Lines.GroupBy(l => l.ProductId)
-            .Select(g => new DeliveryLineDto
-            {
-                ProductId = g.Key,
-                Quantity = g.Sum(l => l.Quantity),
-            })
-            .Select(deliveryLineDto => new DeliveryLine
-            {
-                ProductId = deliveryLineDto.ProductId,
-                Quantity = deliveryLineDto.Quantity,
-            }).ToList();
-
-        var productLookup = (await unitOfWork.ProductRepository
-            .GetByIds(lines.Select(l => l.ProductId)))
-            .ToDictionary(p => p.Id, p => p);
+        using var tracker = TelemetryHelper.TrackOperation("create_delivery", new Dictionary<string, object?> { ["user_id"] = userId });
 
         var delivery = new Delivery
         {
             State = DeliveryState.InProgress,
             UserId = userId,
             Recipient = client,
-            Message = dto.Message.Trim(),
-            Lines = lines,
+            Message = dto.Message?.Trim() ?? string.Empty,
+            Lines = [],
             SystemMessages = [],
         };
-        
-        var result = await stockService.UpdateStockBulkAsync(user, lines
-            .Where(l => productLookup[l.ProductId].IsTracked)
-            .Select(l => new UpdateStockDto 
-            { 
-                ProductId = l.ProductId, 
-                Value = l.Quantity, 
-                Operation = StockOperation.Remove, 
-                Reference = $"Delivery creation by {user.Name} to {client.Name}",
-            })
-            .ToList());
 
-        if (result.IsFailure)
-        {
-            throw new InOutException(result.Error);
-        }
-        
+        // For creation, we reconcile against an empty list
+        await ReconcileStockAndLines(user, delivery, dto.Lines, isNew: true);
+
+        // Guard
+        var priceCategory = await unitOfWork.ProductRepository
+            .GetPriceCategoryById(dto.PriceCategoryId) ?? throw new InOutException("errors.price-category-not-found");
+        delivery.PriceCategoryId = priceCategory.Id;
+
         unitOfWork.DeliveryRepository.Add(delivery);
         await unitOfWork.CommitAsync();
 
@@ -88,109 +56,89 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
 
     public async Task<Delivery> UpdateDelivery(ClaimsPrincipal actor, DeliveryDto dto)
     {
-        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id, DeliveryIncludes.Complete);
-        if (delivery == null)
-            throw new InOutException("errors.delivery-not-found");
-        
+        var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(dto.Id, DeliveryIncludes.Complete)
+            ?? throw new InOutException("errors.delivery-not-found");
+
         if (FinalDeliveryStates.Contains(delivery.State))
             throw new InOutException("errors.delivery-locked");
-        
+
         if (delivery.Recipient.Id != dto.ClientId)
             throw new InOutException("errors.cannot-change-recipient");
-        
-        var user = await userService.GetUser(actor);
-        if (delivery.UserId != user.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
+
+        var currentUser = await userService.GetUser(actor);
+        if (delivery.UserId != currentUser.Id && !actor.IsInRole(PolicyConstants.CreateForOthers))
             throw new UnauthorizedAccessException();
-        
-        using var tracker = TelemetryHelper.TrackOperation("update_client", new Dictionary<string, object?>
-        {
-            ["user_id"] = user.Id,
-        });
+
+        using var tracker = TelemetryHelper.TrackOperation("update_delivery", new Dictionary<string, object?> { ["user_id"] = currentUser.Id });
 
         delivery.Message = dto.Message;
-
         if (delivery.UserId != dto.FromId)
         {
-            if (user.Id != dto.FromId && !actor.IsInRole(PolicyConstants.CreateForOthers))
+            if (currentUser.Id != dto.FromId && !actor.IsInRole(PolicyConstants.CreateForOthers))
                 throw new UnauthorizedAccessException();
-            
             delivery.UserId = dto.FromId;
         }
-        
-        // Ensure no duplicates
-        var dtoLines = dto.Lines.GroupBy(l => l.ProductId)
-            .Select(g => new DeliveryLineDto
-            {
-                ProductId = g.Key,
-                Quantity = g.Sum(l => l.Quantity),
-            }).ToList();
-        
-        var linesLookup = delivery.Lines.ToDictionary(l => l.ProductId, l => l);
-        var productLookup = (await unitOfWork.ProductRepository
-                .GetByIds(dtoLines.Select(l => l.ProductId)))
-            .ToDictionary(p => p.Id, p => p);
 
-        var newLines = dtoLines.Select(deliveryLineDto => new DeliveryLine
-        {
-            ProductId = deliveryLineDto.ProductId,
-            Quantity = deliveryLineDto.Quantity,
-        }).ToList();
-        
-        var updates = dtoLines
-            .Where(l => productLookup[l.ProductId].IsTracked)
-            .Select(l =>
-            {
-                if (!linesLookup.TryGetValue(l.ProductId, out var deliveryLine))
-                {
-                    return new UpdateStockDto
-                    {
-                        ProductId = l.ProductId,
-                        Value = l.Quantity,
-                        Operation = StockOperation.Remove,
-                        Reference = $"Delivery {delivery.Id} update to {delivery.Recipient.Name} by {user.Name}",
-                    };
-                }
+        await ReconcileStockAndLines(currentUser, delivery, dto.Lines, isNew: false);
 
-                var diff = l.Quantity - deliveryLine.Quantity;
-                if (diff == 0)
-                {
-                    return null;
-                }
+        // Guard
+        var priceCategory = await unitOfWork.ProductRepository
+            .GetPriceCategoryById(dto.PriceCategoryId) ?? throw new InOutException("errors.price-category-not-found");
+        delivery.PriceCategoryId = priceCategory.Id;
 
-                logger.LogDebug("Updating stock for product {ProductId} with diff {diff}", deliveryLine.ProductId, diff);
-                return new UpdateStockDto
-                {
-                    ProductId = deliveryLine.ProductId,
-                    Value = Math.Abs(diff),
-                    Operation = diff < 0 ? StockOperation.Add : StockOperation.Remove,
-                    Reference = $"Delivery {delivery.Id} update to {delivery.Recipient.Name} by {user.Name}",
-                };
-            })
-            .RequireNotNull()
-            .ToList();
-
-        if (updates.Count == 0)
-        {
-            unitOfWork.DeliveryRepository.Update(delivery);
-            await unitOfWork.CommitAsync();
-            return delivery;
-        }
-
-        logger.LogDebug("Delivery update resulted in {Length} stock updates", updates.Count);
-        
-        var result = await stockService.UpdateStockBulkAsync(user, updates);
-        if (result.IsFailure)
-        {
-            throw new InOutException(result.Error);
-        }
-        
-        unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
-        delivery.Lines = newLines;
-        
         unitOfWork.DeliveryRepository.Update(delivery);
         await unitOfWork.CommitAsync();
 
         return delivery;
+    }
+
+    private async Task ReconcileStockAndLines(User actor, Delivery delivery, IEnumerable<DeliveryLineDto> newLinesDto, bool isNew)
+    {
+        var aggregatedNewLines = newLinesDto
+            .GroupBy(l => l.ProductId)
+            .Select(g => new DeliveryLine { ProductId = g.Key, Quantity = g.Sum(l => l.Quantity) })
+            .ToList();
+
+        var existingLinesLookup = delivery.Lines.ToDictionary(l => l.ProductId, l => l.Quantity);
+        var productIds = aggregatedNewLines.Select(l => l.ProductId).Union(existingLinesLookup.Keys).ToList();
+        var productLookup = (await unitOfWork.ProductRepository.GetByIds(productIds)).ToDictionary(p => p.Id, p => p);
+
+        var stockUpdates = new List<UpdateStockDto>();
+        foreach (var productId in productIds)
+        {
+            if (!productLookup.TryGetValue(productId, out var product) || !product.IsTracked) continue;
+
+            existingLinesLookup.TryGetValue(productId, out var oldQty);
+            var newQty = aggregatedNewLines.FirstOrDefault(l => l.ProductId == productId)?.Quantity ?? 0;
+
+            var diff = newQty - oldQty;
+            if (diff == 0) continue;
+
+            // Logically: Positive diff means we are delivering MORE (Remove from stock)
+            // Negative diff means we reduced the delivery (Add back to stock)
+            var operation = diff > 0 ? StockOperation.Remove : StockOperation.Add;
+            var actionText = diff > 0 ? "Adjustment (Out)" : "Adjustment (In)";
+            var reference = isNew
+                ? $"New Delivery to {delivery.Recipient.Name} by {actor.Name}"
+                : $"Delivery {delivery.Id} update by {actor.Name}: {actionText}";
+
+            stockUpdates.Add(new UpdateStockDto
+            {
+                ProductId = productId,
+                Value = Math.Abs(diff),
+                Operation = operation,
+                Reference = reference
+            });
+        }
+
+        if (stockUpdates.Count > 0)
+        {
+            var result = await stockService.UpdateStockBulkAsync(actor, stockUpdates);
+            if (result.IsFailure) throw new InOutException(result.Error);
+        }
+
+        if (!isNew) unitOfWork.DeliveryRepository.RemoveRange(delivery.Lines);
+        delivery.Lines = aggregatedNewLines.Where(l => l.Quantity != 0).ToList();
     }
 
     public async Task DeleteDelivery(ClaimsPrincipal actor, int id)
@@ -208,9 +156,9 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
     public async Task TransitionDelivery(ClaimsPrincipal actor, int deliveryId, DeliveryState nextState)
     {
         var user = await userService.GetUser(actor);
-        
+
         var canHandleDeliveries = actor.IsInRole(PolicyConstants.HandleDeliveries);
-        
+
         var delivery = await unitOfWork.DeliveryRepository.GetDeliveryById(deliveryId, DeliveryIncludes.Complete);
         if (delivery == null)
             throw new InOutException("errors.delivery-not-found");
@@ -225,7 +173,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
         {
             await RefundDelivery(user, delivery);
         }
-        
+
         await unitOfWork.CommitAsync();
     }
 
@@ -238,7 +186,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
     {
         var reference = $"Automatic refund after delivery cancellation by {user.Name} ";
         var note = $"Original delivery by {delivery.From.Name} to {delivery.Recipient.Name}";
-        
+
         await stockService.UpdateStockBulkAsync(user, delivery.Lines.Select(l => new UpdateStockDto
         {
             ProductId = l.ProductId,
@@ -248,7 +196,7 @@ public class DeliveryService(ILogger<DeliveryService> logger, IUnitOfWork unitOf
             Notes = note,
         }).ToList());
     }
-    
+
     private static List<DeliveryState> GetStateOptions(DeliveryState currentState, bool canHandleDeliveries)
     {
         switch (currentState)

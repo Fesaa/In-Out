@@ -50,6 +50,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("DefaultPriceCategoryId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("InvoiceEmail")
                         .IsRequired()
                         .HasColumnType("text");
@@ -63,6 +66,8 @@ namespace API.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DefaultPriceCategoryId");
 
                     b.ToTable("Clients");
                 });
@@ -85,6 +90,9 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("PriceCategoryId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("RecipientId")
                         .HasColumnType("integer");
 
@@ -99,6 +107,8 @@ namespace API.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PriceCategoryId");
 
                     b.HasIndex("RecipientId");
 
@@ -155,6 +165,27 @@ namespace API.Migrations
                     b.ToTable("ManualMigrations");
                 });
 
+            modelBuilder.Entity("API.Entities.PriceCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PriceCategories");
+                });
+
             modelBuilder.Entity("API.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -183,6 +214,12 @@ namespace API.Migrations
                     b.Property<string>("NormalizedName")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Prices")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("{}");
 
                     b.Property<int>("SortValue")
                         .HasColumnType("integer");
@@ -347,8 +384,23 @@ namespace API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("API.Entities.Client", b =>
+                {
+                    b.HasOne("API.Entities.PriceCategory", "DefaultPriceCategory")
+                        .WithMany()
+                        .HasForeignKey("DefaultPriceCategoryId");
+
+                    b.Navigation("DefaultPriceCategory");
+                });
+
             modelBuilder.Entity("API.Entities.Delivery", b =>
                 {
+                    b.HasOne("API.Entities.PriceCategory", "PriceCategory")
+                        .WithMany()
+                        .HasForeignKey("PriceCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("API.Entities.Client", "Recipient")
                         .WithMany()
                         .HasForeignKey("RecipientId")
@@ -362,6 +414,8 @@ namespace API.Migrations
                         .IsRequired();
 
                     b.Navigation("From");
+
+                    b.Navigation("PriceCategory");
 
                     b.Navigation("Recipient");
                 });
